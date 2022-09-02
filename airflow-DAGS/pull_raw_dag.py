@@ -157,7 +157,7 @@ with DAG(
         task_id="pull_mssql",
         python_callable=pull_mssql,
         depends_on_past=True,
-        owner="coop2",
+        owner="coops2",
         retries=3,
         retry_delay=timedelta(minutes=1),
     )
