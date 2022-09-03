@@ -80,7 +80,7 @@ def pull_mssql():
     # "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MONTH,-1,GETDATE())"
     #한시간 단위로 pull -> "SELECT *,DATEADD(MI,-60,GETDATE()) from shot_data WITH(NOLOCK)"
     # MSSQL 접속
-    conection_url = sqlalchemy.engine.url.URL.create(
+    conection_url = sqlalchemy.engine.url.URL(
         drivername="mssql+pymssql",
         username=username,
         password=password,
