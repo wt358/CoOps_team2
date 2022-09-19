@@ -26,7 +26,6 @@ def pull_mds_gan():
             group_id='new_group1',
             bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],
             auto_offset_reset='earliest',
-            consumer_timeout_ms=1000
             )
     #consumer.poll(timeout_ms=1000, max_records=2000)
 
