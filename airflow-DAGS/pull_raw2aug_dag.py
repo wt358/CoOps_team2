@@ -18,6 +18,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 
+from json import loads
+
 # define funcs
 
 #pull raw data in the cloud and run the aug module. Then save the aug data files in the local.
