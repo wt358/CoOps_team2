@@ -36,7 +36,7 @@ def pull_mds_gan():
         l.append(message)
 
     df = pd.DataFrame(l)
-    print()
+    print(df.head())
 
 
 #provide the aug data that saved in the local to the aug topic in the kafka cluster
