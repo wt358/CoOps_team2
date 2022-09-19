@@ -24,7 +24,7 @@ from sqlalchemy.sql import text
 def pull_mds_gan():
     consumer = KafkaConsumer('raw.coops2022.molding_data',
             group_id='my-group',
-            bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],
+            bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9093'],
             auto_offset_reset='earliest'
             )
     consumer.poll(timeout_ms=1000, max_records=2000)
