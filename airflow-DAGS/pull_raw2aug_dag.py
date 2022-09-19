@@ -36,6 +36,7 @@ def pull_mds_gan():
     
     for message in consumer:
         message = message.value
+        print(message)
         l.append(message)
 
     df = pd.DataFrame(l)
