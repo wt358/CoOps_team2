@@ -25,7 +25,7 @@ from json import loads
 #pull raw data in the cloud and run the aug module. Then save the aug data files in the local.
 def pull_mds_gan():
     consumer = KafkaConsumer('raw.coops2022.molding_data',
-            group_id='new_group1',
+            group_id='new_group2',
             bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],
             value_deserializer=lambda x: loads(x.decode('utf-8')),
             auto_offset_reset='earliest',
