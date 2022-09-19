@@ -38,7 +38,6 @@ def pull_mds_gan():
         message = message.value
         print(message)
         l.append(message)
-    print()
     df = pd.DataFrame(l)
     print(df.head())
     print("hello")
