@@ -31,12 +31,14 @@ def pull_mds_gan():
     #consumer.poll(timeout_ms=1000, max_records=2000)
 
     l=[]
+    print(message)
     for message in consumer:
         message = message.value
         l.append(message)
 
     df = pd.DataFrame(l)
     print(df.head())
+    print("hello")
 
 
 #provide the aug data that saved in the local to the aug topic in the kafka cluster
