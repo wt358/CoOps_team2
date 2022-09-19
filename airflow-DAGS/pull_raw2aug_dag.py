@@ -26,7 +26,7 @@ from json import loads
 #pull raw data in the cloud and run the aug module. Then save the aug data files in the local.
 def pull_mds_gan():
     now = datetime.now()
-    curr_time = now.strftime("%H:%M:%S")
+    curr_time = now.strftime("%Y-%m-%d_%H:%M:%S")
 
     consumer = KafkaConsumer('raw.coops2022.molding_data',
             group_id=f'airflow_{curr_time}',
