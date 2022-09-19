@@ -31,9 +31,11 @@ def pull_mds_gan():
     #consumer.poll(timeout_ms=1000, max_records=2000)
 
     l=[]
-    print(message)
+    
     for message in consumer:
         message = message.value
+        print(message)
+        break
         l.append(message)
 
     df = pd.DataFrame(l)
