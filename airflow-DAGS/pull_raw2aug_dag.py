@@ -35,7 +35,7 @@ def pull_mds_gan():
         message = message.value
         l.append(message)
 
-    df = pd.Dataframe(l)
+    df = pd.DataFrame(l)
     print()
 
 
