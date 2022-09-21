@@ -37,6 +37,7 @@ def pull_mds_gan():
             )
     #consumer.poll(timeout_ms=1000, max_records=2000)
 
+    #dataframe extract
     l=[]
     
     for message in consumer:
@@ -44,8 +45,41 @@ def pull_mds_gan():
         l.append(loads(message['payload'])['fullDocument'])
     df = pd.DataFrame(l[1:])
     
+
+
+    # dataframe transform
+    df.drop(columns={'Barrel_Temperature_1',
+            'Barrel_Temperature_2',
+            'Barrel_Temperature_3',
+            'Barrel_Temperature_4',
+            'Barrel_Temperature_5',
+            'Barrel_Temperature_6',
+            'Barrel_Temperature_7',
+            'Max_Injection_Speed',
+            'Max_Injection_Pressure',
+            'Max_Screw_RPM',
+            'Max_Switch_Over_Pressure',
+            'Max_Back_Pressure',
+            'Clamp_open_time',
+            'Mold_Temperature_1',
+            'Mold_Temperature_2',
+            'Mold_Temperature_3',
+            'Mold_Temperature_4',
+            'Mold_Temperature_5',
+            'Mold_Temperature_6',
+            'Mold_Temperature_7',
+            'Mold_Temperature_8',
+            'Mold_Temperature_9',
+            'Mold_Temperature_10',
+            'Mold_Temperature_11',
+            'Mold_Temperature_12',
+            'Hopper_Temperature',
+            'Cavity',
+            'NGmark',
+            '_id'}
+        }
+            ,inplace=True)
     print(df.head())
-    print(type(df))
     print("hello")
 
 
