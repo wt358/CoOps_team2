@@ -77,7 +77,10 @@ def pull_mds_gan():
             'Cavity',
             'NGmark',
             '_id',},inplace=True)
-    print(df.head())
+    moldset_labeled_9000R=df[df.Additional_Info_1=='09520 9000R']
+    moldset_labeled_9000R=moldset_labeled_9000R.reset_index(drop=True)
+    print(moldset_labeled_9000R)
+    
     print("hello")
 
 
