@@ -77,7 +77,6 @@ def pull_mds_gan():
             'Cavity',
             'NGmark',
             '_id'}
-        }
             ,inplace=True)
     print(df.head())
     print("hello")
