@@ -105,7 +105,7 @@ def pull_mds_gan():
     '''
     df=df.reset_index(drop=True)
     #IQR
-    section=df
+    section=df.apply(pd.to_numeric)
     for i in range(5,17):
         level_1q = section.iloc[:,i].quantile(0.025)
         level_3q = section.iloc[:,i].quantile(0.975)
