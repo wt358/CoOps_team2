@@ -76,8 +76,7 @@ def pull_mds_gan():
             'Hopper_Temperature',
             'Cavity',
             'NGmark',
-            '_id'}
-            ,inplace=True)
+            '_id',},inplace=True)
     print(df.head())
     print("hello")
 
