@@ -1,0 +1,394 @@
+[33mcommit c70e284206e69495d82fa281ae82caa02efcad08[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:47:37 2022 +0900
+
+    df saved beyond tasks
+
+[33mcommit 0806b94ebc180701e37a9766c80aaf68e4913c42[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:42:10 2022 +0900
+
+    df saved beyond tasks
+
+[33mcommit 51349aca3c69ec9007c0256462a1dad577862437[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:39:48 2022 +0900
+
+    json data extract3
+
+[33mcommit ae99ba28d5a198f9df9ad535ba175bb331a4096b[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:36:32 2022 +0900
+
+    json data extract3
+
+[33mcommit 322493e1a9ef17b8d7619504fb7182d0297c42b1[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:34:15 2022 +0900
+
+    json data extract3
+
+[33mcommit fd6f25731a3e6bad79044c0f64cc24a45d4afa21[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:32:35 2022 +0900
+
+    json data extract3
+
+[33mcommit 47fbb2d4e004b2e0fb1eb748ae8af230cad695da[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:29:27 2022 +0900
+
+    json data extract2
+
+[33mcommit 362e6709bbf696e77164d832dc8609a8cc977288[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:26:37 2022 +0900
+
+    json data extract2
+
+[33mcommit e30cfe92794b71d5d68ad12db13e7551be6bb3a2[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:24:43 2022 +0900
+
+    json data extract2
+
+[33mcommit 754449437f6c26f8ddb1ea7f2f644743bdb52e75[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:22:17 2022 +0900
+
+    json data extract1
+
+[33mcommit 13e410716c667fd04d2b08b8b4f40e470b9b2b20[m
+Author: leejunseok <wt358@naver.com>
+Date:   Wed Sep 21 13:18:45 2022 +0900
+
+    json data extract1
+
+[33mcommit c883cd871f1de44607a060e8bb35a6d79c1c570b[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Tue Sep 20 00:39:02 2022 +0900
+
+    dag fix
+
+[33mcommit 1b25b9443267452a66f5d7ba9ba2fec501ddfca8[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Tue Sep 20 00:31:02 2022 +0900
+
+    dag suc
+
+[33mcommit 22ec9dac7a71ab8404a515b212a0a82118f85adf[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Tue Sep 20 00:12:11 2022 +0900
+
+    dag
+
+[33mcommit 7d195c0869fba87238bef273aa59f67c4cd68563[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Tue Sep 20 00:05:23 2022 +0900
+
+    dag
+
+[33mcommit 93f23ea9f677c3e0cde9f43cea5e6517dc8ba7c1[m
+Merge: 69ed4d7 78656b0
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 23:59:04 2022 +0900
+
+    Merge branch 'main' of github.com:wt358/CoOps_team2 into main
+
+[33mcommit 69ed4d7ef1449bc22b6abde5497d7390fe72bd11[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 23:57:21 2022 +0900
+
+    dag update
+
+[33mcommit 78656b0b9d4a20429db6618171fe983e868f97cd[m
+Author: leejunseok <wt358@naver.com>
+Date:   Mon Sep 19 21:20:32 2022 +0900
+
+    :Asdfasdfasf
+
+[33mcommit 6049eab2387e58d0a951e798aaa9040d643fddfb[m
+Author: leejunseok <wt358@naver.com>
+Date:   Mon Sep 19 21:12:17 2022 +0900
+
+    git account test3
+
+[33mcommit b6ac87cfa9cf481d6b75f47b5c5d52bc70f4090b[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 20:40:51 2022 +0900
+
+    git account test
+
+[33mcommit 404da209ab82cdaa76086c90bb424fdac2383f4c[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 14:17:36 2022 +0900
+
+    dag test group name changesdfsdf
+
+[33mcommit 1b75270d552f8bff2e986bee62a57ea8daae3a04[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 14:17:10 2022 +0900
+
+    dag test group name changesdfsdf
+
+[33mcommit e24276e49b05375543b9521ed145b7af22b5f749[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 14:12:08 2022 +0900
+
+    dag test group name change
+
+[33mcommit 99b297b0fded2122cf1a30f9621fdf699cc13d75[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 13:55:01 2022 +0900
+
+    dag test add value_deserializerzASd
+
+[33mcommit 3d59c47eb415c2e36acb3fae6e29ef422b835311[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 13:53:20 2022 +0900
+
+    dag test add value_deserializerzASd
+
+[33mcommit c8d8de88472361cd3e778109c96aba06dec46722[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 13:51:14 2022 +0900
+
+    dag test add value_deserializer
+
+[33mcommit c6a8e98f6b7c6e6ec92dd793b1308e984b7f6cf4[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 13:48:42 2022 +0900
+
+    dag test add value_deserializerwq
+
+[33mcommit 978d3d2ec434a3eb3d646c6dc61e56758c522496[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 13:45:42 2022 +0900
+
+    dag test df test2
+
+[33mcommit 4ae05c77632bdc04c87116c26c6015d4e35f0368[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 13:42:14 2022 +0900
+
+    dag test df test2
+
+[33mcommit b0610493ca8ff77d6554e3eecf741848a1f5e115[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 13:40:10 2022 +0900
+
+    dag test df test1
+
+[33mcommit 9a2fac3395feba27f985d943750870cad6ee8608[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 13:37:46 2022 +0900
+
+    dag test port change4
+
+[33mcommit 3d98ef925056ebee53a5dd6931546970c739d796[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 13:27:42 2022 +0900
+
+    dag test port change4
+
+[33mcommit 0d8f130590f75753ea91d54882edf4f7b783dd8a[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 13:19:49 2022 +0900
+
+    dag test port change4
+
+[33mcommit 01240b778ca88fe19c3ba9b4eb396856958331a5[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 12:54:40 2022 +0900
+
+    dag test port change3
+
+[33mcommit bd5bb487986f3722ba8d4bdca924ba9ef30469a1[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 12:50:18 2022 +0900
+
+    dag test port change2
+
+[33mcommit 4044edcb332b79b573940b3ec6cef7018708d637[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 12:47:56 2022 +0900
+
+    dag test port change
+
+[33mcommit cf4cccfe96ebea68cb266b695db6d59208f6ee3b[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Mon Sep 19 12:25:21 2022 +0900
+
+    dag test kafka topic connect
+
+[33mcommit 95635069072575771105eb6f6556ba29ad04de08[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Wed Sep 14 17:11:44 2022 +0900
+
+    pull raw to aug module. not finished
+
+[33mcommit 86e091a4d7f6e95471769e625857830f4e09c4d0[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Sat Sep 3 15:57:58 2022 +0900
+
+    bg fix
+
+[33mcommit ec6f200f52a556be50fa0fc2e513ffb32903959c[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Sat Sep 3 15:51:21 2022 +0900
+
+    bug fix
+
+[33mcommit ed038cec825dac3815479922434acfea5c7948d2[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Sat Sep 3 15:35:51 2022 +0900
+
+    dag test
+
+[33mcommit a68a2eed1b095fd783385a62a264e42c9f64a30b[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Fri Sep 2 10:42:53 2022 +0900
+
+    test1 first
+
+[33mcommit 1bc4495f60c3d09a128b44a7fa40e2c15c8c5adf[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Fri Sep 2 10:38:06 2022 +0900
+
+    swp files remove
+
+[33mcommit 6d2906ca5a818958aa6d8cec2d3ccf44ed4adf83[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Fri Sep 2 10:25:14 2022 +0900
+
+    dag owner change
+
+[33mcommit 41237d09fcfcfbc315067897c2b1c1f6d121e2ba[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Thu Sep 1 17:05:09 2022 +0900
+
+    dag fix
+
+[33mcommit 143ff9d55ac20212226af981a9ed73f0fbd11edd[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Thu Sep 1 16:25:04 2022 +0900
+
+    dag update
+
+[33mcommit 66c510359add671f9777633f85978aca59500d6c[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Tue Aug 23 09:14:19 2022 +0900
+
+    secret
+
+[33mcommit e1063ff1187baa4f2dd95803320fd815f43b72bd[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Tue Aug 23 09:02:23 2022 +0900
+
+    test dag
+
+[33mcommit 831e540791b9e5fff59e250aa8dc714fd1cdb8a7[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Tue Aug 23 01:32:02 2022 +0900
+
+    test
+
+[33mcommit 1a529dae3f649be81aca17137c2c6ecd02a434b2[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Tue Aug 23 00:19:44 2022 +0900
+
+    test
+
+[33mcommit e683e9c18cec849ad5600d557a1e7c3f61a8cc8d[m
+Author: JackCokebb <reo2726@gmail.com>
+Date:   Thu Aug 18 15:23:44 2022 +0900
+
+    DAGS dir init
+
+[33mcommit 3b5dd4390d4fc85f7a6d1dfb44e3da68e4155fca[m
+Merge: f3b54b2 f66f143
+Author: sinjeonghwan <tlswjdghks5965@naver.com>
+Date:   Tue Jul 5 11:51:55 2022 +0900
+
+    Merge branch 'main' of https://github.com/wt358/CoOps_team2
+
+[33mcommit f66f14303d55b45db9bc6731f30a8ea3212fc02c[m
+Author: yubin <dbqls856@gmail.com>
+Date:   Tue Jun 28 15:52:12 2022 +0900
+
+    일별 pca 분석 후, labeling
+
+[33mcommit 8051e738c37300162f153ed59693086c133ec8d5[m
+Merge: 0d1f82f 3ea62b3
+Author: yubin <dbqls856@gmail.com>
+Date:   Tue Jun 28 14:46:55 2022 +0900
+
+    Merge branch 'main' of https://github.com/wt358/CoOps_team2
+
+[33mcommit 0d1f82f543016649d607781691bbeb5df58f0bb2[m
+Author: yubin <dbqls856@gmail.com>
+Date:   Tue Jun 28 14:43:01 2022 +0900
+
+    molding_9000R_211215
+
+[33mcommit 3ea62b3f176d3b401ade56eb23c45207d5244f11[m
+Author: SungjunKim98 <wqzw123@gmail.com>
+Date:   Tue Jun 28 12:21:37 2022 +0900
+
+    아아아아
+
+[33mcommit f3b54b27789dc190c0610e9f989fb1bd4274c549[m
+Merge: c1adf51 8c15943
+Author: sinjeonghwan <tlswjdghks5965@naver.com>
+Date:   Fri Jun 24 12:52:19 2022 +0900
+
+    Merge branch 'main' of https://github.com/wt358/CoOps_team2
+
+[33mcommit c1adf51c0fb3abc4266ecaae16674c827c6a6699[m
+Author: sinjeonghwan <tlswjdghks5965@naver.com>
+Date:   Fri Jun 24 12:52:06 2022 +0900
+
+    sdfsdfsdf
+
+[33mcommit d6380a1ee8fd7d7e5971f56512960f1fff2d3047[m
+Merge: cd210ce 8c15943
+Author: yubin <dbqls856@gmail.com>
+Date:   Fri Jun 24 12:48:37 2022 +0900
+
+    Merge branch 'main' of https://github.com/wt358/CoOps_team2
+
+[33mcommit 8c1594332c11e0d9230cdebcbaa800f5a3b722fa[m
+Author: Lee Jun Seok <38034917+wt358@users.noreply.github.com>
+Date:   Fri Jun 24 11:07:54 2022 +0900
+
+    Update README.md
+
+[33mcommit 7d720b1d8a3512fa7399c0934bd59f7581a0a5a7[m
+Author: LeeJunSeok <wt358@naver.com>
+Date:   Fri Jun 24 11:03:38 2022 +0900
+
+    week3 폴더 추가 및 readme 생성
+
+[33mcommit 3979cd87eb8196e0a61fdd693d8d41f93ba72c78[m
+Author: unknown <--unset-all>
+Date:   Fri Jun 24 10:55:49 2022 +0900
+
+    폴더 정리
+
+[33mcommit cd210cedaa4efe394da1508498a1751523ac8940[m[33m ([m[1;31morigin/yubin1[m[33m)[m
+Author: yubin <dbqls856@gmail.com>
+Date:   Thu Jun 23 15:53:46 2022 +0900
+
+    아노바
+
+[33mcommit 29ac201034fc3da55e7dce4f5abf7d99406a03f1[m
+Author: sinjeonghwan <tlswjdghks5965@naver.com>
+Date:   Thu Jun 23 15:52:54 2022 +0900
+
+    프린트 추가
+
+[33mcommit 57896ca509017df7ddc9df6dba4efb9efda78f19[m
+Author: yubin <dbqls856@gmail.com>
+Date:   Thu Jun 23 15:39:10 2022 +0900
+
+    아노바

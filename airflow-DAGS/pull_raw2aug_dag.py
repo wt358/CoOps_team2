@@ -50,8 +50,7 @@ def pull_mds_gan():
 
 #provide the aug data that saved in the local to the aug topic in the kafka cluster
 def provide_aug_data():
-    print()
-
+    print(df.head())
 
 # define DAG with 'with' phase
 with DAG(
