@@ -79,6 +79,7 @@ def pull_mds_gan():
             '_id',},inplace=True)
     print(df.head())
     print(df.shape)
+    print(df.columns)
     print(type(df))
     moldset_labeled_9000R=df[df.Additional_Info_1=='09520 9000R']
     moldset_labeled_9000R=moldset_labeled_9000R.reset_index(drop=True)
