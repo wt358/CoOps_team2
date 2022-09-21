@@ -41,7 +41,7 @@ def pull_mds_gan():
     
     for message in consumer:
         message = message.value
-        print(type(message))
+        print(type(message['payload']))
         print(message['payload'])
         print(message['payload']['fullDocument'])
         l.append(message['payload']['fullDocument'])
