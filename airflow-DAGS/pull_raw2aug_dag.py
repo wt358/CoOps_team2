@@ -42,6 +42,7 @@ def pull_mds_gan():
     
     for message in consumer:
         message = message.value
+        print(message)
         l.append(loads(message['payload'])['fullDocument'])
     df = pd.DataFrame(l[1:])
     
