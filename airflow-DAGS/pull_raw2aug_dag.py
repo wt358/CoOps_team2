@@ -41,11 +41,8 @@ def pull_mds_gan():
     
     for message in consumer:
         message = message.value
-        print(type(message['payload']))
-        print(message['payload'])
-        print(loads(message['payload'])['fullDocument'])
         l.append(loads(message['payload'])['fullDocument'])
-    df = pd.DataFrame(l)
+    df = pd.DataFrame(l[1:])
     
     print(df.head())
     print("hello")
