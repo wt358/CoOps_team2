@@ -44,7 +44,7 @@ def pull_mds_gan():
         print(type(message['payload']))
         print(message['payload'])
         print(loads(message['payload'])['fullDocument'])
-        l.append(message['payload']['fullDocument'])
+        l.append(loads(message['payload'])['fullDocument'])
     df = pd.DataFrame(l)
     
     print(df.head())
