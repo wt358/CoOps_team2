@@ -45,6 +45,7 @@ def pull_mds_gan():
     df = pd.DataFrame(l[1:])
     
     print(df.head())
+    print(type(df))
     print("hello")
 
 
