@@ -106,7 +106,7 @@ def pull_mds_gan():
     print(df)
     print(df['idx'].dtype)
     df=df.reset_index(drop=True)
-    print(df.isnull().values.any())
+    print(df.isnull().sum().sum())
     section=df
     section.iloc[:,5:17]=section.iloc[:,5:17].astype(float)
     print(df)
