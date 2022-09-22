@@ -121,6 +121,7 @@ def pull_mds_gan():
 
     # 자른 데이터프레임을 저장할 리스트
     pds = []
+    section.reset_index(drop=True)
     print(section.index.values)
     for idx in section.index.values:
         # print(idx)
