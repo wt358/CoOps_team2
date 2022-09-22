@@ -104,6 +104,7 @@ def pull_mds_gan():
     print(len(moldset_labeled_9000R))
     '''
     df=df.reset_index(drop=True)
+    print(df[54])
     #IQR
     section=df.apply(pd.to_numeric)
     for i in range(5,17):
