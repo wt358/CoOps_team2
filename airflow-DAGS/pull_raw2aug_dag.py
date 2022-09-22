@@ -105,6 +105,7 @@ def pull_mds_gan():
     print(df)
     print(df.dtypes)
     df=df.reset_index(drop=True)
+    df=df.apply(lambda x: x.str.strip(), axis = 1)
     section=df
     print(section.iloc[0:1,])
     section.iloc[:,5:17]=section.iloc[:,5:17].apply(pd.to_numeric,errors='ignore')
