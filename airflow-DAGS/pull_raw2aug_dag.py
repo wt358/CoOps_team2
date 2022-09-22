@@ -111,15 +111,11 @@ def pull_mds_gan():
     print(df.dtypes)
     print(df)
     for i in range(5,17):
-        try:
-            level_1q = section.iloc[:,i].quantile(0.025)
-            level_3q = section.iloc[:,i].quantile(0.975)
-            IQR = level_3q - level_1q
-            rev_range = 1.5 # 제거 범위 조절 변수
-            section = section[(section.iloc[:,i] <= level_3q + (rev_range * IQR)) & (section.iloc[:,i] >= level_1q - (rev_range * IQR))] ## sectiond에 저장된 데이터 프레임의 이상치 제거 작업
-        except ValueError e:
-            print(e)
-            print(i)
+        level_1q = section.iloc[:,i].quantile(0.025)
+        level_3q = section.iloc[:,i].quantile(0.975)
+        IQR = level_3q - level_1q
+        rev_range = 1.5 # 제거 범위 조절 변수
+        section = section[(section.iloc[:,i] <= level_3q + (rev_range * IQR)) & (section.iloc[:,i] >= level_1q - (rev_range * IQR))] ## sectiond에 저장된 데이터 프레임의 이상치 제거 작업
     print(section)
     last_idx = 0
     curr_idx = 0
