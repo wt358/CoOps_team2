@@ -92,7 +92,6 @@ def pull_mds_gan():
         'Cavity',
         'NGmark',
         '_id',},inplace=True)
-    print(df.head())
     print(df.shape)
     print(df.columns)
     '''
@@ -104,9 +103,8 @@ def pull_mds_gan():
     '''
     #IQR
     print(df)
-    print(df['idx'].dtype)
+    print(df.dtypes)
     df=df.reset_index(drop=True)
-    print(df.isnull().sum().sum())
     section=df
     section.iloc[:,5:17]=section.iloc[:,5:17].astype(float)
     print(df)
@@ -204,7 +202,7 @@ with DAG(
             python_callable=pull_mds_gan,
             depends_on_past=True,
             owner="coops2",
-            retries=1,
+            retries=0,
             retry_delay=timedelta(minutes=1),
             )
 
@@ -213,7 +211,7 @@ with DAG(
             python_callable=provide_aug_data,
             depends_on_past=True,
             owner="coops2",
-            retries=1,
+            retries=0,
             retry_delay=timedelta(minutes=1),
             )
     # 테스크 순서를 정합니다.
