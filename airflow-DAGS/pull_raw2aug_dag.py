@@ -106,7 +106,7 @@ def pull_mds_gan():
     print(df.dtypes)
     df=df.reset_index(drop=True)
     section=df
-    section.iloc[:,5:17]=section.iloc[:,5:17].astype(float)
+    section.iloc[:,5:17]=pd.to_numeric(section.iloc[:,5:17])
     print(df)
     for i in range(5,17):
         level_1q = section.iloc[:,i].quantile(0.025)
