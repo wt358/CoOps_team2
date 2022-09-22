@@ -204,7 +204,7 @@ with DAG(
             python_callable=pull_mds_gan,
             depends_on_past=True,
             owner="coops2",
-            retries=3,
+            retries=1,
             retry_delay=timedelta(minutes=1),
             )
 
@@ -213,7 +213,7 @@ with DAG(
             python_callable=provide_aug_data,
             depends_on_past=True,
             owner="coops2",
-            retries=3,
+            retries=1,
             retry_delay=timedelta(minutes=1),
             )
     # 테스크 순서를 정합니다.
