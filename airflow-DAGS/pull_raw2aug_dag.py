@@ -104,8 +104,9 @@ def pull_mds_gan():
     '''
     #IQR
     print(df)
+    print(df['idx'].dtype)
+    df=df.reset_index(drop=True)
     section=df.astype(float)
-    section=section.reset_index(drop=True)
     print(df)
     for i in range(5,17):
         level_1q = section.iloc[:,i].quantile(0.025)
