@@ -104,7 +104,7 @@ def pull_mds_gan():
     '''
     #IQR
     print(df)
-    section=pd.to_numeric(df,errors = 'coerce')
+    section=df.astype(float)
     section=section.reset_index(drop=True)
     print(df)
     for i in range(5,17):
