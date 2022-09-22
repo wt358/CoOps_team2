@@ -125,6 +125,7 @@ def pull_mds_gan():
     for idx in range(1,len(section.index)):
         # print(idx)
         # print(moldset_labeled_9000R.loc[idx,'TimeStamp'])
+        print(idx)
         time_to_compare1 = datetime.strptime(section.loc[idx,'TimeStamp'], "%Y-%m-%d %H:%M:%S")
         time_to_compare2 = datetime.strptime(section.loc[idx-1,'TimeStamp'], "%Y-%m-%d %H:%M:%S")
         time_diff = time_to_compare1 - time_to_compare2
