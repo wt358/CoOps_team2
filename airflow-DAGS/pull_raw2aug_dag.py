@@ -104,6 +104,7 @@ def pull_mds_gan():
     '''
     df=df.reset_index(drop=True)
     #IQR
+    print(df)
     section=df.apply(pd.to_numeric)
     print(df)
     for i in range(5,17):
