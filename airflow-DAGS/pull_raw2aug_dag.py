@@ -95,7 +95,6 @@ def pull_mds_gan():
     print(df.head())
     print(df.shape)
     print(df.columns)
-    print(df.Additional_Info_1)
     '''
     moldset_labeled_9000R=df[df.Additional_Info_1=='09520 9000R']
     print(moldset_labeled_9000R.head())
@@ -104,9 +103,9 @@ def pull_mds_gan():
     print(len(moldset_labeled_9000R))
     '''
     df=df.reset_index(drop=True)
-    print(df[54])
     #IQR
     section=df.apply(pd.to_numeric)
+    print(df)
     for i in range(5,17):
         level_1q = section.iloc[:,i].quantile(0.025)
         level_3q = section.iloc[:,i].quantile(0.975)
