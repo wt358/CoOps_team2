@@ -122,7 +122,7 @@ def pull_mds_gan():
     # 자른 데이터프레임을 저장할 리스트
     pds = []
     print(section.index)
-    for idx in range(section.index.start + 1, section.index.stop):
+    for idx in range(1,len(section.index)):
         # print(idx)
         # print(moldset_labeled_9000R.loc[idx,'TimeStamp'])
         time_to_compare1 = datetime.strptime(section.loc[idx,'TimeStamp'], "%Y-%m-%d %H:%M:%S")
