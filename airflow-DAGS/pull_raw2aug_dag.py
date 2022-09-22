@@ -122,7 +122,7 @@ def pull_mds_gan():
     # 자른 데이터프레임을 저장할 리스트
     pds = []
     print(section.index)
-    for idx in range(1,len(section.index)):
+    for idx in section.index.values:
         # print(idx)
         # print(moldset_labeled_9000R.loc[idx,'TimeStamp'])
         print(idx)
