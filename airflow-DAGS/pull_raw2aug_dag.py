@@ -179,6 +179,7 @@ def pull_mds_gan():
 
 
     print(df_all)
+    print(df_all.index)
     print("hello")
 
 
