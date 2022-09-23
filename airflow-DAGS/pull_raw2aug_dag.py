@@ -180,6 +180,17 @@ def pull_mds_gan():
 
     print(df_all)
     print(df_all.columns)
+
+    #GAN
+
+    df=df_all
+    df['Class'] = df_all['Class'].map(lambda x: 1 if x == -1 else 0)
+
+    print(df)
+    print(df['Class'].value_counts(normalize=True)*100)
+
+
+
     print("hello")
 
 
