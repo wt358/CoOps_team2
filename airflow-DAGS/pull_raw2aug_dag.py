@@ -202,9 +202,15 @@ def pull_mds_gan():
                 ,inplace=True)
     except:
         print("passed")
+    
+
 
     print(df)
 
+    # checking skewness of other columns
+
+    print(df.drop('Class',1).skew())
+    
     print("hello")
 
 
