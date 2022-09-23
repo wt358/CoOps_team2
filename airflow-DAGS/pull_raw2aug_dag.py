@@ -9,6 +9,7 @@ from airflow.models.variable import Variable
 import csv
 import pandas as pd
 import os
+import time
 
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
