@@ -145,7 +145,8 @@ def pull_mds_gan():
     else:
         pds.append(section.truncate(before=last_idx, after=len(section.index.tolist())-1,axis=0))
 
-
+    for i in range(len(pds)):
+        print(i, pds[i].count().max())
 
 
     list1=[]## 불량여부가 라벨링된 구간별 데이터 프레임을 저장할 리스트
