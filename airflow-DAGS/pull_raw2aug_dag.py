@@ -178,7 +178,7 @@ def pull_mds_gan():
     df_all=pd.concat(list1, ignore_index=True)
 
 
-
+    print(df_all)
     print("hello")
 
 
