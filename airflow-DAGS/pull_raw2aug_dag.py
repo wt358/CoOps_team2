@@ -211,6 +211,9 @@ def pull_mds_gan():
 
     print(df.drop('Class',1).skew())
     
+    skew_cols = df.drop('Class', 1).skew().loc[lambda x: x>2].index
+    print(skew_cols)
+
     print("hello")
 
 
