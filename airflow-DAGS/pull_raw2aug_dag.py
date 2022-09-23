@@ -10,10 +10,13 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.decomposition import PCA 
 from sklearn.cluster import DBSCAN
 from sklearn.manifold import MDS
+
 import csv
 import pandas as pd
 import os
 import time
+import numpy as np
+import tqdm
 
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
