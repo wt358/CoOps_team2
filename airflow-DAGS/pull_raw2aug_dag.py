@@ -6,6 +6,10 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from airflow.models.variable import Variable
 
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.decomposition import PCA 
+from sklearn.cluster import DBSCAN
+from sklearn.manifold import MDS
 import csv
 import pandas as pd
 import os
@@ -125,7 +129,6 @@ def pull_mds_gan():
     section=section.reset_index(drop=True)
     print(section.index.tolist())
     for idx in range(1,len(section.index.tolist())):
-        print(idx)
         # print(moldset_labeled_9000R.loc[idx,'TimeStamp'])
         time_to_compare1 = datetime.strptime(section.loc[idx,'TimeStamp'], "%Y-%m-%d %H:%M:%S")
         time_to_compare2 = datetime.strptime(section.loc[idx-1,'TimeStamp'], "%Y-%m-%d %H:%M:%S")
