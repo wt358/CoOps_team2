@@ -10,12 +10,24 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.decomposition import PCA 
 from sklearn.cluster import DBSCAN
 from sklearn.manifold import MDS
+from sklearn.metrics import precision_score, recall_score, f1_score,accuracy_score, classification_report, plot_confusion_matrix, confusion_matrix
+
+from sklearn.model_selection import KFold, GridSearchCV
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from imblearn.over_sampling import SMOTE
+from imblearn.pipeline import Pipeline
+
+
 
 import csv
 import pandas as pd
 import os
 import time
 import numpy as np
+
+from collections import Counter
+
 
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
@@ -28,6 +40,7 @@ from sqlalchemy.sql import text
 
 from json import loads
 
+np.random.seed(34)
 # define funcs
 
 #pull raw data in the cloud and run the aug module. Then save the aug data files in the local.
