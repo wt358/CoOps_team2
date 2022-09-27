@@ -214,6 +214,21 @@ def pull_mds_gan():
     skew_cols = df.drop('Class', 1).skew().loc[lambda x: x>2].index
     print(skew_cols)
 
+    for col in skew_cols:
+        lower_lim = abs(df[col].min())
+        normal_col = df[col].apply(lambda x: np.log10(x+lower_lim+1))
+        print(f"Skew value of {col} after log transform: {normal_col.skew()}")
+    
+    scaler = StandardScaler()
+    #scaler = MinMaxScaler()
+    X = scaler.fit_transform(df.drop('Class', 1))
+    y = df['Class'].values
+    print(X.shape, y.shape)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y)
+
+
+
     print("hello")
 
 
