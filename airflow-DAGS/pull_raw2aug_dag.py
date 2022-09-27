@@ -396,6 +396,18 @@ def pull_mds_gan():
 
     print(df.shape)
     print(X_train.shape)
+    
+    noise = np.random.normal(0, 1, (1225, 32))
+    sampled_labels = np.ones(1225).reshape(-1, 1)
+
+    gen_samples = gan.generator.predict([noise, sampled_labels])
+    gen_samples = scaler.inverse_transform(gen_samples)
+    print(gen_samples.shape)
+
+    gen_df = pd.DataFrame(data = gen_samples,
+            columns = df.drop('Class',1).columns)
+    gen_df['Class'] = 1
+    print(gen_df.head())
 
     print("hello")
 
