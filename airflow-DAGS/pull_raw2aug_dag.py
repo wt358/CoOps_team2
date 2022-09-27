@@ -24,6 +24,7 @@ from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.optimizers import Adam, RMSprop
 from tensorflow.keras.initializers import RandomNormal
 import tensorflow.keras.backend as K
+from tensorflow.python.client import device_lib
 from sklearn.utils import shuffle
 
 import csv
@@ -361,7 +362,7 @@ def pull_mds_gan():
     except:
         print("passed")
     
-
+    print(device_lib.list_local_devices())
 
     print(df)
 
@@ -392,7 +393,7 @@ def pull_mds_gan():
     y_train = y_train.reshape(-1,1)
     pos_index = np.where(y_train==1)[0]
     neg_index = np.where(y_train==0)[0]
-    gan.train(X_train, y_train, pos_index, neg_index, epochs=5000)
+    gan.train(X_train, y_train, pos_index, neg_index, epochs=100)#원래 epochs= 5000
 
     print(df.shape)
     print(X_train.shape)
