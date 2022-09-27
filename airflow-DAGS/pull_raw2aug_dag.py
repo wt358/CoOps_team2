@@ -26,6 +26,7 @@ from tensorflow.keras.initializers import RandomNormal
 import tensorflow.keras.backend as K
 from tensorflow.python.client import device_lib
 from sklearn.utils import shuffle
+import tensorflow as tf
 
 import csv
 import pandas as pd
@@ -362,7 +363,6 @@ def pull_mds_gan():
     except:
         print("passed")
     
-    print(device_lib.list_local_devices())
 
     print(df)
 
@@ -373,6 +373,8 @@ def pull_mds_gan():
     skew_cols = df.drop('Class', 1).skew().loc[lambda x: x>2].index
     print(skew_cols)
 
+    print(device_lib.list_local_devices())
+    print(tf.config.list_physical_devices())
     for col in skew_cols:
         lower_lim = abs(df[col].min())
         normal_col = df[col].apply(lambda x: np.log10(x+lower_lim+1))
