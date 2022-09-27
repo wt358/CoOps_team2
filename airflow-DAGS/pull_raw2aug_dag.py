@@ -377,6 +377,7 @@ def pull_mds_gan():
     print(tf.config.list_physical_devices())
 
     print(os.system("nvidia-smi"))
+    os.system('nvidia-smi')
 
     for col in skew_cols:
         lower_lim = abs(df[col].min())
