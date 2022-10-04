@@ -422,9 +422,9 @@ def pull_mds_gan():
 
     db_test = client['coops2022_aug']
     collection_aug=db_test['mongo_aug1']
-
+    data=gen_df.to_dict('records')
     try:
-        result = collection_aug.insert_many(gen_df.todict('records'))
+        result = collection_aug.insert_many(data)
     except:
         print("mongo connection failed")
 
