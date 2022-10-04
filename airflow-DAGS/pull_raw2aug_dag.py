@@ -421,7 +421,7 @@ def pull_mds_gan():
 
 
     db_test = client['coops2022_aug']
-    collection_aug=db_test['aug_data']
+    collection_aug=db_test['mongo_aug1']
 
     try:
         result = collection_aug.insert_many(gen_df.todict('records'))
