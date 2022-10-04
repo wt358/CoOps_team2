@@ -40,6 +40,7 @@ from collections import Counter
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
 
+from pymongo import MongoClient
 
 import sqlalchemy
 from sqlalchemy import create_engine
@@ -376,8 +377,6 @@ def pull_mds_gan():
     print(device_lib.list_local_devices())
     print(tf.config.list_physical_devices())
 
-    print(os.system("nvidia-smi"))
-    os.system('nvidia-smi')
 
     for col in skew_cols:
         lower_lim = abs(df[col].min())
@@ -415,6 +414,19 @@ def pull_mds_gan():
             columns = df.drop('Class',1).columns)
     gen_df['Class'] = 1
     print(gen_df.head())
+    
+    mongoClient = MongoClient()
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+
+
+    db_test = client['coops2022_aug']
+    collection_aug=db_test['aug_data']
+
+    try:
+        result = collection_aug.insert_many(gen_df.todict('records'))
+    except:
+        print("mongo connection failed")
 
     print("hello")
 
