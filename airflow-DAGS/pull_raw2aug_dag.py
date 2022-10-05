@@ -426,7 +426,7 @@ def pull_mds_gan():
     data=gen_df.to_dict('records')
     # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
     try:
-        result = collection_aug.updateMany(data)
+        result = collection_aug.updateMany(data,{},{upsert: true})
     except:
         print("mongo connection failed")
     print("hello")
