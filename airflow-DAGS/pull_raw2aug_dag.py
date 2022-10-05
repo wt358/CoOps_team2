@@ -433,8 +433,21 @@ def pull_mds_gan():
 
 #provide the aug data that saved in the local to the aug topic in the kafka cluster
 def oc_svm():
+    
+    mongoClient = MongoClient()
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+    
+    db_test = client['coops2022_aug']
+    collection_aug=db_test['mongo_aug1']
+    try:
+        result = collection_aug.find()
+        print(result)
+    except:
+        print("mongo connection failed")
 
-    print("hello auto OC_SVM")
+    
+    print("hello OC_SVM")
 
 def lstm_autoencoder():
     print("hello auto encoder")
