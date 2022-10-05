@@ -423,11 +423,13 @@ def pull_mds_gan():
     db_test = client['coops2022_aug']
     collection_aug=db_test['mongo_aug1']
     data=gen_df.to_dict('records')
+    # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
+    '''
     try:
         result = collection_aug.insert_many(data)
     except:
         print("mongo connection failed")
-
+    '''
     print("hello")
 
 
@@ -440,8 +442,9 @@ def oc_svm():
     
     db_test = client['coops2022_aug']
     collection_aug=db_test['mongo_aug1']
+    
     try:
-        result = collection_aug.find()
+        result = pd.DataFrame(list(collection_aug.find()))
         print(result)
     except:
         print("mongo connection failed")
