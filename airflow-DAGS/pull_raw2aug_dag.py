@@ -432,9 +432,12 @@ def pull_mds_gan():
 
 
 #provide the aug data that saved in the local to the aug topic in the kafka cluster
-def provide_aug_data():
-    print()
+def oc_svm():
 
+    print("hello auto OC_SVM")
+
+def lstm_autoencoder():
+    print("hello auto encoder")
 # define DAG with 'with' phase
 with DAG(
         dag_id="pull_raw2aug_dag", # DAG의 식별자용 아이디입니다.
@@ -464,13 +467,21 @@ with DAG(
             )
 
     t2 = PythonOperator(
-            task_id="provide_aug_data",
-            python_callable=provide_aug_data,
+            task_id="OC_SVM",
+            python_callable=oc_svm,
             depends_on_past=True,
             owner="coops2",
             retries=0,
             retry_delay=timedelta(minutes=1),
             )
+    t3 = PythonOperator(
+            task_id="LSTM_AUTO_ENCODER",
+            python_callable=lstm_autoencoder,
+            depends_on_past=True,
+            owner="coops2",
+            retries=0,
+            )
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
     t1 >> t2
+    t1 >> t3
