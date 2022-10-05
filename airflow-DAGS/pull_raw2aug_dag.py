@@ -15,6 +15,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score,accuracy_sco
 from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import IsolationForest
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline
 
@@ -413,7 +414,7 @@ def pull_mds_gan():
     gen_df = pd.DataFrame(data = gen_samples,
             columns = df.drop('Class',1).columns)
     gen_df['Class'] = 1
-    print(gen_df.head())
+    print(gen_df)
     
     mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
@@ -424,12 +425,10 @@ def pull_mds_gan():
     collection_aug=db_test['mongo_aug1']
     data=gen_df.to_dict('records')
     # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
-    '''
     try:
-        result = collection_aug.insert_many(data)
+        result = collection_aug.update_many(data,upsert=True)
     except:
         print("mongo connection failed")
-    '''
     print("hello")
 
 
@@ -444,11 +443,25 @@ def oc_svm():
     collection_aug=db_test['mongo_aug1']
     
     try:
-        result = pd.DataFrame(list(collection_aug.find()))
-        print(result)
+        moldset_df = pd.DataFrame(list(collection_aug.find()))
+        
     except:
         print("mongo connection failed")
+        return False
+    
+    print(moldset_df)
+    labled = pd.DataFrame(moldset_df, columns = ['Cycle_Time','Barrel_Temperature_6','Max_Switch_Over_Pressure','Filling_Time'])
+    labled.rename(columns={'class':'label'},inplace=True)
+    model=IsolationForest(n_estimators=100, max_samples='auto', n_jobs=-1,
+                                  max_features=4, contamination=0.01)
+    model.fit(labled.to_numpy())
 
+    score = model.decision_function(labled.to_numpy())
+    anomaly = model.predict(labled.to_numpy())
+    labled['scores']= score
+    labled['anomaly']= anomaly
+    anomaly_data = labled.loc[labled['anomaly']==-1] # 이상값은 -1으로 나타낸다.
+    print(labled['anomaly'].value_counts())
     
     print("hello OC_SVM")
 
