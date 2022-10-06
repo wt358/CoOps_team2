@@ -425,11 +425,14 @@ def pull_mds_gan():
     collection_aug=db_test['mongo_aug1']
     data=gen_df.to_dict('records')
     # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
-    try:
-        isData = collection_aug.find_one()
-        result = collection_aug.insert_many(data,ordered=False)
-    except Exception as e:
-        print("mongo connection failed", e)
+    isData = collection_aug.find_one()
+    if len(isData) ==0:
+        try:
+            result = collection_aug.insert_many(data,ordered=False)
+        except Exception as e:
+            print("mongo connection failed", e)
+    else:
+        print("collection is not empty")
     print("hello")
 
 
