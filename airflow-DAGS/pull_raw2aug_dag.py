@@ -436,6 +436,10 @@ def pull_mds_gan():
             print("collection is not empty")
     except:
         print("there is no collection")
+        try:
+            result = collection_aug.insert_many(data,ordered=False)
+        except Exception as e:
+            print("mongo connection failed", e)
     print("hello")
 
 
