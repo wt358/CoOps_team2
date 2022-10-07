@@ -77,6 +77,18 @@ rn.seed(10)
 tf.random.set_seed(10)
 
 # define funcs
+def autoencoder_model(X):
+        inputs = Input(shape=(X.shape[1], X.shape[2]))
+        L1 = LSTM(16, activation='relu', return_sequences=True, 
+        kernel_regularizer=regularizers.l2(0.00))(inputs)
+        L2 = LSTM(4, activation='relu', return_sequences=False)(L1)
+        L3 = RepeatVector(X.shape[1])(L2)
+        L4 = LSTM(4, activation='relu', return_sequences=True)(L3)
+        L5 = LSTM(16, activation='relu', return_sequences=True)(L4)
+        output = TimeDistributed(Dense(X.shape[2]))(L5)    
+        model = Model(inputs=inputs, outputs=output)
+        return model
+
 class buidGAN():
     def __init__(self, out_shape, num_classes):
         self.latent_dim = 32
@@ -600,6 +612,33 @@ def lstm_autoencoder():
     print(f"""Our testing set is composed as follows:
 
             {X_test.label.value_counts()}""")
+    
+    X_test, y_test = X_test.drop('label', axis=1).values, X_test.label.values
+
+    print(f"""Shape of the datasets:
+        training (rows, cols) = {X_train.shape}
+        Testing  (rows, cols) = {X_test.shape}""")
+
+
+    # transforming data from the time domain to the frequency domain using fast Fourier transform
+    train_fft = np.fft.fft(X_train)
+    test_fft = np.fft.fft(X_test)
+
+    scaler = MinMaxScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+    scaler_filename = "scaler_data"
+    joblib.dump(scaler, scaler_filename)
+
+    # reshape inputs for LSTM [samples, timesteps, features]
+    X_train = X_train.reshape(X_train.shape[0], 1, X_train.shape[1])
+    print("Training data shape:", X_train.shape)
+    X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
+    print("Test data shape:", X_test.shape)
+
+
+
+    
 
     print("hello auto encoder")
 
