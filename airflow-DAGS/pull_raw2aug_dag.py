@@ -424,7 +424,7 @@ def pull_mds_gan():
     y_train = y_train.reshape(-1,1)
     pos_index = np.where(y_train==1)[0]
     neg_index = np.where(y_train==0)[0]
-    gan.train(X_train, y_train, pos_index, neg_index, epochs=100)#원래 epochs= 5000
+    gan.train(X_train, y_train, pos_index, neg_index, epochs=10)#원래 epochs= 5000
 
     print(df.shape)
     print(X_train.shape)
@@ -571,18 +571,35 @@ def lstm_autoencoder():
 
     labled = pd.DataFrame(moldset_df, columns = ['Filling_Time','Plasticizing_Time','Cycle_Time','Cushion_Position','Class'])
 
+    labled.columns = map(str.lower,labled.columns)
+    labled.rename(columns={'class':'label'},inplace=True)
+    
     outlier = moldset_df[moldset_df.Class == 1]
     print(outlier.head())
 
-    labled.columns = map(str.lower,labled.columns)
-    labled.rename(columns={'class':'label'},inplace=True)
     # splitting by class
     fraud = labled[labled.label == 1]
     clean = labled[labled.label == 0]
 
     print(f"""Shape of the datasets:
         clean (rows, cols) = {clean.shape}
-            fraud (rows, cols) = {fraud.shape}""")
+        fraud (rows, cols) = {fraud.shape}""")
+    
+    # shuffle our training set
+    clean = clean.sample(frac=1).reset_index(drop=True)
+
+    # training set: exlusively non-fraud transactions
+    X_train = clean.iloc[:TRAINING_SAMPLE].drop('label', axis=1)
+    train = clean.iloc[:TRAINING_SAMPLE].drop('label', axis=1)
+
+    # testing  set: the remaining non-fraud + all the fraud 
+    X_test = clean.iloc[:TRAINING_SAMPLE].append(fraud).sample(frac=1)
+    test = clean.iloc[:TRAINING_SAMPLE].append(fraud).sample(frac=1)
+    test.drop('label', axis = 1, inplace = True)
+
+    print(f"""Our testing set is composed as follows:
+
+            {X_test.label.value_counts()}""")
 
     print("hello auto encoder")
 
