@@ -17,6 +17,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import IsolationForest
 from sklearn.svm import OneClassSVM 
+from sklearn.metrics import confusion_matrix
+
 
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline
@@ -499,6 +501,29 @@ def oc_svm():
     y_test = target_columns['Anomaly']
     
     print(y_test.unique())
+
+    df = pd.DataFrame(labled, columns = ['label'])
+    outliers = df['label']
+    outliers = outliers.fillna(0)
+    print(outliers.unique())
+    print(outliers)
+
+    print(y_test)
+
+    outliers = outliers.to_numpy()
+    y_test = y_test.to_numpy()
+
+    # get (mis)classification
+    cf = confusion_matrix(outliers, y_test)
+
+    # true/false positives/negatives
+    print(cf)
+    (tn, fp, fn, tp) = cf.flatten()
+
+    print(f"""{cf}
+    % of transactions labeled as fraud that were correct (precision): {tp}/({fp}+{tp}) = {tp/(fp+tp):.2%}
+    % of fraudulent transactions were caught succesfully (recall):    {tp}/({fn}+{tp}) = {tp/(fn+tp):.2%}
+    % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
 
     print("hello OC_SVM")
 
