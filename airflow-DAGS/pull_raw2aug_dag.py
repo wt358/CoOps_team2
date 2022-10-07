@@ -574,6 +574,8 @@ def lstm_autoencoder():
     outlier = moldset_df[moldset_df.Class == 1]
     print(outlier.head())
 
+    labled.columns = map(str.lower,labled.columns)
+    labled.rename(columns={'class':'label'},inplace=True)
     # splitting by class
     fraud = labled[labled.label == 1]
     clean = labled[labled.label == 0]
