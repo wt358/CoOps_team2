@@ -464,8 +464,7 @@ def pull_mds_gan():
     # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
     try:
         isData = collection_aug.find_one()
-        if len(isData) ==0:
-        else:
+        if len(isData) !=0:
             print("collection is not empty")
             collection_aug.delete_many({})
         try:
