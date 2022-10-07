@@ -16,6 +16,8 @@ from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import IsolationForest
+from sklearn.svm import OneClassSVM 
+
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline
 
