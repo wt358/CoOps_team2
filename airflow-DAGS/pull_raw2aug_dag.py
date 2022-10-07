@@ -462,7 +462,7 @@ def oc_svm():
     
     print(moldset_df)
 
-    moldset_9000R=moldset_df[moldset_df.Additional_Info_1.str.contains('09520 9000R')]
+    moldset_9000R=moldset_df
     
 
     labled = pd.DataFrame(moldset_9000R, columns = ['Filling_Time','Plasticizing_Time','Cycle_Time','Cushion_Position','Class'])
