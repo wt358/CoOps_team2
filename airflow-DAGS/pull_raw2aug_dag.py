@@ -484,12 +484,28 @@ def oc_svm():
 
     #filter outlier values
     outlier_values = target_columns.iloc[outlier_index]
-    print(outlier_values.head())
+    print(outlier_values)
+    
+    # 이상값은 -1으로 나타낸다.
+    score = model.fit(target_columns)
+    anomaly = model.predict(target_columns)
+    target_columns['anomaly']= anomaly
+    anomaly_data = target_columns.loc[target_columns['anomaly']==-1] 
+    print(target_columns['anomaly'].value_counts())
+
+    target_columns[target_columns['anomaly']==1] = 0
+    target_columns[target_columns['anomaly']==-1] = 1
+    target_columns['Anomaly'] = target_columns['anomaly'] > 0.5
+    y_test = target_columns['Anomaly']
+    
+    print(y_test.unique())
 
     print("hello OC_SVM")
 
 def lstm_autoencoder():
     print("hello auto encoder")
+
+
 # define DAG with 'with' phase
 with DAG(
         dag_id="pull_raw2aug_dag", # DAG의 식별자용 아이디입니다.
