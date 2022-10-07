@@ -461,10 +461,29 @@ def oc_svm():
         return False
     
     print(moldset_df)
-    labled = pd.DataFrame(moldset_df, columns = ['Filling_Time','Plasticizing_Time','Cycle_Time','Cushion_Position','Class'])
+
+    moldset_9000R=moldset_df[moldset_df.Additional_Info_1.str.contains('09520 9000R')]
+    
+
+    labled = pd.DataFrame(moldset_9000R, columns = ['Filling_Time','Plasticizing_Time','Cycle_Time','Cushion_Position','Class'])
     labled.columns = map(str.lower,labled.columns)
     labled.rename(columns={'class':'label'},inplace=True)
     print(labled.head())
+
+    target_columns = pd.DataFrame(labled, columns = ['cycle_time', 'cushion_position'])
+    target_columns.astype('float')
+    model = OneClassSVM(kernel = 'rbf', gamma = 0.001, nu = 0.04).fit(target_columns)
+
+    y_pred = model.predict(target_columns)
+    print(y_pred)
+
+    # filter outlier index
+    outlier_index = where(y_pred == -1)
+
+    #filter outlier values
+    outlier_values = target_columns.iloc[outlier_index]
+    print(outlier_values.head())
+
     print("hello OC_SVM")
 
 def lstm_autoencoder():
