@@ -23,15 +23,19 @@ from sklearn.metrics import confusion_matrix
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline
 
-from tensorflow.keras.layers import Input, Dense, Reshape, Flatten, Dropout, multiply, Concatenate
+from tensorflow.keras.layers import Input, Dense, Reshape, Flatten, Dropout, multiply, Concatenate, Dropout, LSTM, TimeDistributed, RepeatVector
 from tensorflow.keras.layers import BatchNormalization, Activation, Embedding, ZeroPadding2D, LeakyReLU
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.optimizers import Adam, RMSprop
 from tensorflow.keras.initializers import RandomNormal
 import tensorflow.keras.backend as K
+from tensorflow.keras import regularizers
 from tensorflow.python.client import device_lib
 from sklearn.utils import shuffle
 import tensorflow as tf
+
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 
 import csv
 import pandas as pd
@@ -53,8 +57,25 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 
 from json import loads
+import random as rn
+
 
 np.random.seed(34)
+
+# manual parameters
+RANDOM_SEED = 42
+TRAINING_SAMPLE = 50000
+VALIDATE_SIZE = 0.2
+
+# setting random seeds for libraries to ensure reproducibility
+np.random.seed(RANDOM_SEED)
+rn.seed(RANDOM_SEED)
+tf.random.set_seed(RANDOM_SEED)
+
+seed(10)
+
+tf.random.set_seed(10)
+
 # define funcs
 class buidGAN():
     def __init__(self, out_shape, num_classes):
@@ -503,6 +524,8 @@ def oc_svm():
     print(y_test.unique())
 
     df = pd.DataFrame(labled, columns = ['label'])
+    print(df.label)
+    
     outliers = df['label']
     outliers = outliers.fillna(0)
     print(outliers.unique())
@@ -528,6 +551,37 @@ def oc_svm():
     print("hello OC_SVM")
 
 def lstm_autoencoder():
+
+     
+    mongoClient = MongoClient()
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+    
+    db_test = client['coops2022_aug']
+    collection_aug=db_test['mongo_aug1']
+    
+    try:
+        moldset_df = pd.DataFrame(list(collection_aug.find()))
+        
+    except:
+        print("mongo connection failed")
+        return False
+    
+    print(moldset_df)
+
+    labled = pd.DataFrame(moldset_df, columns = ['Filling_Time','Plasticizing_Time','Cycle_Time','Cushion_Position','Class'])
+
+    outlier = dp[dp.Class == 1]
+    print(outlier.head())
+
+    # splitting by class
+    fraud = labled[labled.label == 1]
+    clean = labled[labled.label == 0]
+
+    print(f"""Shape of the datasets:
+        clean (rows, cols) = {clean.shape}
+            fraud (rows, cols) = {fraud.shape}""")
+
     print("hello auto encoder")
 
 
