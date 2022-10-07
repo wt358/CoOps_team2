@@ -571,7 +571,7 @@ def lstm_autoencoder():
 
     labled = pd.DataFrame(moldset_df, columns = ['Filling_Time','Plasticizing_Time','Cycle_Time','Cushion_Position','Class'])
 
-    outlier = dp[dp.Class == 1]
+    outlier = moldset_df[moldset_df.Class == 1]
     print(outlier.head())
 
     # splitting by class
