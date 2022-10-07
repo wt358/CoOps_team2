@@ -461,19 +461,10 @@ def oc_svm():
         return False
     
     print(moldset_df)
-    labled = pd.DataFrame(moldset_df, columns = ['Cycle_Time','Barrel_Temperature_6','Max_Switch_Over_Pressure','Filling_Time'])
+    labled = pd.DataFrame(moldset_df, columns = ['Filling_Time','Plasticizing_Time','Cycle_Time','Cushion_Position','Class'])
+    labled.columns = map(str.lower,labled.columns)
     labled.rename(columns={'class':'label'},inplace=True)
-    model=IsolationForest(n_estimators=100, max_samples='auto', n_jobs=-1,
-                                  max_features=4, contamination=0.01)
-    model.fit(labled.to_numpy())
-
-    score = model.decision_function(labled.to_numpy())
-    anomaly = model.predict(labled.to_numpy())
-    labled['scores']= score
-    labled['anomaly']= anomaly
-    anomaly_data = labled.loc[labled['anomaly']==-1] # 이상값은 -1으로 나타낸다.
-    print(labled['anomaly'].value_counts())
-    
+    print(labled.head())
     print("hello OC_SVM")
 
 def lstm_autoencoder():
