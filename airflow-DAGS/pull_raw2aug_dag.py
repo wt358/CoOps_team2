@@ -436,7 +436,7 @@ def pull_mds_gan():
     y_train = y_train.reshape(-1,1)
     pos_index = np.where(y_train==1)[0]
     neg_index = np.where(y_train==0)[0]
-    gan.train(X_train, y_train, pos_index, neg_index, epochs=10)#원래 epochs= 5000
+    gan.train(X_train, y_train, pos_index, neg_index, epochs=5000)#원래 epochs= 5000
 
     print(df.shape)
     print(X_train.shape)
