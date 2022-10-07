@@ -480,7 +480,7 @@ def oc_svm():
     print(y_pred)
 
     # filter outlier index
-    outlier_index = where(y_pred == -1)
+    outlier_index = np.where(y_pred == -1)
 
     #filter outlier values
     outlier_values = target_columns.iloc[outlier_index]
