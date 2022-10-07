@@ -72,7 +72,7 @@ np.random.seed(RANDOM_SEED)
 rn.seed(RANDOM_SEED)
 tf.random.set_seed(RANDOM_SEED)
 
-seed(10)
+rn.seed(10)
 
 tf.random.set_seed(10)
 
