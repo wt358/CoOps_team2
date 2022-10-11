@@ -436,7 +436,7 @@ def pull_mds_gan():
     y_train = y_train.reshape(-1,1)
     pos_index = np.where(y_train==1)[0]
     neg_index = np.where(y_train==0)[0]
-    gan.train(X_train, y_train, pos_index, neg_index, epochs=5000)#원래 epochs= 5000
+    gan.train(X_train, y_train, pos_index, neg_index, epochs=500)#원래 epochs= 5000
 
     print(df.shape)
     print(X_train.shape)
@@ -452,6 +452,13 @@ def pull_mds_gan():
             columns = df.drop('Class',1).columns)
     gen_df['Class'] = 1
     print(gen_df)
+
+    Class0 = df[df['Class'] == 0 ]
+    print(Class0)
+
+    augdata = pd.concat([pd.DataFrame(Class0), gen_df])
+    Augdata = augdata.reset_index(drop=True)
+    print(Augdata)
     
     mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
@@ -460,7 +467,7 @@ def pull_mds_gan():
 
     db_test = client['coops2022_aug']
     collection_aug=db_test['mongo_aug1']
-    data=gen_df.to_dict('records')
+    data=Augdata.to_dict('records')
     # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
     try:
         isData = collection_aug.find_one()
