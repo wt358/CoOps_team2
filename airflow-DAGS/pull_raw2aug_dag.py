@@ -729,8 +729,8 @@ def lstm_autoencoder():
     print(outliers.unique())
 
     outliers = outliers.to_numpy()
-    print(y_test = y_test.to_numpy())
-
+    y_test = y_test.to_numpy()
+    print(y_test)
     cm = confusion_matrix(y_test, outliers)
     (tn, fp, fn, tp) = cm.flatten()
     
