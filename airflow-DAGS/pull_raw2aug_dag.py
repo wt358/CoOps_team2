@@ -488,6 +488,7 @@ def pull_mds_gan():
     augdata = pd.concat([pd.DataFrame(Class0), gen_df])
     Augdata = augdata.reset_index(drop=True)
     print(Augdata)
+    print(Augdata['Class'].value_counts(normalize=True)*100)
     
     mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
