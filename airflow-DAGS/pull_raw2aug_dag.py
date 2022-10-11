@@ -437,7 +437,7 @@ def pull_mds_gan():
     y_train = y_train.reshape(-1,1)
     pos_index = np.where(y_train==1)[0]
     neg_index = np.where(y_train==0)[0]
-    gan.train(X_train, y_train, pos_index, neg_index, epochs=5000)#원래 epochs= 5000
+    gan.train(X_train, y_train, pos_index, neg_index, epochs=100)#원래 epochs= 5000
 
     print(df.shape)
     print(X_train.shape)
@@ -675,9 +675,24 @@ def lstm_autoencoder():
     X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
     print("Test data shape:", X_test.shape)
 
-    
+    model = autoencoder_model(X_train)
+    model.compile(optimizer='adam', loss='mae')
+    print(model.summary())
 
-    
+    nb_epochs = 100
+    batch_size = 10
+    history = model.fit(X_train, X_train, epochs=nb_epochs, batch_size=batch_size, validation_split=0.05).history
+
+    X_pred = model.predict(X_train)
+    X_pred = X_pred.reshape(X_pred.shape[0], X_pred.shape[2])
+    X_pred = pd.DataFrame(X_pred, columns=train.columns)
+    X_pred.index = train.index
+
+    scored = pd.DataFrame(index=train.index)
+    Xtrain = X_train.reshape(X_train.shape[0], X_train.shape[2])
+    scored['Loss_mae'] = np.mean(np.abs(X_pred-Xtrain), axis = 1)
+
+     
 
     print("hello auto encoder")
 
