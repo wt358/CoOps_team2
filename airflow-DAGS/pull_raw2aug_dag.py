@@ -40,7 +40,6 @@ import tensorflow as tf
 import joblib
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
-matplotlib.pyplot.show()
 
 import csv
 import pandas as pd
@@ -605,6 +604,7 @@ def oc_svm():
 def lstm_autoencoder():
 
      
+    plt.show()
     mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
