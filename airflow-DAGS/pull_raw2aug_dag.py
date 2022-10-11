@@ -19,6 +19,7 @@ from sklearn.ensemble import IsolationForest
 from sklearn.svm import OneClassSVM 
 from sklearn.metrics import confusion_matrix
 
+from IPython.display import Image
 import matplotlib.pyplot as plt
 import seaborn as sns
 
