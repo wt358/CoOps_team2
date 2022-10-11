@@ -699,7 +699,7 @@ def lstm_autoencoder():
     plt.title('Loss Distribution', fontsize=16)
     sns.distplot(scored['Loss_mae'], bins = 20, kde= True, color = 'blue');
     plt.xlim([0.0,.5])
-
+    plt.show()
     print("hello auto encoder")
 
 
