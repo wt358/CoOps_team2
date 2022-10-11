@@ -80,16 +80,15 @@ tf.random.set_seed(10)
 
 # define funcs
 def autoencoder_model(X):
-        inputs = Input(shape=(X.shape[1], X.shape[2]))
-        L1 = LSTM(16, activation='relu', return_sequences=True, 
-        kernel_regularizer=regularizers.l2(0.00))(inputs)
-        L2 = LSTM(4, activation='relu', return_sequences=False)(L1)
-        L3 = RepeatVector(X.shape[1])(L2)
-        L4 = LSTM(4, activation='relu', return_sequences=True)(L3)
-        L5 = LSTM(16, activation='relu', return_sequences=True)(L4)
-        output = TimeDistributed(Dense(X.shape[2]))(L5)    
-        model = Model(inputs=inputs, outputs=output)
-        return model
+    inputs = Input(shape=(X.shape[1], X.shape[2]))
+    L1 = LSTM(16, activation='relu', return_sequences=True, kernel_regularizer=regularizers.l2(0.00))(inputs)
+    L2 = LSTM(4, activation='relu', return_sequences=False)(L1)
+    L3 = RepeatVector(X.shape[1])(L2)
+    L4 = LSTM(4, activation='relu', return_sequences=True)(L3)
+    L5 = LSTM(16, activation='relu', return_sequences=True)(L4)
+    output = TimeDistributed(Dense(X.shape[2]))(L5)    
+    model = Model(inputs=inputs, outputs=output)
+    return model
 
 class buidGAN():
     def __init__(self, out_shape, num_classes):
@@ -457,6 +456,34 @@ def pull_mds_gan():
 
     Class0 = df[df['Class'] == 0 ]
     print(Class0)
+    
+    pca = PCA(n_components = 2)
+    PC = pca.fit_transform(gen_df)
+    PCdf = pca.fit_transform(Class0)
+
+    VarRatio = pca.explained_variance_ratio_
+    VarRatio = pd.DataFrame(np.round_(VarRatio,3))
+
+    CumVarRatio    = np.cumsum(pca.explained_variance_ratio_)
+    CumVarRatio_df = pd.DataFrame(np.round_(CumVarRatio,3))
+
+    Result = pd.concat([VarRatio , CumVarRatio_df], axis=1)
+    print(pd.DataFrame(Result))
+    print(pd.DataFrame(PC))
+
+    pca3 = PCA(n_components = 3)
+    PC3 = pca3.fit_transform(gen_df)
+    PC_df = pca3.fit_transform(Class0)
+
+    VarRatio3 = pca3.explained_variance_ratio_
+    VarRatio3 = pd.DataFrame(np.round_(VarRatio3,3))
+
+    CumVarRatio3    = np.cumsum(pca3.explained_variance_ratio_)
+    CumVarRatio_df3 = pd.DataFrame(np.round_(CumVarRatio3,3))
+
+    Result3 = pd.concat([VarRatio3 , CumVarRatio_df3], axis=1)
+    print(pd.DataFrame(Result3))
+    print(pd.DataFrame(PC3))
 
     augdata = pd.concat([pd.DataFrame(Class0), gen_df])
     Augdata = augdata.reset_index(drop=True)
@@ -647,7 +674,7 @@ def lstm_autoencoder():
     X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
     print("Test data shape:", X_test.shape)
 
-
+    
 
     
 
