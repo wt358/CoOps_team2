@@ -700,6 +700,47 @@ def lstm_autoencoder():
     sns.distplot(scored['Loss_mae'], bins = 20, kde= True, color = 'blue');
     plt.xlim([0.0,.5])
     plt.show()
+
+
+    # calculate the loss on the test set
+    X_pred = model.predict(X_test)
+    X_pred = X_pred.reshape(X_pred.shape[0], X_pred.shape[2])
+    X_pred = pd.DataFrame(X_pred, columns=test.columns)
+    X_pred.index = test.index
+
+    scored = pd.DataFrame(index=test.index)
+    Xtest = X_test.reshape(X_test.shape[0], X_test.shape[2])
+    scored['Loss_mae'] = np.mean(np.abs(X_pred-Xtest), axis = 1)
+    scored['Threshold'] = 0.1
+    scored['Anomaly'] = scored['Loss_mae'] > scored['Threshold']
+    scored['label'] = labled['label']
+    print(scored.head())
+
+
+    y_test = scored['Anomaly']
+    print(y_test.unique())
+
+    print(scored[scored['Anomaly']==True].label.count())
+
+    print(scored.label.unique())
+
+    outliers = scored['label']
+    outliers = outliers.fillna(0)
+    print(outliers.unique())
+
+    outliers = outliers.to_numpy()
+    print(y_test = y_test.to_numpy())
+
+    cm = confusion_matrix(y_test, outliers)
+    (tn, fp, fn, tp) = cm.flatten()
+    
+    print(f"""{cm}
+    % of transactions labeled as fraud that were correct (precision): {tp}/({fp}+{tp}) = {tp/(fp+tp):.2%}
+    % of fraudulent transactions were caught succesfully (recall):    {tp}/({fn}+{tp}) = {tp/(fn+tp):.2%}
+    % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
+
+    print(roc_auc_score(outliers, y_test))
+
     print("hello auto encoder")
 
 
