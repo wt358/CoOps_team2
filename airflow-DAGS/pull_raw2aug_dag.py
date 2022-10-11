@@ -7,7 +7,7 @@ from airflow.operators.python import PythonOperator
 from airflow.models.variable import Variable
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.decomposition import PCA 
+from sklearn.decomposition import PCA
 from sklearn.cluster import DBSCAN
 from sklearn.manifold import MDS
 from sklearn.metrics import precision_score, recall_score, f1_score,accuracy_score, classification_report, plot_confusion_matrix, confusion_matrix
@@ -19,6 +19,9 @@ from sklearn.ensemble import IsolationForest
 from sklearn.svm import OneClassSVM 
 from sklearn.metrics import confusion_matrix
 
+from IPython.display import Image
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline
@@ -37,7 +40,7 @@ import tensorflow as tf
 import joblib
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
-
+matplotlib.pyplot.show()
 
 import csv
 import pandas as pd
@@ -692,7 +695,10 @@ def lstm_autoencoder():
     Xtrain = X_train.reshape(X_train.shape[0], X_train.shape[2])
     scored['Loss_mae'] = np.mean(np.abs(X_pred-Xtrain), axis = 1)
 
-     
+    plt.figure(figsize=(16,9), dpi=80)
+    plt.title('Loss Distribution', fontsize=16)
+    sns.distplot(scored['Loss_mae'], bins = 20, kde= True, color = 'blue');
+    plt.xlim([0.0,.5])
 
     print("hello auto encoder")
 
