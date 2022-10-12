@@ -614,7 +614,7 @@ def oc_svm():
     
     db_model = client['coops2022_model']
     fs = gridfs.GridFS(db_model)
-    collection_model=db_test['mongo_OCSVM']
+    collection_model=db_model['mongo_OCSVM']
    
     model_name = f'OC_SVM_{datetime.now()}'
     model_fpath = f'{model_name}.joblib'
