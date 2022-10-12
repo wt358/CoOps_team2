@@ -632,7 +632,7 @@ def oc_svm():
             'file_id': file_id,
             'inserted_time': datetime.now()
             }
-    result = mycol.insert_one(params)
+    result = collection_model.insert_one(params)
 
     print("hello OC_SVM")
 
