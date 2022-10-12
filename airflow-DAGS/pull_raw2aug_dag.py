@@ -616,7 +616,7 @@ def oc_svm():
     fs = gridfs.GridFS(db_model)
     collection_model=db_test['mongo_OCSVM']
    
-    model_name = f'OC_SVM_{datetime.datetime.now()}'
+    model_name = f'OC_SVM_{datetime.now()}'
     model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
     
@@ -630,7 +630,7 @@ def oc_svm():
     params = {
             'model_name': model_name,
             'file_id': file_id,
-            'inserted_time': datetime.datetime.now()
+            'inserted_time': datetime.now()
             }
     result = mycol.insert_one(params)
 
