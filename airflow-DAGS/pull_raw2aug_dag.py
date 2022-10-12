@@ -23,6 +23,16 @@ from IPython.display import Image
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from bson.binary import Binary
+from bson import ObjectId
+
+import gridfs
+import io
+
+from gridfs import GridFS
+
+
+
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline
 
@@ -598,6 +608,30 @@ def oc_svm():
     % of transactions labeled as fraud that were correct (precision): {tp}/({fp}+{tp}) = {tp/(fp+tp):.2%}
     % of fraudulent transactions were caught succesfully (recall):    {tp}/({fn}+{tp}) = {tp/(fn+tp):.2%}
     % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
+    
+    #save model in the DB
+
+    
+    db_model = client['coops2022_model']
+    collection_model=db_test['mongo_OCSVM']
+   
+    model_name = f'OC_SVM_{datetime.datetime.now()}'
+    model_fpath = f'{model_name}.joblib'
+    joblib.dump(model, model_fpath)
+
+    # save the local file to mongodb
+    with open(model_fpath, 'rb') as infile:
+        file_id = fs.put(
+                infile.read(), 
+                model_name=model_name
+                )
+    # insert the model status info to ModelStatus collection 
+    params = {
+            'model_name': model_name,
+            'file_id': file_id,
+            'inserted_time': datetime.datetime.now()
+            }
+    result = mycol.insert_one(params)
 
     print("hello OC_SVM")
 
