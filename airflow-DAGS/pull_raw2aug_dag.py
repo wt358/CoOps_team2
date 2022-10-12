@@ -637,9 +637,6 @@ def oc_svm():
     print("hello OC_SVM")
 
 def lstm_autoencoder():
-
-     
-    plt.show()
     mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
@@ -775,6 +772,29 @@ def lstm_autoencoder():
     % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
 
     print(roc_auc_score(outliers, y_test))
+    
+    
+    db_model = client['coops2022_model']
+    fs = gridfs.GridFS(db_model)
+    collection_model=db_model['mongo_LSTM_autoencoder']
+   
+    model_name = f'LSTM_autoencoder_{datetime.now()}'
+    model_fpath = f'{model_name}.joblib'
+    joblib.dump(model, model_fpath)
+    
+    # save the local file to mongodb
+    with open(model_fpath, 'rb') as infile:
+        file_id = fs.put(
+                infile.read(), 
+                model_name=model_name
+                )
+    # insert the model status info to ModelStatus collection 
+    params = {
+            'model_name': model_name,
+            'file_id': file_id,
+            'inserted_time': datetime.now()
+            }
+    result = collection_model.insert_one(params)
 
     print("hello auto encoder")
 
