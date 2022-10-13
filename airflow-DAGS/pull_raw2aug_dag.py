@@ -101,6 +101,29 @@ def autoencoder_model(X):
     output = TimeDistributed(Dense(X.shape[2]))(L5)    
     model = Model(inputs=inputs, outputs=output)
     return model
+class ModelSingleton(type):
+    """
+    Metaclass that creates a Singleton base type when called.
+    """
+    _model_name = {}
+    def __call__(cls, *args, **kwargs):
+        model_name = kwargs.pop('model_name')
+        if model_name not in cls._model_name:
+            print('Adding model into ModelSingleton')
+            cls._model_name[model_name] = super(ModelSingleton, cls).__call__(*args, **kwargs)
+        return cls._model_name[model_name]
+
+class LoadModel(metaclass=ModelSingleton):
+    def __init__(self, *args, **kwargs):
+        self.model_name = kwargs['model_name']
+        self.clf = self.load_model()
+                                
+    def load_model(self):
+        print('loading model')
+        f = fs.find({"model_name": ObjectId(self.model_name)}).next()
+        with open(f'{f.model_name}.joblib', 'wb') as outfile:
+            outfile.write(f.read())
+        return joblib.load(f'{f.model_name}.joblib')
 
 class buidGAN():
     def __init__(self, out_shape, num_classes):
@@ -615,11 +638,19 @@ def oc_svm():
     db_model = client['coops2022_model']
     fs = gridfs.GridFS(db_model)
     collection_model=db_model['mongo_OCSVM']
-   
-    model_name = f'OC_SVM_{datetime.now()}'
+    
+    model_name = 'OC_SVM'
     model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
-    
+
+    result = collection_model.find({"filename": model_name}, {'_id': 1}).sort('uploadDate', -1)
+    if result.count():
+        mongo_id = str(result[0]['_id'])
+
+    model = LoadModel(model_name=model_name)
+    clf = model.clf
+
+    print(clf.summary())
     # save the local file to mongodb
     with open(model_fpath, 'rb') as infile:
         file_id = fs.put(
@@ -778,7 +809,7 @@ def lstm_autoencoder():
     fs = gridfs.GridFS(db_model)
     collection_model=db_model['mongo_LSTM_autoencoder']
    
-    model_name = f'LSTM_autoencoder_{datetime.now()}'
+    model_name = 'LSTM_autoencoder'
     model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
     
