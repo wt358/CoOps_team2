@@ -645,7 +645,7 @@ def oc_svm():
     model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
     
-    result = collection_model.find({"filename": {$regex : /OC_SVM/}}, {'_id': 1}).sort('uploadDate', -1)
+    result = collection_model.find({filename: {$regex : /OC_SVM/}}, {'_id': 1}).sort('uploadDate', -1)
 
     print(result[0]['_id'])
     ''' 
@@ -881,5 +881,8 @@ with DAG(
             )
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
+    '''
     t1 >> t2
     t1 >> t3
+    '''
+    t2
