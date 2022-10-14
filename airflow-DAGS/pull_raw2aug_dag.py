@@ -101,33 +101,29 @@ def autoencoder_model(X):
     output = TimeDistributed(Dense(X.shape[2]))(L5)    
     model = Model(inputs=inputs, outputs=output)
     return model
+
 class ModelSingleton(type):
-    """
-    Metaclass that creates a Singleton base type when called.
-    """
-    _model_name = {}
-    def __call__(cls, *args, **kwargs):
-        print(kwargs)
-        model_name = kwargs.pop('model_name')
-        if model_name not in cls._model_name:
-            print('Adding model into ModelSingleton')
-            print(model_name)
-            cls._model_name[model_name] = super(ModelSingleton, cls).__call__(*args, **kwargs)
-        return cls._model_name[model_name]
+   """
+   Metaclass that creates a Singleton base type when called.
+   """
+   _mongo_id = {}
+   def __call__(cls, *args, **kwargs):
+       mongo_id = kwargs.pop('mongo_id')
+       if mongo_id not in cls._mongo_id:
+           print('Adding model into ModelSingleton')
+           cls._mongo_id[mongo_id] = super(ModelSingleton, cls).__call__(*args, **kwargs)
+       return cls._mongo_id[mongo_id]
 
 class LoadModel(metaclass=ModelSingleton):
-    def __init__(self, *args, **kwargs):
-        print(kwargs)
-        print("123123")
-        self.model_name = kwargs['model_name']
-        self.clf = self.load_model()
-                                
-    def load_model(self):
-        print('loading model')
-        f = fs.find({"model_name": ObjectId(self.model_name)}).next()
-        with open(f'{f.model_name}.joblib', 'wb') as outfile:
-            outfile.write(f.read())
-        return joblib.load(f'{f.model_name}.joblib')
+   def __init__(self, *args, **kwargs):
+       self.mongo_id = kwargs['mongo_id']
+       self.clf = self.load_model()
+   def load_model(self):
+       print('loading model')
+       f = fs.find({"_id": ObjectId(self.mongo_id)}).next()
+       with open(f'{f.model_name}.joblib', 'wb') as outfile:
+           outfile.write(f.read())
+       return joblib.load(f'{f.model_name}.joblib')
 
 class buidGAN():
     def __init__(self, out_shape, num_classes):
@@ -646,19 +642,13 @@ def oc_svm():
     model_name = 'OC_SVM'
     model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
-    result = collection_model.find({"model_name": model_name }).sort('uploadDate', -1)
+    result = collection_model.find({"model_name": model_name }, {'_id': 1}).sort('uploadDate', -1)
 
-    print(result)
+    if result.count():
+        mongo_id = str(result[0]['_id'])
 
-    print(result[0])
-    print(result[0]['model_name'])
-    
-    if len(list(result))!=0:
-        model_name = str(result[0]['model_name'])
-    
-
-    print(model_name)
-    model = LoadModel(model_name=model_name)
+    print(mongo_id)
+    model = LoadModel(mongo_id=mongo_id)
     clf = model.clf
 
     print(clf.summary())
@@ -887,5 +877,8 @@ with DAG(
             )
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
+    '''
     t1 >> t2
     t1 >> t3
+    '''
+    t2 
