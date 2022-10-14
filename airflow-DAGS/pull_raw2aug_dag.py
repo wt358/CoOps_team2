@@ -108,6 +108,7 @@ class ModelSingleton(type):
     _model_name = {}
     def __call__(cls, *args, **kwargs):
         model_name = kwargs.pop('model_name')
+        print(model_name)
         if model_name not in cls._model_name:
             print('Adding model into ModelSingleton')
             cls._model_name[model_name] = super(ModelSingleton, cls).__call__(*args, **kwargs)
@@ -644,11 +645,12 @@ def oc_svm():
     joblib.dump(model, model_fpath)
     
     result = collection_model.find({"filename": model_name}, {'_id': 1}).sort('uploadDate', -1)
-    print(result[0])
+    ''' 
     if result.count():
         model_name = str(result[0]['_id'])
+    ''' 
     print(model_name)
-    model = LoadModel(model_name='OC_SVM')
+    model = LoadModel(model_name=model_name)
     clf = model.clf
 
     print(clf.summary())
