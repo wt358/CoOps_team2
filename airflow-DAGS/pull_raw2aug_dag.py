@@ -645,7 +645,7 @@ def oc_svm():
     model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
     
-    result = collection_model.find({"filename": model_name}, {'_id': 1}).sort('uploadDate', -1)
+    result = collection_model.find({"filename": {$regex : /OC_SVM/}}, {'_id': 1}).sort('uploadDate', -1)
 
     print(result[0]['_id'])
     ''' 
