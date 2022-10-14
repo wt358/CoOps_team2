@@ -644,6 +644,11 @@ def oc_svm():
     joblib.dump(model, model_fpath)
     
     result = collection_model.find({"model_name": model_name}, {'_id': 1}).sort('uploadDate', -1)
+    
+    print(result)
+    print(result[0])
+    
+    
     if result.count():
         mongo_id = str(result[0]['_id'])
 
