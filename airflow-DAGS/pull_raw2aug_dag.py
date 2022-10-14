@@ -129,7 +129,7 @@ class LoadModel(metaclass=ModelSingleton):
        db_model = client['coops2022_model']
        fs = gridfs.GridFS(db_model)
        f = fs.find({"_id": ObjectId(self.mongo_id)})
-       print(f[0])
+       print(f.model_name)
        with open(f'{f.model_name}.joblib', 'wb') as outfile:
            outfile.write(f.read())
        return joblib.load(f'{f.model_name}.joblib')
