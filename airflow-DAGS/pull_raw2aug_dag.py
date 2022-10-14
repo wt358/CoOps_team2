@@ -645,11 +645,10 @@ def oc_svm():
     joblib.dump(model, model_fpath)
     
     result = collection_model.find({"filename": model_name}, {'_id': 1}).sort('uploadDate', -1)
-    print(result)
-    '''
+    print(result[0])
     if result.count():
         model_name = str(result[0]['_id'])
-    '''
+    print(model_name)
     model = LoadModel(model_name=model_name)
     clf = model.clf
 
