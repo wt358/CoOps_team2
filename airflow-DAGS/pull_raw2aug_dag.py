@@ -109,6 +109,7 @@ class ModelSingleton(type):
    _mongo_id = {}
    def __call__(cls, *args, **kwargs):
        mongo_id = kwargs.pop('mongo_id')
+       print(kwargs)
        if mongo_id not in cls._mongo_id:
            print('Adding model into ModelSingleton')
            cls._mongo_id[mongo_id] = super(ModelSingleton, cls).__call__(*args, **kwargs)
@@ -116,6 +117,7 @@ class ModelSingleton(type):
 
 class LoadModel(metaclass=ModelSingleton):
    def __init__(self, *args, **kwargs):
+       print(kwargs)
        self.mongo_id = kwargs['mongo_id']
        self.clf = self.load_model()
    def load_model(self):
