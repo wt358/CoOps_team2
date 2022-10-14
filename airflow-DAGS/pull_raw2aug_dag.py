@@ -108,7 +108,7 @@ class ModelSingleton(type):
    """
    _mongo_id = {}
    def __call__(cls, *args, **kwargs):
-       mongo_id = kwargs.pop('mongo_id')
+       mongo_id = kwargs['mongo_id']
        print(kwargs)
        if mongo_id not in cls._mongo_id:
            print('Adding model into ModelSingleton')
