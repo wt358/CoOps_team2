@@ -660,7 +660,7 @@ def oc_svm():
     print(result)
     print(result[0])
     
-    if result.getCount()==0:
+    if len(list(result.clone()))==0:
         print("empty")
     else:
         print("not empty")
