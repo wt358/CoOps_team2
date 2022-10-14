@@ -644,19 +644,22 @@ def oc_svm():
     model_name = 'OC_SVM'
     model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
-    
+    '''
     result = collection_model.find({"model_name": model_name }).sort('uploadDate', -1)
 
     print(result)
     ''' 
     if result.count():
         model_name = str(result[0]['_id'])
-    ''' 
+    '''
+
     print(model_name)
     model = LoadModel(model_name=model_name)
     clf = model.clf
 
     print(clf.summary())
+
+    '''
     # save the local file to mongodb
     with open(model_fpath, 'rb') as infile:
         file_id = fs.put(
@@ -881,8 +884,5 @@ with DAG(
             )
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
-    '''
     t1 >> t2
     t1 >> t3
-    '''
-    t2
