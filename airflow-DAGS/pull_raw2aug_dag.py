@@ -648,10 +648,10 @@ def oc_svm():
     result = collection_model.find({"model_name": model_name }).sort('uploadDate', -1)
 
     print(result)
-    ''' 
+    
     if result.count():
         model_name = str(result[0]['_id'])
-    '''
+    
 
     print(model_name)
     model = LoadModel(model_name=model_name)
