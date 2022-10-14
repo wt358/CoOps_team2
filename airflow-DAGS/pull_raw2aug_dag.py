@@ -642,8 +642,8 @@ def oc_svm():
     model_name = 'OC_SVM'
     model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
-    result = collection_model.find({"model_name": model_name }, {'_id': 1}).sort('uploadDate', -1)
-
+    
+    result = mycol.find({"filename": model_name}, {'_id': 1}).sort('uploadDate', -1)
     if result.count():
         mongo_id = str(result[0]['_id'])
 
