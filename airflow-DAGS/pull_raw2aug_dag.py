@@ -647,10 +647,9 @@ def oc_svm():
     
     print(result)
     print(result[0])
+     
     
-    
-    if result.count():
-        mongo_id = str(result[0]['_id'])
+    mongo_id = str(result[0]['_id'])
 
     print(mongo_id)
     model = LoadModel(mongo_id=mongo_id)
