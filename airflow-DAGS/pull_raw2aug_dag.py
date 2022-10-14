@@ -593,7 +593,31 @@ def oc_svm():
     target_columns = pd.DataFrame(labled, columns = ['cycle_time', 'cushion_position'])
     target_columns.astype('float')
      
-    model = OneClassSVM(kernel = 'rbf', gamma = 0.001, nu = 0.04).fit(target_columns)
+    db_model = client['coops2022_model']
+    fs = gridfs.GridFS(db_model)
+    collection_model=db_model['mongo_OCSVM']
+    
+    model_name = 'OC_SVM'
+    model_fpath = f'{model_name}.joblib'
+    joblib.dump(model, model_fpath)
+     
+    result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
+    print(result)
+    print(result[0])
+    if len(list(result.clone()))==0:
+        print("empty")
+        model = OneClassSVM(kernel = 'rbf', gamma = 0.001, nu = 0.04).fit(target_columns)
+    else:
+        print("not empty")
+        file_id = str(result[0]['file_id'])
+
+        model = LoadModel(mongo_id=file_id).clf
+
+    
+    print(model.get_params())
+    
+    
+
 
     y_pred = model.predict(target_columns)
     print(y_pred)
@@ -644,36 +668,9 @@ def oc_svm():
     % of fraudulent transactions were caught succesfully (recall):    {tp}/({fn}+{tp}) = {tp/(fn+tp):.2%}
     % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
     
+
+    
     #save model in the DB
-
-    
-    db_model = client['coops2022_model']
-    fs = gridfs.GridFS(db_model)
-    collection_model=db_model['mongo_OCSVM']
-    
-    model_name = 'OC_SVM'
-    model_fpath = f'{model_name}.joblib'
-    joblib.dump(model, model_fpath)
-    
-    result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
-    
-    print(result)
-    print(result[0])
-    
-    if len(list(result.clone()))==0:
-        print("empty")
-    else:
-        print("not empty")
-    
-    mongo_id = str(result[0]['_id'])
-    file_id = str(result[0]['file_id'])
-
-    model = LoadModel(mongo_id=file_id)
-    clf = model.clf
-
-    print(clf.get_params())
-    print(clf.coef_)
-
     # save the local file to mongodb
     with open(model_fpath, 'rb') as infile:
         file_id = fs.put(
