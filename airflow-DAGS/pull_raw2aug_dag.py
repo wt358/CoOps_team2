@@ -653,7 +653,7 @@ def oc_svm():
     print(result[0])
     print(result[0]['model_name'])
     
-    if len(result.count())!=0:
+    if len(result)!=0:
         model_name = str(result[0]['model_name'])
     
 
