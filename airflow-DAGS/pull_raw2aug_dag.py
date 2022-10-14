@@ -115,6 +115,7 @@ class ModelSingleton(type):
 
 class LoadModel(metaclass=ModelSingleton):
     def __init__(self, *args, **kwargs):
+        print(kwargs['model_name'])
         self.model_name = kwargs['model_name']
         self.clf = self.load_model()
                                 
