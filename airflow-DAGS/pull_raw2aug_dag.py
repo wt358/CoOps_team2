@@ -107,9 +107,11 @@ class ModelSingleton(type):
     """
     _model_name = {}
     def __call__(cls, *args, **kwargs):
+        print(kwargs)
         model_name = kwargs.pop('model_name')
         if model_name not in cls._model_name:
             print('Adding model into ModelSingleton')
+            print(model_name)
             cls._model_name[model_name] = super(ModelSingleton, cls).__call__(*args, **kwargs)
         return cls._model_name[model_name]
 
@@ -649,13 +651,11 @@ def oc_svm():
     print(result)
 
     print(result[0])
-    print(result)
+    print(result[0]['model_name'])
     
-    '''
     if result.count():
-        model_name = str(result[0]['_id'])
+        model_name = str(result[0]['model_name'])
     
-    '''
 
     print(model_name)
     model = LoadModel(model_name=model_name)
