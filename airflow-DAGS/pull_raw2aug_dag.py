@@ -131,7 +131,6 @@ class LoadModel(metaclass=ModelSingleton):
        print(self.mongo_id)
        f = fs.find({"_id": ObjectId(self.mongo_id)})
        print(f)
-       print(f[0])
 
        with open(f'{f.model_name}.joblib', 'wb') as outfile:
            outfile.write(f.read())
@@ -655,16 +654,18 @@ def oc_svm():
     model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
     
-    result = collection_model.find({"model_name": model_name}, {'_id': 1}).sort('uploadDate', -1)
+    result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
     
     print(result)
     print(result[0])
      
     
     mongo_id = str(result[0]['_id'])
+    file_id = str(result[0]['file_id'])
+
 
     print(mongo_id)
-    model = LoadModel(mongo_id=mongo_id)
+    model = LoadModel(mongo_id=file_id)
     clf = model.clf
 
     print(clf.summary())
