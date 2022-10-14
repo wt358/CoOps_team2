@@ -646,7 +646,7 @@ def oc_svm():
     model_name = 'OC_SVM'
     model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
-    result = collection_model.find({"model_name": model_name }.sort('uploadDate', -1)
+    result = collection_model.find({"model_name": model_name }).sort('uploadDate', -1)
 
     print(result)
 
