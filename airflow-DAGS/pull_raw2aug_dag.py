@@ -592,6 +592,7 @@ def oc_svm():
 
     target_columns = pd.DataFrame(labled, columns = ['cycle_time', 'cushion_position'])
     target_columns.astype('float')
+     
     model = OneClassSVM(kernel = 'rbf', gamma = 0.001, nu = 0.04).fit(target_columns)
 
     y_pred = model.predict(target_columns)
@@ -663,12 +664,10 @@ def oc_svm():
     mongo_id = str(result[0]['_id'])
     file_id = str(result[0]['file_id'])
 
-
-    print(mongo_id)
     model = LoadModel(mongo_id=file_id)
     clf = model.clf
 
-    print(clf.summary())
+    print(clf.get_params())
 
     # save the local file to mongodb
     with open(model_fpath, 'rb') as infile:
