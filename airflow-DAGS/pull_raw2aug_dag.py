@@ -659,7 +659,11 @@ def oc_svm():
     
     print(result)
     print(result[0])
-     
+    
+    if result.getCount()==0:
+        print("empty")
+    else:
+        print("not empty")
     
     mongo_id = str(result[0]['_id'])
     file_id = str(result[0]['file_id'])
@@ -668,6 +672,7 @@ def oc_svm():
     clf = model.clf
 
     print(clf.get_params())
+    print(clf.coef_)
 
     # save the local file to mongodb
     with open(model_fpath, 'rb') as infile:
