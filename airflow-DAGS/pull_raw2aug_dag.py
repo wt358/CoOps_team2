@@ -122,6 +122,10 @@ class LoadModel(metaclass=ModelSingleton):
    def load_model(self):
        print('loading model')
 
+       mongoClient = MongoClient()
+       host = Variable.get("MONGO_URL_SECRET")
+       client = MongoClient(host)
+
        db_model = client['coops2022_model']
        fs = gridfs.GridFS(db_model)
        f = fs.find({"_id": ObjectId(self.mongo_id)}).next()
