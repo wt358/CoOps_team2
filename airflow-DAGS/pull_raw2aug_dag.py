@@ -109,7 +109,6 @@ class ModelSingleton(type):
    _mongo_id = {}
    def __call__(cls, *args, **kwargs):
        mongo_id = kwargs['mongo_id']
-       print(kwargs)
        if mongo_id not in cls._mongo_id:
            print('Adding model into ModelSingleton')
            cls._mongo_id[mongo_id] = super(ModelSingleton, cls).__call__(*args, **kwargs)
@@ -122,6 +121,9 @@ class LoadModel(metaclass=ModelSingleton):
        self.clf = self.load_model()
    def load_model(self):
        print('loading model')
+
+       db_model = client['coops2022_model']
+       fs = gridfs.GridFS(db_model)
        f = fs.find({"_id": ObjectId(self.mongo_id)}).next()
        with open(f'{f.model_name}.joblib', 'wb') as outfile:
            outfile.write(f.read())
