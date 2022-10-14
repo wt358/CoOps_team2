@@ -115,7 +115,6 @@ class ModelSingleton(type):
 
 class LoadModel(metaclass=ModelSingleton):
     def __init__(self, *args, **kwargs):
-        print(kwargs['model_name'])
         self.model_name = kwargs['model_name']
         self.clf = self.load_model()
                                 
@@ -649,7 +648,7 @@ def oc_svm():
     if result.count():
         model_name = str(result[0]['_id'])
     print(model_name)
-    model = LoadModel(model_name=model_name)
+    model = LoadModel(model_name='OC_SVM')
     clf = model.clf
 
     print(clf.summary())
