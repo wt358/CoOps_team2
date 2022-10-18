@@ -785,7 +785,6 @@ def lstm_autoencoder():
     joblib.dump(model, model_fpath)
     
     model.compile(optimizer='adam', loss='mae')
-    print(model.get_params())
     
     # 이상값은 -1으로 나타낸다.
     print(model.summary())
