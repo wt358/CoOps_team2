@@ -597,6 +597,8 @@ def oc_svm():
     fs = gridfs.GridFS(db_model)
     collection_model=db_model['mongo_OCSVM']
     
+    model_name = 'OC_SVM'
+    model_fpath = f'{model_name}.joblib'
     result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
     print(result)
     print(result[0])
@@ -609,8 +611,6 @@ def oc_svm():
 
         model = LoadModel(mongo_id=file_id).clf
     
-    model_name = 'OC_SVM'
-    model_fpath = f'{model_name}.joblib'
     joblib.dump(model, model_fpath)
      
     
