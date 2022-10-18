@@ -612,15 +612,18 @@ def oc_svm():
         model = LoadModel(mongo_id=file_id).clf
     
     joblib.dump(model, model_fpath)
-     
     
     print(model.get_params())
-    
-    
+   
+
+
+
 
 
     y_pred = model.predict(target_columns)
     print(y_pred)
+
+
 
     # filter outlier index
     outlier_index = np.where(y_pred == -1)
@@ -761,8 +764,30 @@ def lstm_autoencoder():
     X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
     print("Test data shape:", X_test.shape)
 
-    model = autoencoder_model(X_train)
+    db_model = client['coops2022_model']
+    fs = gridfs.GridFS(db_model)
+    collection_model=db_model['mongo_LSTM_autoencoder']
+    
+    model_name = 'LSTM_autoencoder'
+    model_fpath = f'{model_name}.joblib'
+    result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
+    print(result)
+    print(result[0])
+    if len(list(result.clone()))==0:
+        print("empty")
+        model = autoencoder_model(X_train)
+    else:
+        print("not empty")
+        file_id = str(result[0]['file_id'])
+
+        model = LoadModel(mongo_id=file_id).clf
+    
+    joblib.dump(model, model_fpath)
+    
     model.compile(optimizer='adam', loss='mae')
+    print(model.get_params())
+    
+    # 이상값은 -1으로 나타낸다.
     print(model.summary())
 
     nb_epochs = 100
