@@ -15,7 +15,7 @@ task_default_args = {
         'retries': 0,
         'retry_delay': timedelta(minutes=1),
         'depends_on_past': True,
-        'execution_timeout': timedelta(minutes=5)
+        #'execution_timeout': timedelta(minutes=5)
 }
 
 dag = DAG(
@@ -24,7 +24,7 @@ dag = DAG(
         start_date=days_ago(2),
         default_args=task_default_args,
         schedule_interval=timedelta(days=1),
-        max_active_runs=1
+        #max_active_runs=1
 )
 '''
 env_from = [
