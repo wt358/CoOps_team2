@@ -45,6 +45,7 @@ start = DummyOperator(task_id="start", dag=dag)
 
 run = KubernetesPodOperator(
         task_id="kubernetespodoperator",
+        name="test",
         namespace='airflow-cluster',
         image='model-image.kr.ncr.ntruss.com/airflow-py:0.7',
         image_pull_policy="Always",
