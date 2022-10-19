@@ -26,7 +26,6 @@ dag = DAG(
         schedule_interval=timedelta(days=1),
         max_active_runs=1
 )
-'''
 env = Secret(
         'env',
         'TEST',
@@ -34,24 +33,17 @@ env = Secret(
         'TEST',
 )
 
-pod_resources = Resources()
-pod_resources.request_cpu = '1000m'
-pod_resources.request_memory = '2048Mi'
-pod_resources.limit_cpu = '2000m'
-pod_resources.limit_memory = '4096Mi'
-
-
 configmaps = [
         k8s.V1EnvFromSource(config_map_ref=k8s.V1ConfigMapEnvSource(name='secret')),
         ]
-'''
 
 start = DummyOperator(task_id="start", dag=dag)
 
 run = KubernetesPodOperator(
         task_id="kubernetespodoperator",
         namespace='airflow-cluster',
-        image='model-image.kr.ncr.ntruss.com/airflow-py',
+        image='model-image.kr.ncr.ntruss.com/airflow-py:0.7',
+        image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         name="job",
         is_delete_operator_pod=True,
         get_logs=True,
