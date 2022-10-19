@@ -13,7 +13,7 @@ dag_id = 'kubernetes-dag'
 task_default_args = {
         'owner': 'coops2',
         'retries': 0,
-        'retry_delay': timedelta(minutes=5),
+        'retry_delay': timedelta(minutes=1),
         'depends_on_past': True,
         #'execution_timeout': timedelta(hours=1)
 }
@@ -45,7 +45,7 @@ run = KubernetesPodOperator(
         image='model-image.kr.ncr.ntruss.com/airflow-py:0.7',
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         name="job",
-        is_delete_operator_pod=True,
+        #is_delete_operator_pod=True,
         get_logs=True,
         dag=dag,
         )
