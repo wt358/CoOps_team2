@@ -21,7 +21,7 @@ dag = DAG(
         dag_id=dag_id,
         description='kubernetes pod operator',
         default_args=task_default_args,
-        schedule_interval='5 16 * * *',
+        schedule_interval=timedelta(days=1),
         max_active_runs=1
 )
 '''
@@ -48,13 +48,11 @@ start = DummyOperator(task_id="start", dag=dag)
 
 run = KubernetesPodOperator(
         task_id="kubernetespodoperator",
-        namespace='development',
-        image='test/image',
+        namespace='airflow-cluster',
+        image='model-image.kr.ncr.ntruss.com/airflow-py',
         name="job",
         is_delete_operator_pod=True,
         get_logs=True,
-        resources=pod_resources,
-        env_from=configmaps,
         dag=dag,
         )
 
