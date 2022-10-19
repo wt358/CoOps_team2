@@ -15,7 +15,7 @@ task_default_args = {
         'retries': 0,
         'retry_delay': timedelta(minutes=1),
         'depends_on_past': True,
-        'execution_timeout': timedelta(minutes=1)
+        'execution_timeout': timedelta(hours=1)
 }
 
 dag = DAG(
