@@ -24,9 +24,9 @@ dag = DAG(
         start_date=days_ago(2),
         default_args=task_default_args,
         schedule_interval=timedelta(days=1),
-        #max_active_runs=1
+        max_active_runs=1
 )
-
+'''
 env_from = [
         k8s.V1EnvFromSource(
             # configmap fields를  key-value 형태의 dict 타입으로 전달한다. 
@@ -35,6 +35,7 @@ env_from = [
             secret_ref=k8s.V1SecretEnvSource(name="regcred")),
 ]
 
+'''
 
 
 
