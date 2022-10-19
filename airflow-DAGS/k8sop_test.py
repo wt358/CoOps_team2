@@ -6,6 +6,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.kubernetes.secret import Secret
 from airflow.kubernetes.pod import Resources
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (KubernetesPodOperator,)
+from airflow.utils.dates import days_ago
 
 dag_id = 'kubernetes-dag'
 
