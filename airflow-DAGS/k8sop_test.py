@@ -15,7 +15,7 @@ task_default_args = {
         'retries': 0,
         'retry_delay': timedelta(minutes=1),
         'depends_on_past': True,
-        #'execution_timeout': timedelta(hours=1)
+        'execution_timeout': timedelta(minutes=1)
 }
 
 dag = DAG(
@@ -46,12 +46,9 @@ start = DummyOperator(task_id="start", dag=dag)
 run = KubernetesPodOperator(
         task_id="kubernetespodoperator",
         namespace='airflow-cluster',
-        
-        
         image='model-image.kr.ncr.ntruss.com/airflow-py:0.7',
         image_pull_policy="Always",
         #image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
-        name="job",
         is_delete_operator_pod=True,
         get_logs=True,
         dag=dag,
