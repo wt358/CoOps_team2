@@ -5,7 +5,7 @@ from airflow.models import DAG, Variable
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.kubernetes.secret import Secret
 from airflow.kubernetes.pod import Resources
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import (KubernetesPodOperator,)
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.utils.dates import days_ago
 
 dag_id = 'kubernetes-dag'
@@ -51,9 +51,10 @@ run = KubernetesPodOperator(
         image='model-image.kr.ncr.ntruss.com/airflow-py',
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
+        cmds=["bash", "-cx"],
+        arguments=["echo", "10"],
         is_delete_operator_pod=True,
         get_logs=True,
-        dag=dag,
         )
 
 start >> run
