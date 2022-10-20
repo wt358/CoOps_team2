@@ -199,61 +199,11 @@ def pull_transform():
     data=df.to_dict('records')
     # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
     try:
-        isData = collection_aug.find_one()
-        if len(isData) !=0:
-            print("collection is not empty")
-            collection_aug.delete_many({})
-        try:
-            result = collection_aug.insert_many(data,ordered=False)
-        except Exception as e:
-            print("mongo connection failed", e)
+        result = collection_aug.insert_many(data)
     except:
-        print("there is no collection")
-        try:
-            result = collection_aug.insert_many(data,ordered=False)
-        except Exception as e:
-            print("mongo connection failed", e)
-    
+        print("mongo connection failed")
     
     print("hello")
-
-
-def infer_model():
-    #data consumer
-    now = datetime.now()
-    curr_time = now.strftime("%Y-%m-%d_%H:%M:%S")
-
-    consumer = KafkaConsumer('raw.coops2022.molding_data',
-            group_id=f'Infer_{curr_time}',
-            bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],
-            value_deserializer=lambda x: loads(x.decode('utf-8')),
-            auto_offset_reset='earliest',
-            consumer_timeout_ms=10000
-            )
-    #consumer.poll(timeout_ms=1000, max_records=2000)
-
-    #dataframe extract
-    l=[]
-
-    for message in consumer:
-        message = message.value
-        l.append(loads(message['payload'])['fullDocument'])
-    df = pd.DataFrame(l)
-    print(df)
-    # dataframe transform
-    df=df[df['idx']!='idx']
-    print(df.shape)
-    print(df.columns)
-    print(df)
-
-    df.drop(columns={'_id',
-        },inplace=True)
-    
-    print(df)
-
-    
-
-    print("hello inference")
 
 
 # define DAG with 'with' phase
@@ -309,17 +259,6 @@ with DAG(
         retry_delay=timedelta(minutes=1),
     )
    
-    t4 = PythonOperator(
-        task_id="infer_model",
-        python_callable=infer_model,
-        depends_on_past=True,
-        owner="coops2",
-        retries=0,
-        retry_delay=timedelta(minutes=1),
-    )
-   
-
-
 
     dummy1 = DummyOperator(task_id="path1")
     dummy2 = DummyOperator(task_id="path2",trigger_rule=TriggerRule.NONE_FAILED)
@@ -329,4 +268,4 @@ with DAG(
     
     dummy1 >> [t1,t2] >> dummy2
 
-    dummy2 >> t3 >> sleep_task >> t4
+    dummy2 >> t3 >> sleep_task 
