@@ -313,7 +313,7 @@ def pull_transform():
         l.append(loads(message['payload'])['fullDocument'])
     df = pd.DataFrame(l[1:])
 
-
+    print(df)
 
     # dataframe transform
     df.drop(columns={'Barrel_Temperature_1',
@@ -347,6 +347,8 @@ def pull_transform():
         '_id',},inplace=True)
     print(df.shape)
     print(df.columns)
+    print(df)
+
     '''
     moldset_labeled_9000R=df[df.Additional_Info_1=='09520 9000R']
     print(moldset_labeled_9000R.head())
