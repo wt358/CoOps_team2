@@ -203,7 +203,7 @@ def pull_transform():
             print(row)
             uniq=row['idx']
             del row['idx']
-            result = collection_aug.update({'idx':uniq},row,upsert=True)
+            result = collection_aug.update_one({'idx':uniq},{"$set":row},upsert=True)
     except Exception as e: 
         print("mongo connection failed")
         print(e)
