@@ -18,11 +18,28 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 
 # define funcs
-def pull_influx():
+def model_inference():
+    # pull the ETL data
+    mongoClient = MongoClient()
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+    
+    db_test = client['coops2022_etl']
+    collection_aug=db_test['etl_data']
+    
+    try:
+        df = pd.DataFrame(list(collection_aug.find()))
+        
+    except:
+        print("mongo connection failed")
+        return False
+    df.drop(columns={'_id',
+        },inplace=True)
+
+    print(df)
 
 
 
-def pull_mssql():
 
 # define DAG with 'with' phase
 with DAG(
@@ -34,14 +51,14 @@ with DAG(
     ) as dag:
 
     t1 = PythonOperator(
-        task_id="pull_influx",
-        python_callable=pull_influx,
+        task_id="model_inference",
+        python_callable=model_inference,
         depends_on_past=True,
         owner="coops2",
-        retries=3,
+        retries=0,
         retry_delay=timedelta(minutes=1),
     )
-
+    '''
     t2 = PythonOperator(
         task_id="pull_mssql",
         python_callable=pull_mssql,
@@ -50,6 +67,7 @@ with DAG(
         retries=3,
         retry_delay=timedelta(minutes=1),
     )
+    '''
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
-    t2 >> t1
+     t1

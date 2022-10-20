@@ -311,11 +311,8 @@ def pull_transform():
     for message in consumer:
         message = message.value
         l.append(loads(message['payload'])['fullDocument'])
-    print(l)
-    df = pd.DataFrame(l[1:])
-
+    df = pd.DataFrame(l)
     print(df)
-
     # dataframe transform
     df.drop(columns={'Barrel_Temperature_1',
         'Barrel_Temperature_2',

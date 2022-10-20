@@ -18,6 +18,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 
 # define funcs
+
 def pull_influx():
     bucket = Variable.get("INFLUX_BUCKET")
     org = Variable.get("INFLUX_ORG")
@@ -36,7 +37,7 @@ def pull_influx():
 
     #
     query = ' from(bucket:"cloud-bucket")\
-    |> range(start: -1h)\
+    |> range(start: -15m)\
     |> filter(fn:(r) => r._measurement == "CLSeoGwang25HO")\
     |> filter(fn:(r) => r._field == "Weight" )'
     #|> range(start: -2mo)
@@ -76,7 +77,7 @@ def pull_mssql():
     # 접속 유저 패스워드
     password = Variable.get("MS_PASSWORD")
     #쿼리
-    query = text("SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MI,-60,GETDATE())")
+    query = text("SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MI,-15,GETDATE())")
     # "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MONTH,-1,GETDATE())"
     #한시간 단위로 pull -> "SELECT *,DATEADD(MI,-60,GETDATE()) from shot_data WITH(NOLOCK)"
     # MSSQL 접속
@@ -124,6 +125,24 @@ def pull_mssql():
     except:
         print("mongo connection failed")
 
+def wait_kafka():
+    time.sleep(60)
+
+def pull_transform():
+    mongoClient = MongoClient()
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+
+
+    db_test = client['coops2022']
+    collection_test1 = db_test['molding_data']
+    try:
+        df = pd.DataFrame(list(collection_aug.find()))
+    except:
+        print("mongo connection failed")
+     
+    print(df) 
+
 
 # define DAG with 'with' phase
 with DAG(
@@ -143,6 +162,14 @@ with DAG(
 #    retry_delay=timedelta(minutes=5), # 재시도하는 시간 간격은 5분입니다.
 #)
 
+    sleep_task = PythonOperator(
+        task_id="sleep 60s",
+        python_callable=wait_kafka,
+        depends_on_past=True,
+        owner="coops2",
+        retries=3,
+        retry_delay=timedelta(minutes=1),
+    )
 
     t1 = PythonOperator(
         task_id="pull_influx",
@@ -161,6 +188,19 @@ with DAG(
         retries=3,
         retry_delay=timedelta(minutes=1),
     )
+    t3 = PythonOperator(
+        task_id="pull_transform",
+        python_callable=pull_transform,
+        depends_on_past=True,
+        owner="coops2",
+        retries=3,
+        retry_delay=timedelta(minutes=1),
+    )
+    
+    
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
-    t2 >> t1
+    
+    t2 >> t3 
+    t1 >> t3 
+    t3 >> sleep_task
