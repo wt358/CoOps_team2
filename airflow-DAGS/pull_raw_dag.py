@@ -141,7 +141,76 @@ def pull_transform():
     except:
         print("mongo connection failed")
      
-    print(df) 
+    print(df)
+    df.drop(columns={'Barrel_Temperature_1',
+        'Barrel_Temperature_2',
+        'Barrel_Temperature_3',
+        'Barrel_Temperature_4',
+        'Barrel_Temperature_5',
+        'Barrel_Temperature_6',
+        'Barrel_Temperature_7',
+        'Max_Injection_Speed',
+        'Max_Injection_Pressure',
+        'Max_Screw_RPM',
+        'Max_Switch_Over_Pressure',
+        'Max_Back_Pressure',
+        'Clamp_open_time',
+        'Mold_Temperature_1',
+        'Mold_Temperature_2',
+        'Mold_Temperature_3',
+        'Mold_Temperature_4',
+        'Mold_Temperature_5',
+        'Mold_Temperature_6',
+        'Mold_Temperature_7',
+        'Mold_Temperature_8',
+        'Mold_Temperature_9',
+        'Mold_Temperature_10',
+        'Mold_Temperature_11',
+        'Mold_Temperature_12',
+        'Hopper_Temperature',
+        'Cavity',
+        'NGmark',
+        '_id',},inplace=True)
+    df=df[df['idx']!='idx']
+    print(df.shape)
+    print(df.columns)
+    print(df)
+
+    '''
+    moldset_labeled_9000R=df[df.Additional_Info_1=='09520 9000R']
+    print(moldset_labeled_9000R.head())
+    moldset_labeled_9000R=moldset_labeled_9000R.reset_index(drop=True)
+    print(moldset_labeled_9000R.head())
+    print(len(moldset_labeled_9000R))
+    '''
+    mongoClient = MongoClient()
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+
+    db_test = client['coops2022_etl']
+    collection_aug=db_test['etl_data']
+    data=df.to_dict('records')
+    # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
+    try:
+        isData = collection_aug.find_one()
+        if len(isData) !=0:
+            print("collection is not empty")
+            collection_aug.delete_many({})
+        try:
+            result = collection_aug.insert_many(data,ordered=False)
+        except Exception as e:
+            print("mongo connection failed", e)
+    except:
+        print("there is no collection")
+        try:
+            result = collection_aug.insert_many(data,ordered=False)
+        except Exception as e:
+            print("mongo connection failed", e)
+    
+    
+    print("hello")
+
+    
 
 
 # define DAG with 'with' phase
@@ -201,4 +270,5 @@ with DAG(
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
     
-    [t2,t1] >> t3 >> sleep_task
+    [t2,t1] >> t3 
+    t3 >> sleep_task
