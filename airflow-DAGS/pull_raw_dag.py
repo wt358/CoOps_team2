@@ -269,9 +269,10 @@ with DAG(
         retry_delay=timedelta(minutes=1),
     )
     
+    dummy1 = DummyOperator(task_id="path1")
     
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
     
-    [t1,t2] >> t3 
+    dummy1 >> [t1,t2] >> t3 
     t3 >> sleep_task
