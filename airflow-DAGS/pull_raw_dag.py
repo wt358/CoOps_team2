@@ -77,7 +77,7 @@ def pull_mssql():
     # 접속 유저 패스워드
     password = Variable.get("MS_PASSWORD")
     #쿼리
-    query = text("SELECT DISTINCT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MI,-15,GETDATE())")
+    query = text("SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MI,-15,GETDATE())")
     # "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MONTH,-1,GETDATE())"
     #한시간 단위로 pull -> "SELECT *,DATEADD(MI,-60,GETDATE()) from shot_data WITH(NOLOCK)"
     # MSSQL 접속
@@ -142,6 +142,9 @@ def pull_transform():
         print("mongo connection failed")
      
     print(df)
+    df.drop(columns={'_id'},inplace=True)
+
+    df=df['idx'].drop_duplicates()
     df.drop(columns={'Barrel_Temperature_1',
         'Barrel_Temperature_2',
         'Barrel_Temperature_3',
@@ -170,7 +173,7 @@ def pull_transform():
         'Hopper_Temperature',
         'Cavity',
         'NGmark',
-        '_id',},inplace=True)
+        },inplace=True)
     df=df[df['idx']!='idx']
     print(df.shape)
     print(df.columns)
