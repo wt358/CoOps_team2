@@ -311,6 +311,7 @@ def pull_transform():
     for message in consumer:
         message = message.value
         l.append(loads(message['payload'])['fullDocument'])
+    print(l)
     df = pd.DataFrame(l[1:])
 
     print(df)
@@ -345,6 +346,7 @@ def pull_transform():
         'Cavity',
         'NGmark',
         '_id',},inplace=True)
+    df=df[df['idx']=='idx']
     print(df.shape)
     print(df.columns)
     print(df)
@@ -398,10 +400,13 @@ def iqr_mds_gan():
     except:
         print("mongo connection failed")
         return False
+    df.drop(columns={'_id',
+        },inplace=True)
 
     #IQR
     print(df)
     print(df.dtypes)
+    
     df=df.reset_index(drop=True)
     section=df
     section.iloc[:,5:17]=section.iloc[:,5:17].apply(pd.to_numeric,errors='coerce')
@@ -528,7 +533,7 @@ def iqr_mds_gan():
     y_train = y_train.reshape(-1,1)
     pos_index = np.where(y_train==1)[0]
     neg_index = np.where(y_train==0)[0]
-    gan.train(X_train, y_train, pos_index, neg_index, epochs=5000)#원래 epochs= 5000
+    gan.train(X_train, y_train, pos_index, neg_index, epochs=50)#원래 epochs= 5000
 
     print(df.shape)
     print(X_train.shape)
