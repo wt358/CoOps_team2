@@ -163,7 +163,7 @@ with DAG(
 #)
 
     sleep_task = PythonOperator(
-        task_id="sleep 60s",
+        task_id="sleep_60s",
         python_callable=wait_kafka,
         depends_on_past=True,
         owner="coops2",
