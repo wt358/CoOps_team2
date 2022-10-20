@@ -346,7 +346,7 @@ def pull_transform():
         'Cavity',
         'NGmark',
         '_id',},inplace=True)
-    df=df[df['idx']=='idx']
+    df=df[df['idx']!='idx']
     print(df.shape)
     print(df.columns)
     print(df)
