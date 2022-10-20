@@ -296,7 +296,7 @@ def pull_transform():
     now = datetime.now()
     curr_time = now.strftime("%Y-%m-%d_%H:%M:%S")
 
-    consumer = KafkaConsumer('raw.coops2022.molding_data',
+    consumer = KafkaConsumer('etl.coops2022_etl.etl_data',
             group_id=f'airflow_{curr_time}',
             bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],
             value_deserializer=lambda x: loads(x.decode('utf-8')),
@@ -314,35 +314,6 @@ def pull_transform():
     df = pd.DataFrame(l)
     print(df)
     # dataframe transform
-    df.drop(columns={'Barrel_Temperature_1',
-        'Barrel_Temperature_2',
-        'Barrel_Temperature_3',
-        'Barrel_Temperature_4',
-        'Barrel_Temperature_5',
-        'Barrel_Temperature_6',
-        'Barrel_Temperature_7',
-        'Max_Injection_Speed',
-        'Max_Injection_Pressure',
-        'Max_Screw_RPM',
-        'Max_Switch_Over_Pressure',
-        'Max_Back_Pressure',
-        'Clamp_open_time',
-        'Mold_Temperature_1',
-        'Mold_Temperature_2',
-        'Mold_Temperature_3',
-        'Mold_Temperature_4',
-        'Mold_Temperature_5',
-        'Mold_Temperature_6',
-        'Mold_Temperature_7',
-        'Mold_Temperature_8',
-        'Mold_Temperature_9',
-        'Mold_Temperature_10',
-        'Mold_Temperature_11',
-        'Mold_Temperature_12',
-        'Hopper_Temperature',
-        'Cavity',
-        'NGmark',
-        '_id',},inplace=True)
     df=df[df['idx']!='idx']
     print(df.shape)
     print(df.columns)
@@ -354,7 +325,6 @@ def pull_transform():
     moldset_labeled_9000R=moldset_labeled_9000R.reset_index(drop=True)
     print(moldset_labeled_9000R.head())
     print(len(moldset_labeled_9000R))
-    '''
     mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
@@ -378,6 +348,7 @@ def pull_transform():
             result = collection_aug.insert_many(data,ordered=False)
         except Exception as e:
             print("mongo connection failed", e)
+    '''
     print("hello")
 
 
@@ -973,6 +944,9 @@ with DAG(
             )
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
+    t0
+    '''
     t0 >> t1
     t1 >> t2
     t1 >> t3
+    '''
