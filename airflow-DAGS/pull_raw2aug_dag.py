@@ -292,7 +292,7 @@ def customize(dataframe,mds_matrix):
     result = pd.DataFrame(pd.concat([dataframe,answer], axis = 1))       
     return result
 
-def pull_transform():
+def iqr_mds_gan():
     now = datetime.now()
     curr_time = now.strftime("%Y-%m-%d_%H:%M:%S")
 
@@ -319,55 +319,6 @@ def pull_transform():
     print(df.columns)
     print(df)
 
-    '''
-    moldset_labeled_9000R=df[df.Additional_Info_1=='09520 9000R']
-    print(moldset_labeled_9000R.head())
-    moldset_labeled_9000R=moldset_labeled_9000R.reset_index(drop=True)
-    print(moldset_labeled_9000R.head())
-    print(len(moldset_labeled_9000R))
-    mongoClient = MongoClient()
-    host = Variable.get("MONGO_URL_SECRET")
-    client = MongoClient(host)
-
-    db_test = client['coops2022_etl']
-    collection_aug=db_test['etl_data']
-    data=df.to_dict('records')
-    # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
-    try:
-        isData = collection_aug.find_one()
-        if len(isData) !=0:
-            print("collection is not empty")
-            collection_aug.delete_many({})
-        try:
-            result = collection_aug.insert_many(data,ordered=False)
-        except Exception as e:
-            print("mongo connection failed", e)
-    except:
-        print("there is no collection")
-        try:
-            result = collection_aug.insert_many(data,ordered=False)
-        except Exception as e:
-            print("mongo connection failed", e)
-    '''
-    print("hello")
-
-
-
-def iqr_mds_gan():
-    
-    mongoClient = MongoClient()
-    host = Variable.get("MONGO_URL_SECRET")
-    client = MongoClient(host)
-    
-    db_test = client['coops2022_etl']
-    collection_aug=db_test['etl_data']
-    
-    try:
-        df = pd.DataFrame(list(collection_aug.find()))
-        
-    except:
-        print("mongo connection failed")
-        return False
     df.drop(columns={'_id',
         },inplace=True)
 
@@ -909,14 +860,6 @@ with DAG(
 #    retry_delay=timedelta(minutes=5), # 재시도하는 시간 간격은 5분입니다.
 #)
 
-    t0 = PythonOperator(
-            task_id="pull_transform",
-            python_callable=pull_transform,
-            depends_on_past=True,
-            owner="coops2",
-            retries=0,
-            retry_delay=timedelta(minutes=1),
-            )
 
     t1 = PythonOperator(
             task_id="iqr_mds_gan",
@@ -944,9 +887,5 @@ with DAG(
             )
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
-    t0
-    '''
-    t0 >> t1
     t1 >> t2
     t1 >> t3
-    '''
