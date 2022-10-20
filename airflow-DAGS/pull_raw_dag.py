@@ -144,7 +144,7 @@ def pull_transform():
     print(df)
     df.drop(columns={'_id'},inplace=True)
 
-    df=df['idx'].drop_duplicates()
+    df=df.drop_duplicates(subset=["idx"])
     df.drop(columns={'Barrel_Temperature_1',
         'Barrel_Temperature_2',
         'Barrel_Temperature_3',
