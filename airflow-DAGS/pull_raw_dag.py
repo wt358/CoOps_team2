@@ -149,7 +149,7 @@ with DAG(
     dag_id="pull_raw_dag", # DAG의 식별자용 아이디입니다.
     description="pull raw data from local DBs", # DAG에 대해 설명합니다.
     start_date=days_ago(2), # DAG 정의 기준 2일 전부터 시작합니다.
-    schedule_interval=timedelta(days=1), # 매일 00:00에 실행합니다.
+    schedule_interval=timedelta(minutes=15), # 매일 00:00에 실행합니다.
     tags=["my_dags"],
     ) as dag:
 # define the tasks
@@ -201,6 +201,4 @@ with DAG(
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
     
-    t2 >> t3 
-    t1 >> t3 
-    t3 >> sleep_task
+    [t2,t1] >> t3 >> sleep_task
