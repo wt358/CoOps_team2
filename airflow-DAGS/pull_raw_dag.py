@@ -142,7 +142,7 @@ def pull_transform():
     collection_test1 = db_test['molding_data']
     try:
         df = pd.DataFrame(list(collection_test1.find()))
-    except:
+    except Exception as e: 
         print("mongo connection failed")
      
     print(df)
@@ -201,10 +201,12 @@ def pull_transform():
     try:
         for row in data:
             print(row)
-            print(row['idx'])
-            result = collection_aug.update({'idx':row['idx']},row,upsert=True)
-    except:
+            uniq=row['idx']
+            del row['idx']
+            result = collection_aug.update({'idx':uniq},row,upsert=True)
+    except Exception as e: 
         print("mongo connection failed")
+        print(e)
     
     print("hello")
 
