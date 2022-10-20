@@ -77,7 +77,7 @@ def pull_mssql():
     # 접속 유저 패스워드
     password = Variable.get("MS_PASSWORD")
     #쿼리
-    query = text("SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MI,-15,GETDATE())")
+    query = text("SELECT DISTINCT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MI,-15,GETDATE())")
     # "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MONTH,-1,GETDATE())"
     #한시간 단위로 pull -> "SELECT *,DATEADD(MI,-60,GETDATE()) from shot_data WITH(NOLOCK)"
     # MSSQL 접속
@@ -270,5 +270,5 @@ with DAG(
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
     
-    [t2,t1] >> t3 
+    [t1,t2] >> t3 
     t3 >> sleep_task
