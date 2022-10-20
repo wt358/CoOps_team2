@@ -137,7 +137,7 @@ def pull_transform():
     db_test = client['coops2022']
     collection_test1 = db_test['molding_data']
     try:
-        df = pd.DataFrame(list(collection_aug.find()))
+        df = pd.DataFrame(list(collection_test1.find()))
     except:
         print("mongo connection failed")
      
@@ -167,7 +167,7 @@ with DAG(
         python_callable=wait_kafka,
         depends_on_past=True,
         owner="coops2",
-        retries=3,
+        retries=0,
         retry_delay=timedelta(minutes=1),
     )
 
@@ -176,7 +176,7 @@ with DAG(
         python_callable=pull_influx,
         depends_on_past=True,
         owner="coops2",
-        retries=3,
+        retries=0,
         retry_delay=timedelta(minutes=1),
     )
 
@@ -185,7 +185,7 @@ with DAG(
         python_callable=pull_mssql,
         depends_on_past=True,
         owner="coops2",
-        retries=3,
+        retries=0,
         retry_delay=timedelta(minutes=1),
     )
     t3 = PythonOperator(
@@ -193,7 +193,7 @@ with DAG(
         python_callable=pull_transform,
         depends_on_past=True,
         owner="coops2",
-        retries=3,
+        retries=0,
         retry_delay=timedelta(minutes=1),
     )
     
