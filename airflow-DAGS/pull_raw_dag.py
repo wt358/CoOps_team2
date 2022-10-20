@@ -5,6 +5,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
 from airflow.models.variable import Variable
+from airflow.utils.trigger_rule import TriggerRule
 
 
 import influxdb_client
@@ -271,9 +272,11 @@ with DAG(
     )
     
     dummy1 = DummyOperator(task_id="path1")
+    dummy2 = DummyOperator(task_id="path2",trigger_rule=TriggerRule.NONE_FAILED)
     
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
     
-    dummy1 >> [t1,t2] >> t3 
-    t3 >> sleep_task
+    dummy1 >> [t1,t2] >> dummy2
+
+    dummy2 >> t3 >> sleep_task
