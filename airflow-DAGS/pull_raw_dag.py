@@ -14,6 +14,8 @@ from pymongo import MongoClient
 import pandas as pd
 import os
 
+import time
+
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
