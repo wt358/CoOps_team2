@@ -222,33 +222,13 @@ def model_inference():
     scored['Loss_mae'] = np.mean(np.abs(X_pred-Xtest), axis = 1)
     scored['Threshold'] = 0.1
     scored['Anomaly'] = scored['Loss_mae'] > scored['Threshold']
-    scored['label'] = labled['label']
     print(scored.head())
 
     y_test = scored['Anomaly']
     print(y_test.unique())
 
-    print(scored[scored['Anomaly']==True].label.count())
-    print(scored.label.unique())
 
-    outliers = scored['label']
-    outliers = outliers.fillna(0)
-    print(outliers.unique())
-
-    outliers = outliers.to_numpy()
-    y_test = y_test.to_numpy()
     print(y_test)
-    cm = confusion_matrix(y_test, outliers)
-    (tn, fp, fn, tp) = cm.flatten()
-
-
-    print(f"""{cm}
-    % of transactions labeled as fraud that were correct (precision): {tp}/({fp}+{tp}) = {tp/(fp+tp):.2%}
-    % of fraudulent transactions were caught succesfully (recall):    {tp}/({fn}+{tp}) = {tp/(fn+tp):.2%}
-    % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
-
-    print(roc_auc_score(outliers, y_test))
-
 
     print("hello inference")
 
