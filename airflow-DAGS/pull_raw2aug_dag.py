@@ -322,12 +322,12 @@ def iqr_mds_gan():
     df.drop(columns={'_id',
         },inplace=True)
 
-    df=df['idx', 'Machine_Name','TimeStamp','Additional_Info_1', 'Additional_Info_2',
+    df=df[['idx', 'Machine_Name','TimeStamp','Additional_Info_1', 'Additional_Info_2',
             'Average_Back_Pressure', 'Average_Screw_RPM', 'Clamp_Close_Time',
             'Clamp_Open_Position', 'Cushion_Position', 'Cycle_Time', 'Filling_Time',
             'Injection_Time', 'Plasticizing_Position',
             'Plasticizing_Time', 'Shot_Number', 'Switch_Over_Position',
-            ]
+            ]]
     #IQR
     print(df)
     print(df.dtypes)
