@@ -319,6 +319,7 @@ def iqr_mds_gan():
     print(df.columns)
     print(df)
 
+    df=df[df['Additional_Info_1'].str.contains("9000a")]
     df.drop(columns={'_id',
         },inplace=True)
 
