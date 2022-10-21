@@ -172,23 +172,37 @@ def model_inference():
         Testing  (rows, cols) = {X_test.shape}""")
     
     
+    mongoClient = MongoClient()
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+    db_model = client['coops2022_model']
+    fs = gridfs.GridFS(db_model)
+    collection_model=db_model['mongo_LSTM_autoencoder']
+    
+    model_name = 'scaler_data'
+    model_fpath = f'{model_name}.joblib'
+    result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
+    print(result)
+    if len(list(result.clone()))==0:
+        print("empty")
+        scaler = MinMaxScaler()
+        return 1
+    else:
+        print("not empty")
+        file_id = str(result[0]['file_id'])
+        scaler = LoadModel(mongo_id=file_id).clf
+    
     # transforming data from the time domain to the frequency domain using fast Fourier transform
     test_fft = np.fft.fft(X_test)
     
-    scaler = MinMaxScaler()
-    X_test = scaler.fit_transform(X_test)# 나중에 scaler도 pull raw 2 aug에서 모델을 저장해서 놓고 여기서는 그 모델을 불러와서 transform(X_test)만 해야함.
+    X_test = scaler.transform(X_test)# 나중에 scaler도 pull raw 2 aug에서 모델을 저장해서 놓고 여기서는 그 모델을 불러와서 transform(X_test)만 해야함.
     scaler_filename = "scaler_data"
     joblib.dump(scaler, scaler_filename)
 
     X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
     print("Test data shape:", X_test.shape)
     #model load    
-    mongoClient = MongoClient()
-    host = Variable.get("MONGO_URL_SECRET")
-    client = MongoClient(host)
     
-    db_model = client['coops2022_model']
-    fs = gridfs.GridFS(db_model)
     collection_model=db_model['mongo_LSTM_autoencoder']
     
     model_name = 'LSTM_autoencoder'
