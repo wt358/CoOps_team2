@@ -42,7 +42,7 @@ def pull_influx():
 
     #
     query = ' from(bucket:"cloud-bucket")\
-    |> range(start: -15m)\
+    |> range(start: -4y)\
     |> filter(fn:(r) => r._measurement == "CLSeoGwang25HO")\
     |> filter(fn:(r) => r._field == "Weight" )'
     #|> range(start: -2mo)
@@ -82,7 +82,8 @@ def pull_mssql():
     # 접속 유저 패스워드
     password = Variable.get("MS_PASSWORD")
     #쿼리
-    query = text("SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MI,-15,GETDATE())")
+    #query = text("SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MI,-15,GETDATE())")
+    query = text("SELECT * from shot_data WITH(NOLOCK) where TimeStamp < DATEADD(MI,+15,GETDATE())")
     # "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(MONTH,-1,GETDATE())"
     #한시간 단위로 pull -> "SELECT *,DATEADD(MI,-60,GETDATE()) from shot_data WITH(NOLOCK)"
     # MSSQL 접속
@@ -143,7 +144,7 @@ def pull_transform():
     collection_test1 = db_test['molding_data']
     now = datetime.now()
     start = now - timedelta(days=7)
-    start1 = now - timedelta(days=14)
+    start1 = now - timedelta(years=4)
     print(start)
     query={
             'TimeStamp':{
