@@ -182,7 +182,7 @@ def pull_transform():
     print(df.shape)
     print(df.columns)
     print(df)
-
+    df=df.head()
     '''
     moldset_labeled_9000R=df[df.Additional_Info_1=='09520 9000R']
     print(moldset_labeled_9000R.head())
@@ -200,7 +200,6 @@ def pull_transform():
     # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
     try:
         for row in data:
-            print(row)
             uniq=row['idx']
             del row['idx']
             result = collection_aug.update_one({'idx':uniq},{"$set":row},upsert=True)
