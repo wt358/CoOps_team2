@@ -142,9 +142,11 @@ def pull_transform():
     db_test = client['coops2022']
     collection_test1 = db_test['molding_data']
     now = datetime.now()
+    start = now - timedelta(days=30)
+    print(start)
     query={
             "TimeStamp":{
-                "$gt":now - timedelta(days=7)
+                "$gt":start
                 }
             }
     try:
