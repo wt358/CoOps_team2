@@ -70,6 +70,23 @@ from sqlalchemy.sql import text
 
 from json import loads
 import random as rn
+
+np.random.seed(34)
+
+# manual parameters
+RANDOM_SEED = 42
+TRAINING_SAMPLE = 50000
+VALIDATE_SIZE = 0.2
+
+# setting random seeds for libraries to ensure reproducibility
+np.random.seed(RANDOM_SEED)
+rn.seed(RANDOM_SEED)
+tf.random.set_seed(RANDOM_SEED)
+
+rn.seed(10)
+
+tf.random.set_seed(10)
+
 # define funcs
 def model_inference():
     #data consumer
@@ -77,7 +94,7 @@ def model_inference():
     curr_time = now.strftime("%Y-%m-%d_%H:%M:%S")
 
     consumer = KafkaConsumer('test.coops2022_etl.etl_data',
-            group_id=f'Inference_model',
+            group_id=f'Inference_model_{curr_time}',
             bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],
             value_deserializer=lambda x: loads(x.decode('utf-8')),
             auto_offset_reset='earliest',
@@ -108,6 +125,97 @@ def model_inference():
     print(df)
 
     
+    labled = pd.DataFrame(df, columns = ['Filling_Time','Plasticizing_Time','Cycle_Time','Cushion_Position'])
+
+
+    labled.columns = map(str.lower,labled.columns)
+
+    print(labled.head())
+
+    X_test = labled.sample(frac=1)
+    test = X_test 
+    X_test=X_test.values
+    print(f"""Shape of the datasets:
+        training (rows, cols) = {X_train.shape}
+        Testing  (rows, cols) = {X_test.shape}""")
+    
+    
+    # transforming data from the time domain to the frequency domain using fast Fourier transform
+    test_fft = np.fft.fft(X_test)
+    
+    scaler = MinMaxScaler()
+    X_test = scaler.transform(X_test)
+    scaler_filename = "scaler_data"
+    joblib.dump(scaler, scaler_filename)
+
+    X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
+    print("Test data shape:", X_test.shape)
+    #model load    
+    mongoClient = MongoClient()
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+    
+    db_model = client['coops2022_model']
+    fs = gridfs.GridFS(db_model)
+    collection_model=db_model['mongo_LSTM_autoencoder']
+    
+    model_name = 'LSTM_autoencoder'
+    model_fpath = f'{model_name}.joblib'
+    result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
+    
+    print(result)
+    if len(list(result.clone()))==0:
+        print("empty")
+        return 1
+    else:
+        print("not empty")
+        model = LoadModel(mongo_id=file_id).clf
+
+    joblib.dump(model, model_fpath)
+    
+    model.compile(optimizer='adam', loss='mae')
+    
+    # 이상값은 -1으로 나타낸다.
+    print(model.summary())
+
+
+    X_pred = model.predict(X_test)
+    X_pred = X_pred.reshape(X_pred.shape[0], X_pred.shape[2])
+    X_pred = pd.DataFrame(X_pred, columns=test.columns)
+    X_pred.index = test.index
+    
+    scored = pd.DataFrame(index=test.index)
+    Xtest = X_test.reshape(X_test.shape[0], X_test.shape[2])
+    scored['Loss_mae'] = np.mean(np.abs(X_pred-Xtest), axis = 1)
+    scored['Threshold'] = 0.1
+    scored['Anomaly'] = scored['Loss_mae'] > scored['Threshold']
+    scored['label'] = labled['label']
+    print(scored.head())
+
+    y_test = scored['Anomaly']
+    print(y_test.unique())
+
+    print(scored[scored['Anomaly']==True].label.count())
+    print(scored.label.unique())
+
+    outliers = scored['label']
+    outliers = outliers.fillna(0)
+    print(outliers.unique())
+
+    outliers = outliers.to_numpy()
+    y_test = y_test.to_numpy()
+    print(y_test)
+    cm = confusion_matrix(y_test, outliers)
+    (tn, fp, fn, tp) = cm.flatten()
+
+
+    print(f"""{cm}
+    % of transactions labeled as fraud that were correct (precision): {tp}/({fp}+{tp}) = {tp/(fp+tp):.2%}
+    % of fraudulent transactions were caught succesfully (recall):    {tp}/({fn}+{tp}) = {tp/(fn+tp):.2%}
+    % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
+
+    print(roc_auc_score(outliers, y_test))
+
 
     print("hello inference")
 

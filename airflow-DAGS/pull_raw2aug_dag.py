@@ -704,6 +704,7 @@ def lstm_autoencoder():
     X_test = clean.iloc[:TRAINING_SAMPLE].append(fraud).sample(frac=1)
     test = clean.iloc[:TRAINING_SAMPLE].append(fraud).sample(frac=1)
     test.drop('label', axis = 1, inplace = True)
+    # 여기 test set이랑 train set 겹침
 
     print(f"""Our testing set is composed as follows:
 
@@ -796,7 +797,6 @@ def lstm_autoencoder():
     print(y_test.unique())
 
     print(scored[scored['Anomaly']==True].label.count())
-
     print(scored.label.unique())
 
     outliers = scored['label']
