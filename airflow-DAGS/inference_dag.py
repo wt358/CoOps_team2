@@ -201,6 +201,7 @@ def model_inference():
         return 1
     else:
         print("not empty")
+        file_id = str(result[0]['file_id'])
         model = LoadModel(mongo_id=file_id).clf
 
     joblib.dump(model, model_fpath)
