@@ -75,7 +75,7 @@ def model_inference():
     now = datetime.now()
     curr_time = now.strftime("%Y-%m-%d_%H:%M:%S")
 
-    consumer = KafkaConsumer('etl.coops2022_etl.etl_data',
+    consumer = KafkaConsumer('test.coops2022_etl.etl_data',
             group_id=f'Inference_model',
             bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],
             value_deserializer=lambda x: loads(x.decode('utf-8')),
