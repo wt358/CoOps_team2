@@ -144,7 +144,7 @@ def pull_transform():
     now = datetime.now()
     query={
             "TimeStamp":{
-                "$lte":now - timedelta(hours=1)
+                "$gt":now - timedelta(days=7)
                 }
             }
     try:
@@ -153,6 +153,9 @@ def pull_transform():
         print("mongo connection failed")
      
     print(df)
+    if df.empty:
+        print("empty")
+        return
     df.drop(columns={'_id'},inplace=True)
 
     df=df.drop_duplicates(subset=["idx"])
