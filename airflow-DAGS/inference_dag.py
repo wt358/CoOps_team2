@@ -136,7 +136,6 @@ def model_inference():
     test = X_test 
     X_test=X_test.values
     print(f"""Shape of the datasets:
-        training (rows, cols) = {X_train.shape}
         Testing  (rows, cols) = {X_test.shape}""")
     
     
