@@ -146,7 +146,7 @@ def pull_transform():
     print(start)
     query={
             "TimeStamp":{
-                "$gt":start
+                "$lt":start
                 }
             }
     try:
