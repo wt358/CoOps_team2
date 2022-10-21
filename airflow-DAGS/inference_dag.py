@@ -177,7 +177,7 @@ def model_inference():
     client = MongoClient(host)
     db_model = client['coops2022_model']
     fs = gridfs.GridFS(db_model)
-    collection_model=db_model['mongo_LSTM_autoencoder']
+    collection_model=db_model['mongo_scaler_lstm']
     
     model_name = 'scaler_data'
     model_fpath = f'{model_name}.joblib'
@@ -186,7 +186,6 @@ def model_inference():
     if len(list(result.clone()))==0:
         print("empty")
         scaler = MinMaxScaler()
-        return 1
     else:
         print("not empty")
         file_id = str(result[0]['file_id'])
