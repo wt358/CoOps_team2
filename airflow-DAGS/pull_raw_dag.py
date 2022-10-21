@@ -1,4 +1,5 @@
 from datetime import timedelta
+from datetime import datetime
 from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.bash import BashOperator
