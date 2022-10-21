@@ -142,7 +142,7 @@ def pull_transform():
     db_test = client['coops2022']
     collection_test1 = db_test['molding_data']
     now = datetime.now()
-    start = now - timedelta(days=30)
+    start = now - timedelta(days=14)
     print(start)
     query={
             'TimeStamp':{
@@ -195,7 +195,6 @@ def pull_transform():
     print(df.shape)
     print(df.columns)
     print(df)
-    df=df.head()
     '''
     moldset_labeled_9000R=df[df.Additional_Info_1=='09520 9000R']
     print(moldset_labeled_9000R.head())
