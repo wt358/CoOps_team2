@@ -296,7 +296,7 @@ def iqr_mds_gan():
     now = datetime.now()
     curr_time = now.strftime("%Y-%m-%d_%H:%M:%S")
 
-    consumer = KafkaConsumer('etl.coops2022_etl.etl_data',
+    consumer = KafkaConsumer('test.coops2022_etl.etl_data',
             group_id=f'airflow_{curr_time}',
             bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],
             value_deserializer=lambda x: loads(x.decode('utf-8')),
@@ -725,16 +725,37 @@ def lstm_autoencoder():
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
     scaler_filename = "scaler_data"
-    joblib.dump(scaler, scaler_filename)
 
     # reshape inputs for LSTM [samples, timesteps, features]
     X_train = X_train.reshape(X_train.shape[0], 1, X_train.shape[1])
     print("Training data shape:", X_train.shape)
     X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
     print("Test data shape:", X_test.shape)
-
+   
+    #scaler and lstm autoencoder model save
     db_model = client['coops2022_model']
     fs = gridfs.GridFS(db_model)
+    collection_model=db_model['mongo_scaler_lstm']
+   
+    model_fpath = f'{scaler_filename}.joblib'
+    joblib.dump(scaler, model_fpath)
+    
+    # save the local file to mongodb
+    with open(model_fpath, 'rb') as infile:
+        file_id = fs.put(
+                infile.read(), 
+                model_name=scaler_filename
+                )
+    # insert the model status info to ModelStatus collection 
+    params = {
+            'model_name': scaler_filename,
+            'file_id': file_id,
+            'inserted_time': datetime.now()
+            }
+    result = collection_model.insert_one(params)
+
+
+    # load the model
     collection_model=db_model['mongo_LSTM_autoencoder']
     
     model_name = 'LSTM_autoencoder'
@@ -748,7 +769,6 @@ def lstm_autoencoder():
     else:
         print("not empty")
         file_id = str(result[0]['file_id'])
-
         model = LoadModel(mongo_id=file_id).clf
     
     joblib.dump(model, model_fpath)
