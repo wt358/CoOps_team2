@@ -23,7 +23,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 
 # define funcs
-
+# 이제 여기서 15분마다 실행되게 하고, query find 할때 20분 레인지
 def pull_influx():
     bucket = Variable.get("INFLUX_BUCKET")
     org = Variable.get("INFLUX_ORG")
@@ -142,11 +142,12 @@ def pull_transform():
     db_test = client['coops2022']
     collection_test1 = db_test['molding_data']
     now = datetime.now()
-    start = now - timedelta(days=14)
+    start = now - timedelta(days=7)
+    start1 = now - timedelta(days=14)
     print(start)
     query={
             'TimeStamp':{
-                #'$gt':f'{start}',
+                '$gt':f'{start}',
                 '$lt':f'{now}'
                 }
             }
