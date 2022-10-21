@@ -140,8 +140,14 @@ def pull_transform():
 
     db_test = client['coops2022']
     collection_test1 = db_test['molding_data']
+    now = datetime.now()
+    query={
+            "TimeStamp":{
+                "$gt":now - timedelta(hours=1)
+                }
+            }
     try:
-        df = pd.DataFrame(list(collection_test1.find()))
+        df = pd.DataFrame(list(collection_test1.find(query)))
     except Exception as e: 
         print("mongo connection failed")
      
