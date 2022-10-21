@@ -144,7 +144,7 @@ def pull_transform():
     now = datetime.now()
     query={
             "TimeStamp":{
-                "$gt":now - timedelta(hours=1)
+                "$lte":now - timedelta(hours=1)
                 }
             }
     try:
