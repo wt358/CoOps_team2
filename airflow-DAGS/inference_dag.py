@@ -243,6 +243,16 @@ def model_inference():
 
     print(y_test)
 
+    db_test = client['coops2022_result']
+    collection = db_test[f'result_{model_name}_{curr_time}']
+    data=scored.to_dict('records')
+
+    try:
+        collection.insert_many(data,ordered=False)
+    except Exception as e:
+        print("mongo connection failer",e)
+
+
     print("hello inference")
 
 
