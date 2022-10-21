@@ -145,8 +145,9 @@ def pull_transform():
     start = now - timedelta(days=30)
     print(start)
     query={
-            "TimeStamp":{
-                $gt:start
+            'TimeStamp':{
+                '$gt':f'{start}',
+                '$lt':f'{now}'
                 }
             }
     try:
