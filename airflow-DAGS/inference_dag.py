@@ -93,6 +93,9 @@ def model_inference():
         l.append(loads(message['payload'])['fullDocument'])
     df = pd.DataFrame(l)
     print(df)
+    if df.empty:
+        print("empty queue")
+        return
     # dataframe transform
     df=df[df['idx']!='idx']
     print(df.shape)
