@@ -143,7 +143,7 @@ def model_inference():
     test_fft = np.fft.fft(X_test)
     
     scaler = MinMaxScaler()
-    X_test = scaler.transform(X_test)
+    X_test = scaler.fit_transform(X_test)# 나중에 scaler도 pull raw 2 aug에서 모델을 저장해서 놓고 여기서는 그 모델을 불러와서 transform(X_test)만 해야함.
     scaler_filename = "scaler_data"
     joblib.dump(scaler, scaler_filename)
 
