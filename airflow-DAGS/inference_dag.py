@@ -202,9 +202,9 @@ def model_inference():
     print("Test data shape:", X_test.shape)
     #model load    
     
-    collection_model=db_model['mongo_LSTM_autoencoder']
-    
     model_name = 'LSTM_autoencoder'
+    collection_model=db_model[f'mongo_{model_name}']
+    
     model_fpath = f'{model_name}.joblib'
     result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
     

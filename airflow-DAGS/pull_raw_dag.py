@@ -143,7 +143,7 @@ def pull_transform():
     collection_test1 = db_test['molding_data']
     now = datetime.now()
     start = now - timedelta(days=7)
-    start1 = now - timedelta(days=35)
+    start1 = now - timedelta(days=45)
     print(start)
     query={
             'TimeStamp':{
