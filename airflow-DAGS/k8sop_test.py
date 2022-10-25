@@ -48,11 +48,11 @@ run = KubernetesPodOperator(
         task_id="kubernetespodoperator",
         name="test",
         namespace='airflow-cluster',
-        image='model-image.kr.ncr.ntruss.com/airflow-py:0.7',
+        image='nvidia/cuda:11.0.3-runtime-ubuntu20.04',
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["bash", "-cx"],
-        arguments=["echo", "10"],
+        arguments=["nvidia-smi"],
         is_delete_operator_pod=True,
         get_logs=True,
         )
