@@ -900,7 +900,6 @@ with DAG(
             owner="coops2",
             retries=0,
             retry_delay=timedelta(minutes=1),
-            executor_config = resource_config
             )
 
     t2 = PythonOperator(
