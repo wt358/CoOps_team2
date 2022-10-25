@@ -265,6 +265,7 @@ with DAG(
     start_date=days_ago(2), # DAG 정의 기준 2일 전부터 시작합니다.
     schedule_interval=timedelta(days=1), # 매일 00:00에 실행합니다.
     tags=["inference"],
+    max_active_runs=3,
     ) as dag:
 
     t1 = PythonOperator(
