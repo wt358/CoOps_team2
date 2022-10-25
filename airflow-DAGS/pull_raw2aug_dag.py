@@ -868,8 +868,6 @@ def lstm_autoencoder():
 
     print("hello auto encoder")
 
-resource_config = {"KubernetesExecutor": {"limit_nvidia.com/gpu":"1"
-    }} 
 
 
 # define DAG with 'with' phase
