@@ -868,6 +868,9 @@ def lstm_autoencoder():
 
     print("hello auto encoder")
 
+resource_config = {"KubernetesExecutor": {"limit_nvidia.com/gpu":"1"
+    }} 
+
 
 # define DAG with 'with' phase
 with DAG(
@@ -888,6 +891,7 @@ with DAG(
 #)
 
 
+
     t1 = PythonOperator(
             task_id="iqr_mds_gan",
             python_callable=iqr_mds_gan,
@@ -895,6 +899,7 @@ with DAG(
             owner="coops2",
             retries=0,
             retry_delay=timedelta(minutes=1),
+            executor_config = resource_config
             )
 
     t2 = PythonOperator(
