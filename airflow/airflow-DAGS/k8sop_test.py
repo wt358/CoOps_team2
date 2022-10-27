@@ -25,7 +25,6 @@ dag = DAG(
         default_args=task_default_args,
         schedule_interval=timedelta(days=1),
         max_active_runs=3,
-        dagrun_timeout=timedelta(minutes=10)
 )
 '''
 env_from = [
@@ -53,9 +52,10 @@ run = KubernetesPodOperator(
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["bash", "-cx"],
-        arguments=["python","gpu_py.py"],
+        arguments=["python3","gpu_py.py"],
         is_delete_operator_pod=True,
         get_logs=True,
+        startup_timeout_seconds=600,
         )
 
 start >> run
