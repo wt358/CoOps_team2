@@ -53,7 +53,7 @@ run = KubernetesPodOperator(
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["bash", "-cx"],
-        arguments=["nvidia-smi","python","from gpu_py import iqr_mds_gan","iqr_mds_gan()"],
+        arguments=["python","gpu_py.py"],
         is_delete_operator_pod=True,
         get_logs=True,
         )
