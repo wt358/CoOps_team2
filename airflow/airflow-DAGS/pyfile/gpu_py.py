@@ -31,7 +31,6 @@ import io
 
 from gridfs import GridFS
 
-print("sdfsdf")
 
 
 from imblearn.over_sampling import SMOTE
