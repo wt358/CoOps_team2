@@ -31,6 +31,7 @@ import io
 
 from gridfs import GridFS
 
+print("sdfsdf")
 
 
 from imblearn.over_sampling import SMOTE
@@ -867,7 +868,6 @@ def lstm_autoencoder():
     result = collection_model.insert_one(params)
 
     print("hello auto encoder")
-print("sdfsdf")
 if __name__ == '__main__':
     iqr_mds_gan()
     print("hello main")
