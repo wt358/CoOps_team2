@@ -1,0 +1,8 @@
+FROM apache/airflow:2.2.5-python3.8
+USER root
+COPY ./requirements.txt .
+RUN apt-get update
+RUN apt-get install -y build-essential 
+USER airflow
+# install your pip package
+RUN pip install -r requirements.txt

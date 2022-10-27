@@ -245,7 +245,8 @@ def model_inference():
 
     db_test = client['coops2022_result']
     collection = db_test[f'result_{model_name}_{curr_time}']
-    data=scored.to_dict('records')
+    #data=scored.to_dict('records')
+    data=X_pred.to_dict('records')
 
     try:
         collection.insert_many(data,ordered=False)
