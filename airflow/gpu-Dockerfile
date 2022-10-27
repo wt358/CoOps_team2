@@ -1,8 +1,10 @@
 FROM nvidia/cuda:11.0.3-runtime-ubuntu20.04 
 USER root
 COPY ./requirements.txt .
+COPY ./airflow-DAGS/pyfile/gpu_py.py .
 RUN apt-get update
 RUN apt-get install -y build-essential python3.8 python3-pip net-tools
-USER airflow
+
 # install your pip package
+USER airflow
 RUN pip install -r requirements.txt
