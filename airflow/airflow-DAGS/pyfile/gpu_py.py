@@ -874,11 +874,14 @@ def lstm_autoencoder():
 
 if __name__ == '__main__':
 
-    if sys.argv == 'iqr':
+    if sys.argv[1] == 'iqr':
+        print("entering iqr")
         iqr_mds_gan()
-    elif sys.argv == 'lstm':
+    elif sys.argv[1] == 'lstm':
+        print("entering lstm")
         lstm_autoencoder()
-    elif sys.argv == 'oc_svm':
+    elif sys.argv[1] == 'oc_svm':
+        print("entering svm")
         oc_svm()
     print("hello main")
  
