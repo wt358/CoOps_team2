@@ -44,7 +44,21 @@ env_from = [
 
 start = DummyOperator(task_id="start", dag=dag)
 
-run = KubernetesPodOperator(
+run_iqr = KubernetesPodOperator(
+        task_id="kubernetespodoperator",
+        name="test",
+        namespace='airflow-cluster',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.5',
+        image_pull_policy="Always",
+        image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
+        cmds=["python3" ],
+        arguments=["gpu_py.py", "iqr"],
+        is_delete_operator_pod=True,
+        get_logs=True,
+        startup_timeout_seconds=600,
+        )
+
+run_lstm = KubernetesPodOperator(
         task_id="kubernetespodoperator",
         name="test",
         namespace='airflow-cluster',
@@ -57,7 +71,19 @@ run = KubernetesPodOperator(
         get_logs=True,
         startup_timeout_seconds=600,
         )
-
-start >> run
+run_svm = KubernetesPodOperator(
+        task_id="kubernetespodoperator",
+        name="test",
+        namespace='airflow-cluster',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.5',
+        image_pull_policy="Always",
+        image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
+        cmds=["python3" ],
+        arguments=["gpu_py.py"],
+        is_delete_operator_pod=True,
+        get_logs=True,
+        startup_timeout_seconds=600,
+        )
+start >> run_iqr
 
 

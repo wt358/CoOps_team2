@@ -54,6 +54,7 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 import csv
 import pandas as pd
 import os
+import sys
 
 import time
 import numpy as np
@@ -869,6 +870,12 @@ def lstm_autoencoder():
 
     print("hello auto encoder")
 if __name__ == '__main__':
-    iqr_mds_gan()
+
+    if sys.argv == 'iqr':
+        iqr_mds_gan()
+    else if sys.argv == 'lstm':
+        lstm_autoencoder()
+    else if sys.argv == 'oc_svm':
+        oc_svm()
     print("hello main")
  
