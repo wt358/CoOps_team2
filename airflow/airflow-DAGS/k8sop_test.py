@@ -45,7 +45,7 @@ env_from = [
 start = DummyOperator(task_id="start", dag=dag)
 
 run_iqr = KubernetesPodOperator(
-        task_id="iqr gan pod operator",
+        task_id="iqr_gan_pod_operator",
         name="test",
         namespace='airflow-cluster',
         image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.5',
@@ -59,7 +59,7 @@ run_iqr = KubernetesPodOperator(
         )
 
 run_lstm = KubernetesPodOperator(
-        task_id="lstm pod operator",
+        task_id="lstm_pod_operator",
         name="test",
         namespace='airflow-cluster',
         image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.5',
