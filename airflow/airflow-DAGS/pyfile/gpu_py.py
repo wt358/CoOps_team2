@@ -873,9 +873,9 @@ if __name__ == '__main__':
 
     if sys.argv == 'iqr':
         iqr_mds_gan()
-    else if sys.argv == 'lstm':
+    elif sys.argv == 'lstm':
         lstm_autoencoder()
-    else if sys.argv == 'oc_svm':
+    elif sys.argv == 'oc_svm':
         oc_svm()
     print("hello main")
  
