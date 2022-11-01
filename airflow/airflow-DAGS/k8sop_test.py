@@ -23,7 +23,7 @@ dag = DAG(
         description='kubernetes pod operator',
         start_date=days_ago(2),
         default_args=task_default_args,
-        schedule_interval=timedelta(days=1),
+        schedule_interval=timedelta(days=7),
         max_active_runs=3,
 )
 '''
@@ -95,6 +95,34 @@ run_lstm = KubernetesPodOperator(
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3" ],
         arguments=["gpu_py.py", "lstm"],
+        affinity={
+            'nodeAffinity': {
+                # requiredDuringSchedulingIgnoredDuringExecution means in order
+                # for a pod to be scheduled on a node, the node must have the
+                # specified labels. However, if labels on a node change at
+                # runtime such that the affinity rules on a pod are no longer
+                # met, the pod will still continue to run on the node.
+                'requiredDuringSchedulingIgnoredDuringExecution': {
+                    'nodeSelectorTerms': [{
+                        'matchExpressions': [{
+                            # When nodepools are created in Google Kubernetes
+                            # Engine, the nodes inside of that nodepool are
+                            # automatically assigned the label
+                            # 'cloud.google.com/gke-nodepool' with the value of
+                            # the nodepool's name.
+                            'key': 'kubernetes.io/hostname',
+                            'operator': 'In',
+                            # The label key's value that pods can be scheduled
+                            # on.
+                            'values': [
+                                'gpu-node-w-1ouo',
+                                #'pool-1',
+                                ]
+                            }]
+                        }]
+                    }
+                }
+            },
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
@@ -141,7 +169,8 @@ run_svm = KubernetesPodOperator(
         get_logs=True,
         startup_timeout_seconds=600,
         )
-start >> run_svm >>run_iqr 
-#run_iqr >> run_svm,run_lstm
+after_aug = DummyOperator(task_id="Augmentation fininshed", dag=dag)
+start >> run_iqr >> after_aug 
+after_aug >> run_svm,run_lstm
 
 
