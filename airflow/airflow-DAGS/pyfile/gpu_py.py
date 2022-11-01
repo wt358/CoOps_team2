@@ -872,7 +872,7 @@ def lstm_autoencoder():
     print("hello auto encoder")
 
 
-def main():
+if __name__ == "__main__":
     print("entering main")
     
     if sys.argv[1] == 'iqr':
