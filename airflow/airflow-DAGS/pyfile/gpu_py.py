@@ -439,80 +439,80 @@ def iqr_mds_gan():
 
     print(device_lib.list_local_devices())
     print(tf.config.list_physical_devices())
-
-
-    for col in skew_cols:
-        lower_lim = abs(df[col].min())
-        normal_col = df[col].apply(lambda x: np.log10(x+lower_lim+1))
-        print(f"Skew value of {col} after log transform: {normal_col.skew()}")
     
-    scaler = StandardScaler()
-    #scaler = MinMaxScaler()
-    X = scaler.fit_transform(df.drop('Class', 1))
-    y = df['Class'].values
-    print(X.shape, y.shape)
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y)
-
-
-    gan = buidGAN(out_shape=X_train.shape[1], num_classes=2)
-    # cgan.out_shape=X_train.shape[1]
-
-    y_train = y_train.reshape(-1,1)
-    pos_index = np.where(y_train==1)[0]
-    neg_index = np.where(y_train==0)[0]
-    gan.train(X_train, y_train, pos_index, neg_index, epochs=50)#원래 epochs= 5000
-
-    print(df.shape)
-    print(X_train.shape)
+    with tf.device("/gpu:0"):
+        for col in skew_cols:
+            lower_lim = abs(df[col].min())
+            normal_col = df[col].apply(lambda x: np.log10(x+lower_lim+1))
+            print(f"Skew value of {col} after log transform: {normal_col.skew()}")
     
-    noise = np.random.normal(0, 1, (1225, 32))
-    sampled_labels = np.ones(1225).reshape(-1, 1)
+        scaler = standardscaler()
+        #scaler = minmaxscaler()
+        x = scaler.fit_transform(df.drop('class', 1))
+        y = df['class'].values
+        print(x.shape, y.shape)
 
-    gen_samples = gan.generator.predict([noise, sampled_labels])
-    gen_samples = scaler.inverse_transform(gen_samples)
-    print(gen_samples.shape)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y)
 
-    gen_df = pd.DataFrame(data = gen_samples,
-            columns = df.drop('Class',1).columns)
-    gen_df['Class'] = 1
-    print(gen_df)
 
-    Class0 = df[df['Class'] == 0 ]
-    print(Class0)
-    
-    pca = PCA(n_components = 2)
-    PC = pca.fit_transform(gen_df)
-    PCdf = pca.fit_transform(Class0)
+        gan = buidGAN(out_shape=X_train.shape[1], num_classes=2)
+        # cgan.out_shape=X_train.shape[1]
 
-    VarRatio = pca.explained_variance_ratio_
-    VarRatio = pd.DataFrame(np.round_(VarRatio,3))
+        y_train = y_train.reshape(-1,1)
+        pos_index = np.where(y_train==1)[0]
+        neg_index = np.where(y_train==0)[0]
+        gan.train(X_train, y_train, pos_index, neg_index, epochs=50)#원래 epochs= 5000
 
-    CumVarRatio    = np.cumsum(pca.explained_variance_ratio_)
-    CumVarRatio_df = pd.DataFrame(np.round_(CumVarRatio,3))
+        print(df.shape)
+        print(X_train.shape)
 
-    Result = pd.concat([VarRatio , CumVarRatio_df], axis=1)
-    print(pd.DataFrame(Result))
-    print(pd.DataFrame(PC))
+        noise = np.random.normal(0, 1, (1225, 32))
+        sampled_labels = np.ones(1225).reshape(-1, 1)
 
-    pca3 = PCA(n_components = 3)
-    PC3 = pca3.fit_transform(gen_df)
-    PC_df = pca3.fit_transform(Class0)
+        gen_samples = gan.generator.predict([noise, sampled_labels])
+        gen_samples = scaler.inverse_transform(gen_samples)
+        print(gen_samples.shape)
 
-    VarRatio3 = pca3.explained_variance_ratio_
-    VarRatio3 = pd.DataFrame(np.round_(VarRatio3,3))
+        gen_df = pd.DataFrame(data = gen_samples,
+                columns = df.drop('Class',1).columns)
+        gen_df['Class'] = 1
+        print(gen_df)
 
-    CumVarRatio3    = np.cumsum(pca3.explained_variance_ratio_)
-    CumVarRatio_df3 = pd.DataFrame(np.round_(CumVarRatio3,3))
+        Class0 = df[df['Class'] == 0 ]
+        print(Class0)
 
-    Result3 = pd.concat([VarRatio3 , CumVarRatio_df3], axis=1)
-    print(pd.DataFrame(Result3))
-    print(pd.DataFrame(PC3))
+        pca = PCA(n_components = 2)
+        PC = pca.fit_transform(gen_df)
+        PCdf = pca.fit_transform(Class0)
 
-    augdata = pd.concat([pd.DataFrame(Class0), gen_df])
-    Augdata = augdata.reset_index(drop=True)
-    print(Augdata)
-    print(Augdata['Class'].value_counts(normalize=True)*100)
+        VarRatio = pca.explained_variance_ratio_
+        VarRatio = pd.DataFrame(np.round_(VarRatio,3))
+
+        CumVarRatio    = np.cumsum(pca.explained_variance_ratio_)
+        CumVarRatio_df = pd.DataFrame(np.round_(CumVarRatio,3))
+
+        Result = pd.concat([VarRatio , CumVarRatio_df], axis=1)
+        print(pd.DataFrame(Result))
+        print(pd.DataFrame(PC))
+
+        pca3 = PCA(n_components = 3)
+        PC3 = pca3.fit_transform(gen_df)
+        PC_df = pca3.fit_transform(Class0)
+
+        VarRatio3 = pca3.explained_variance_ratio_
+        VarRatio3 = pd.DataFrame(np.round_(VarRatio3,3))
+
+        CumVarRatio3    = np.cumsum(pca3.explained_variance_ratio_)
+        CumVarRatio_df3 = pd.DataFrame(np.round_(CumVarRatio3,3))
+
+        Result3 = pd.concat([VarRatio3 , CumVarRatio_df3], axis=1)
+        print(pd.DataFrame(Result3))
+        print(pd.DataFrame(PC3))
+
+        augdata = pd.concat([pd.DataFrame(Class0), gen_df])
+        Augdata = augdata.reset_index(drop=True)
+        print(Augdata)
+        print(Augdata['Class'].value_counts(normalize=True)*100)
     
     mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
