@@ -514,29 +514,29 @@ def iqr_mds_gan():
         print(Augdata)
         print(Augdata['Class'].value_counts(normalize=True)*100)
     
-    mongoClient = MongoClient()
-    host = Variable.get("MONGO_URL_SECRET")
-    client = MongoClient(host)
+        mongoClient = MongoClient()
+        host = Variable.get("MONGO_URL_SECRET")
+        client = MongoClient(host)
 
-    db_test = client['coops2022_aug']
-    collection_aug=db_test['mongo_aug1']
-    data=Augdata.to_dict('records')
+        db_test = client['coops2022_aug']
+        collection_aug=db_test['mongo_aug1']
+        data=Augdata.to_dict('records')
     # 아래 부분은 테스트 할 때 매번 다른 oid로 데이터가 쌓이는 것을 막기 위함
-    try:
-        isData = collection_aug.find_one()
-        if len(isData) !=0:
-            print("collection is not empty")
-            collection_aug.delete_many({})
         try:
-            result = collection_aug.insert_many(data,ordered=False)
-        except Exception as e:
-            print("mongo connection failed", e)
-    except:
-        print("there is no collection")
-        try:
-            result = collection_aug.insert_many(data,ordered=False)
-        except Exception as e:
-            print("mongo connection failed", e)
+            isData = collection_aug.find_one()
+            if len(isData) !=0:
+                print("collection is not empty")
+                collection_aug.delete_many({})
+            try:
+                result = collection_aug.insert_many(data,ordered=False)
+            except Exception as e:
+                print("mongo connection failed", e)
+        except:
+            print("there is no collection")
+            try:
+                result = collection_aug.insert_many(data,ordered=False)
+            except Exception as e:
+                print("mongo connection failed", e)
     print("hello")
 
 
@@ -725,150 +725,153 @@ def lstm_autoencoder():
         training (rows, cols) = {X_train.shape}
         Testing  (rows, cols) = {X_test.shape}""")
 
+    with tf.device("/gpu:0"):
 
-    # transforming data from the time domain to the frequency domain using fast Fourier transform
-    train_fft = np.fft.fft(X_train)
-    test_fft = np.fft.fft(X_test)
+        # transforming data from the time domain to the frequency domain using fast Fourier transform
+        train_fft = np.fft.fft(X_train)
+        test_fft = np.fft.fft(X_test)
 
-    scaler = MinMaxScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
-    scaler_filename = "scaler_data"
+        scaler = MinMaxScaler()
+        X_train = scaler.fit_transform(X_train)
+        X_test = scaler.transform(X_test)
+        scaler_filename = "scaler_data"
 
-    # reshape inputs for LSTM [samples, timesteps, features]
-    X_train = X_train.reshape(X_train.shape[0], 1, X_train.shape[1])
-    print("Training data shape:", X_train.shape)
-    X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
-    print("Test data shape:", X_test.shape)
-   
-    #scaler and lstm autoencoder model save
-    db_model = client['coops2022_model']
-    fs = gridfs.GridFS(db_model)
-    collection_model=db_model['mongo_scaler_lstm']
-   
-    model_fpath = f'{scaler_filename}.joblib'
-    joblib.dump(scaler, model_fpath)
+        # reshape inputs for LSTM [samples, timesteps, features]
+        X_train = X_train.reshape(X_train.shape[0], 1, X_train.shape[1])
+        print("Training data shape:", X_train.shape)
+        X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[1])
+        print("Test data shape:", X_test.shape)
+       
+        #scaler and lstm autoencoder model save
+        db_model = client['coops2022_model']
+        fs = gridfs.GridFS(db_model)
+        collection_model=db_model['mongo_scaler_lstm']
+       
+        model_fpath = f'{scaler_filename}.joblib'
+        joblib.dump(scaler, model_fpath)
+        
+        # save the local file to mongodb
+        with open(model_fpath, 'rb') as infile:
+            file_id = fs.put(
+                    infile.read(), 
+                    model_name=scaler_filename
+                    )
+        # insert the model status info to ModelStatus collection 
+        params = {
+                'model_name': scaler_filename,
+                'file_id': file_id,
+                'inserted_time': datetime.now()
+                }
+        result = collection_model.insert_one(params)
+
+
+        # load the model
+        collection_model=db_model['mongo_LSTM_autoencoder']
+        
+        model_name = 'LSTM_autoencoder'
+        model_fpath = f'{model_name}.joblib'
+        result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
+        print(result)
+        print(result[0])
+        if len(list(result.clone()))==0:
+            print("empty")
+            model = autoencoder_model(X_train)
+        else:
+            print("not empty")
+            file_id = str(result[0]['file_id'])
+            model = LoadModel(mongo_id=file_id).clf
+        
+        joblib.dump(model, model_fpath)
+        
+        model.compile(optimizer='adam', loss='mae')
+        
+        # 이상값은 -1으로 나타낸다.
+        print(model.summary())
+
+        nb_epochs = 100
+        batch_size = 10
+        history = model.fit(X_train, X_train, epochs=nb_epochs, batch_size=batch_size, validation_split=0.05).history
+
+        X_pred = model.predict(X_train)
+        X_pred = X_pred.reshape(X_pred.shape[0], X_pred.shape[2])
+        X_pred = pd.DataFrame(X_pred, columns=train.columns)
+        X_pred.index = train.index
+
+        scored = pd.DataFrame(index=train.index)
+        Xtrain = X_train.reshape(X_train.shape[0], X_train.shape[2])
+        scored['Loss_mae'] = np.mean(np.abs(X_pred-Xtrain), axis = 1)
+
+        plt.figure(figsize=(16,9), dpi=80)
+        plt.title('Loss Distribution', fontsize=16)
+        sns.distplot(scored['Loss_mae'], bins = 20, kde= True, color = 'blue');
+        plt.xlim([0.0,.5])
+        plt.show()
+
+
+        # calculate the loss on the test set
+        X_pred = model.predict(X_test)
+        X_pred = X_pred.reshape(X_pred.shape[0], X_pred.shape[2])
+        X_pred = pd.DataFrame(X_pred, columns=test.columns)
+        X_pred.index = test.index
+
+        scored = pd.DataFrame(index=test.index)
+        Xtest = X_test.reshape(X_test.shape[0], X_test.shape[2])
+        scored['Loss_mae'] = np.mean(np.abs(X_pred-Xtest), axis = 1)
+        scored['Threshold'] = 0.1
+        scored['Anomaly'] = scored['Loss_mae'] > scored['Threshold']
+        scored['label'] = labled['label']
+        print(scored.head())
+
+
+        y_test = scored['Anomaly']
+        print(y_test.unique())
+
+        print(scored[scored['Anomaly']==True].label.count())
+        print(scored.label.unique())
+
+        outliers = scored['label']
+        outliers = outliers.fillna(0)
+        print(outliers.unique())
+
+        outliers = outliers.to_numpy()
+        y_test = y_test.to_numpy()
+        print(y_test)
+        cm = confusion_matrix(y_test, outliers)
+        (tn, fp, fn, tp) = cm.flatten()
+        
+        print(f"""{cm}
+        % of transactions labeled as fraud that were correct (precision): {tp}/({fp}+{tp}) = {tp/(fp+tp):.2%}
+        % of fraudulent transactions were caught succesfully (recall):    {tp}/({fn}+{tp}) = {tp/(fn+tp):.2%}
+        % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
+
+        print(roc_auc_score(outliers, y_test))
     
-    # save the local file to mongodb
-    with open(model_fpath, 'rb') as infile:
-        file_id = fs.put(
-                infile.read(), 
-                model_name=scaler_filename
-                )
-    # insert the model status info to ModelStatus collection 
-    params = {
-            'model_name': scaler_filename,
-            'file_id': file_id,
-            'inserted_time': datetime.now()
-            }
-    result = collection_model.insert_one(params)
-
-
-    # load the model
-    collection_model=db_model['mongo_LSTM_autoencoder']
     
-    model_name = 'LSTM_autoencoder'
-    model_fpath = f'{model_name}.joblib'
-    result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
-    print(result)
-    print(result[0])
-    if len(list(result.clone()))==0:
-        print("empty")
-        model = autoencoder_model(X_train)
-    else:
-        print("not empty")
-        file_id = str(result[0]['file_id'])
-        model = LoadModel(mongo_id=file_id).clf
-    
-    joblib.dump(model, model_fpath)
-    
-    model.compile(optimizer='adam', loss='mae')
-    
-    # 이상값은 -1으로 나타낸다.
-    print(model.summary())
-
-    nb_epochs = 100
-    batch_size = 10
-    history = model.fit(X_train, X_train, epochs=nb_epochs, batch_size=batch_size, validation_split=0.05).history
-
-    X_pred = model.predict(X_train)
-    X_pred = X_pred.reshape(X_pred.shape[0], X_pred.shape[2])
-    X_pred = pd.DataFrame(X_pred, columns=train.columns)
-    X_pred.index = train.index
-
-    scored = pd.DataFrame(index=train.index)
-    Xtrain = X_train.reshape(X_train.shape[0], X_train.shape[2])
-    scored['Loss_mae'] = np.mean(np.abs(X_pred-Xtrain), axis = 1)
-
-    plt.figure(figsize=(16,9), dpi=80)
-    plt.title('Loss Distribution', fontsize=16)
-    sns.distplot(scored['Loss_mae'], bins = 20, kde= True, color = 'blue');
-    plt.xlim([0.0,.5])
-    plt.show()
-
-
-    # calculate the loss on the test set
-    X_pred = model.predict(X_test)
-    X_pred = X_pred.reshape(X_pred.shape[0], X_pred.shape[2])
-    X_pred = pd.DataFrame(X_pred, columns=test.columns)
-    X_pred.index = test.index
-
-    scored = pd.DataFrame(index=test.index)
-    Xtest = X_test.reshape(X_test.shape[0], X_test.shape[2])
-    scored['Loss_mae'] = np.mean(np.abs(X_pred-Xtest), axis = 1)
-    scored['Threshold'] = 0.1
-    scored['Anomaly'] = scored['Loss_mae'] > scored['Threshold']
-    scored['label'] = labled['label']
-    print(scored.head())
-
-
-    y_test = scored['Anomaly']
-    print(y_test.unique())
-
-    print(scored[scored['Anomaly']==True].label.count())
-    print(scored.label.unique())
-
-    outliers = scored['label']
-    outliers = outliers.fillna(0)
-    print(outliers.unique())
-
-    outliers = outliers.to_numpy()
-    y_test = y_test.to_numpy()
-    print(y_test)
-    cm = confusion_matrix(y_test, outliers)
-    (tn, fp, fn, tp) = cm.flatten()
-    
-    print(f"""{cm}
-    % of transactions labeled as fraud that were correct (precision): {tp}/({fp}+{tp}) = {tp/(fp+tp):.2%}
-    % of fraudulent transactions were caught succesfully (recall):    {tp}/({fn}+{tp}) = {tp/(fn+tp):.2%}
-    % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
-
-    print(roc_auc_score(outliers, y_test))
-    
-    
-    db_model = client['coops2022_model']
-    fs = gridfs.GridFS(db_model)
-    collection_model=db_model['mongo_LSTM_autoencoder']
-   
-    model_name = 'LSTM_autoencoder'
-    model_fpath = f'{model_name}.joblib'
-    joblib.dump(model, model_fpath)
-    
-    # save the local file to mongodb
-    with open(model_fpath, 'rb') as infile:
-        file_id = fs.put(
-                infile.read(), 
-                model_name=model_name
-                )
-    # insert the model status info to ModelStatus collection 
-    params = {
-            'model_name': model_name,
-            'file_id': file_id,
-            'inserted_time': datetime.now()
-            }
-    result = collection_model.insert_one(params)
+        db_model = client['coops2022_model']
+        fs = gridfs.GridFS(db_model)
+        collection_model=db_model['mongo_LSTM_autoencoder']
+       
+        model_name = 'LSTM_autoencoder'
+        model_fpath = f'{model_name}.joblib'
+        joblib.dump(model, model_fpath)
+        
+        # save the local file to mongodb
+        with open(model_fpath, 'rb') as infile:
+            file_id = fs.put(
+                    infile.read(), 
+                    model_name=model_name
+                    )
+        # insert the model status info to ModelStatus collection 
+        params = {
+                'model_name': model_name,
+                'file_id': file_id,
+                'inserted_time': datetime.now()
+                }
+        result = collection_model.insert_one(params)
 
     print("hello auto encoder")
+
+
 if __name__ == '__main__':
 
     if sys.argv == 'iqr':
