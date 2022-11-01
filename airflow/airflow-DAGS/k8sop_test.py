@@ -169,7 +169,7 @@ run_svm = KubernetesPodOperator(
         get_logs=True,
         startup_timeout_seconds=600,
         )
-after_aug = DummyOperator(task_id="Augmentation fininshed", dag=dag)
+after_aug = DummyOperator(task_id="Aug_fin", dag=dag)
 start >> run_iqr >> after_aug 
 after_aug >> run_svm,run_lstm
 
