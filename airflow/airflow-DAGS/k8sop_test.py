@@ -106,8 +106,8 @@ run_svm = KubernetesPodOperator(
         image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.5',
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
-        cmds=["python3","-u" ],
-        arguments=["gpu_py.py", "oc_svm"],
+        cmds=["python3","gpu_py.py" ],
+        arguments=["oc_svm"],
         affinity={
             'nodeAffinity': {
                 # requiredDuringSchedulingIgnoredDuringExecution means in order
