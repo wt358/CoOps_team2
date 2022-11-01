@@ -100,7 +100,7 @@ run_lstm = KubernetesPodOperator(
         startup_timeout_seconds=600,
         )
 run_svm = KubernetesPodOperator(
-        task_id="kubernetespodoperator",
+        task_id="oc_svm_pod_operator",
         name="test",
         namespace='airflow-cluster',
         image='wcu5i9i6.kr.private-ncr.ntruss.com/airflow-py:0.8',
@@ -142,6 +142,6 @@ run_svm = KubernetesPodOperator(
         startup_timeout_seconds=600,
         )
 start >> run_svm >>run_iqr 
-run_iqr >> run_svm,run_lstm
+#run_iqr >> run_svm,run_lstm
 
 
