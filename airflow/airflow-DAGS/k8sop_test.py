@@ -53,6 +53,34 @@ run_iqr = KubernetesPodOperator(
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3" ],
         arguments=["gpu_py.py", "iqr"],
+        affinity={
+            'nodeAffinity': {
+                # requiredDuringSchedulingIgnoredDuringExecution means in order
+                # for a pod to be scheduled on a node, the node must have the
+                # specified labels. However, if labels on a node change at
+                # runtime such that the affinity rules on a pod are no longer
+                # met, the pod will still continue to run on the node.
+                'requiredDuringSchedulingIgnoredDuringExecution': {
+                    'nodeSelectorTerms': [{
+                        'matchExpressions': [{
+                            # When nodepools are created in Google Kubernetes
+                            # Engine, the nodes inside of that nodepool are
+                            # automatically assigned the label
+                            # 'cloud.google.com/gke-nodepool' with the value of
+                            # the nodepool's name.
+                            'key': 'kubernetes.io/hostname',
+                            'operator': 'In',
+                            # The label key's value that pods can be scheduled
+                            # on.
+                            'values': [
+                                'gpu-node-w-1ouo',
+                                #'pool-1',
+                                ]
+                            }]
+                        }]
+                    }
+                }
+            },
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
@@ -66,7 +94,7 @@ run_lstm = KubernetesPodOperator(
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3" ],
-        arguments=["gpu_py.py"],
+        arguments=["gpu_py.py", "lstm"],
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
@@ -75,15 +103,45 @@ run_svm = KubernetesPodOperator(
         task_id="kubernetespodoperator",
         name="test",
         namespace='airflow-cluster',
-        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.5',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/airflow-py:0.8',
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3" ],
-        arguments=["gpu_py.py"],
+        arguments=["gpu_py.py","oc_svm"],
+        affinity={
+            'nodeAffinity': {
+                # requiredDuringSchedulingIgnoredDuringExecution means in order
+                # for a pod to be scheduled on a node, the node must have the
+                # specified labels. However, if labels on a node change at
+                # runtime such that the affinity rules on a pod are no longer
+                # met, the pod will still continue to run on the node.
+                'requiredDuringSchedulingIgnoredDuringExecution': {
+                    'nodeSelectorTerms': [{
+                        'matchExpressions': [{
+                            # When nodepools are created in Google Kubernetes
+                            # Engine, the nodes inside of that nodepool are
+                            # automatically assigned the label
+                            # 'cloud.google.com/gke-nodepool' with the value of
+                            # the nodepool's name.
+                            'key': 'kubernetes.io/hostname',
+                            'operator': 'In',
+                            # The label key's value that pods can be scheduled
+                            # on.
+                            'values': [
+                                'high-memory-w-1ih9',
+                                'high-memory-w-1iha',
+                                #'pool-1',
+                                ]
+                            }]
+                        }]
+                    }
+                }
+            },
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
         )
-start >> run_iqr >> run_lstm
+start >> run_svm >>run_iqr 
+run_iqr >> run_svm,run_lstm
 
 
