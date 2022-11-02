@@ -321,4 +321,4 @@ with DAG(
     dummy1 = DummyOperator(task_id="path1")
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
-    dummy1 >> t2 >> t1
+    dummy1 >> t1 >> t2
