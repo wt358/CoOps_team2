@@ -302,23 +302,23 @@ with DAG(
     max_active_runs=3,
     ) as dag:
 
-    t1 = PythonOperator(
-        task_id="model_inference",
-        python_callable=model_inference,
-        depends_on_past=True,
-        owner="coops2",
-        retries=0,
-        retry_delay=timedelta(minutes=1),
-    )
-    t2 = PythonOperator(
-        task_id="push_on_premise",
-        python_callable=push_on_premise,
-        depends_on_past=True,
-        owner="coops2",
-        retries=0,
-        retry_delay=timedelta(minutes=1),
-    )
-    dummy1 = DummyOperator(task_id="path1")
-    # 테스크 순서를 정합니다.
-    # t1 실행 후 t2를 실행합니다.
-    dummy1 >> t1 >> t2
+t1 = PythonOperator(
+    task_id="model_inference",
+    python_callable=model_inference,
+    depends_on_past=True,
+    owner="coops2",
+    retries=0,
+    retry_delay=timedelta(minutes=1),
+)
+t2 = PythonOperator(
+    task_id="push_on_premise",
+    python_callable=push_on_premise,
+    depends_on_past=True,
+    owner="coops2",
+    retries=0,
+    retry_delay=timedelta(minutes=1),
+)
+dummy1 = DummyOperator(task_id="path1")
+# 테스크 순서를 정합니다.
+# t1 실행 후 t2를 실행합니다.
+dummy1 >> t1 >> t2
