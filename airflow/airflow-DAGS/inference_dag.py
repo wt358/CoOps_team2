@@ -280,7 +280,7 @@ def push_onpremise():
     host = Variable.get("LOCAL_MONGO_URL_SECRET")
     client = MongoClient(host)
     db_model = client['coops2022_result']
-    collection_model=db_model[f'result_{model_name}']
+    collection=db_model[f'result_{model_name}']
     
     data=df.to_dict('records')
 
