@@ -244,7 +244,7 @@ def model_inference():
     print(y_test)
 
     db_test = client['coops2022_result']
-    collection = db_test[f'result_{model_name}_{curr_time}']
+    collection = db_test[f'result_{model_name}']
     #data=scored.to_dict('records')
     data=X_pred.to_dict('records')
 
@@ -256,7 +256,40 @@ def model_inference():
 
     print("hello inference")
 
+def push_on_premise():
 
+    
+    model_name = 'LSTM_autoencoder'
+
+    mongoClient = MongoClient()
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+    db_result = client['coops2022_result']
+    collection = db_result[f'result_{model_name}']
+    
+    try:
+        df = pd.DataFrame(list(collection.find()))
+    except Exception as e:
+        print("mongo connection failer during pull",e)
+
+
+    print(df.head())
+
+# for on premise
+    mongoClient = MongoClient()
+    host = Variable.get("LOCAL_MONGO_URL_SECRET")
+    client = MongoClient(host)
+    db_model = client['coops2022_result']
+    collection_model=db_model[f'result_{model_name}']
+    
+    data=df.to_dict('records')
+
+    try:
+        collection.insert_many(data,ordered=False)
+    except Exception as e:
+        print("mongo connection failer during push",e)
+
+    print("hello push on premise")
 
 
 # define DAG with 'with' phase
@@ -277,17 +310,15 @@ with DAG(
         retries=0,
         retry_delay=timedelta(minutes=1),
     )
-    '''
     t2 = PythonOperator(
-        task_id="pull_mssql",
-        python_callable=pull_mssql,
+        task_id="push_to_local",
+        python_callable=push_on_premise,
         depends_on_past=True,
         owner="coops2",
-        retries=3,
+        retries=0,
         retry_delay=timedelta(minutes=1),
     )
-    '''
     dummy1 = DummyOperator(task_id="path1")
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
-    dummy1 >> t1
+    dummy1 >> t1 >> t2
