@@ -311,7 +311,7 @@ with DAG(
         retry_delay=timedelta(minutes=1),
     )
     t2 = PythonOperator(
-        task_id="push_to_local",
+        task_id="push_on_premise",
         python_callable=push_on_premise,
         depends_on_past=True,
         owner="coops2",
