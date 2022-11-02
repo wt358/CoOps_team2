@@ -270,7 +270,8 @@ def push_onpremise():
     except Exception as e:
         print("mongo connection failer during pull",e)
 
-    df=df.drop_duplicates(subset=["_id"])
+    df.drop(columns={'_id'},inplace=True)
+    df=df.drop_duplicates(subset=["idx"])
 
     print(df.head())
 
