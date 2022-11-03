@@ -36,7 +36,8 @@ env_from = [
 ]
 
 '''
-
+pod_resources = Resources()
+pod_resources.limit_nvidia.com/gpu = '1'
 
 
 
@@ -81,6 +82,7 @@ run_iqr = KubernetesPodOperator(
                     }
                 }
             },
+        resources=pod_resources,
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
