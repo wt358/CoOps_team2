@@ -42,7 +42,6 @@ pod_resources.limit_gpu = '1'
 
 
 
-
 start = DummyOperator(task_id="start", dag=dag)
 
 run_iqr = KubernetesPodOperator(
@@ -83,6 +82,7 @@ run_iqr = KubernetesPodOperator(
                 }
             },
         resources=pod_resources,
+        env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
