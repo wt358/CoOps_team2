@@ -37,7 +37,7 @@ env_from = [
 
 '''
 pod_resources = Resources()
-pod_resources.limit_nvidia.com/gpu = '1'
+pod_resources.limit_gpu = '1'
 
 
 
