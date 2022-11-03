@@ -446,11 +446,11 @@ def iqr_mds_gan():
             normal_col = df[col].apply(lambda x: np.log10(x+lower_lim+1))
             print(f"Skew value of {col} after log transform: {normal_col.skew()}")
     
-        scaler = standardscaler()
-        #scaler = minmaxscaler()
-        x = scaler.fit_transform(df.drop('class', 1))
-        y = df['class'].values
-        print(x.shape, y.shape)
+        scaler = StandardScaler()
+        #scaler = MinMaxScaler()
+        X = scaler.fit_transform(df.drop('Class', 1))
+        y = df['Class'].values
+        print(X.shape, y.shape)
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y)
 
@@ -710,8 +710,8 @@ def lstm_autoencoder():
     train = clean.iloc[:TRAINING_SAMPLE].drop('label', axis=1)
 
     # testing  set: the remaining non-fraud + all the fraud 
-    X_test = clean.iloc[:TRAINING_SAMPLE].append(fraud).sample(frac=1)
-    test = clean.iloc[:TRAINING_SAMPLE].append(fraud).sample(frac=1)
+    X_test = clean.iloc[TRAINING_SAMPLE:].append(fraud).sample(frac=1)
+    test = clean.iloc[TRAINING_SAMPLE:].append(fraud).sample(frac=1)
     test.drop('label', axis = 1, inplace = True)
     # 여기 test set이랑 train set 겹침
 
