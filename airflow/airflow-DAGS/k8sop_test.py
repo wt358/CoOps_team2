@@ -35,12 +35,12 @@ env_from = [
             secret_ref=k8s.V1SecretEnvSource(name="regcred")),
 ]
 
-'''
 
 configmaps = [
         k8s.V1EnvFromSource(config_map_ref=k8s.V1ConfigMapEnvSource(name='kube-root-ca.crt'))
         ]
 
+'''
 pod_resources = Resources()
 pod_resources.limit_gpu = '1'
 
@@ -137,7 +137,7 @@ run_iqr = KubernetesPodOperator(
         arguments=["gpu_py.py", "iqr"],
         affinity=gpu_aff,
         resources=pod_resources,
-        secrets=[secret_volume,secret_all],
+        #secrets=[secret_volume,secret_all],
         env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
         #configmaps=configmaps,
         is_delete_operator_pod=True,
@@ -156,7 +156,8 @@ run_lstm = KubernetesPodOperator(
         arguments=["gpu_py.py", "lstm"],
         affinity=gpu_aff,
         resources=pod_resources,
-        secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
+        env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
+        #secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
         #env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
         #env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
         #configmaps=configmaps,
