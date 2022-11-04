@@ -39,7 +39,69 @@ env_from = [
 pod_resources = Resources()
 pod_resources.limit_gpu = '1'
 
+secret_env = Secret(
+        # Expose the secret as environment variable.
+        deploy_type='env',
+        # The name of the environment variable, since deploy_type is `env` rather
+        # than `volume`.
+        deploy_target='SQL_CONN',
+        # Name of the Kubernetes Secret
+        secret='airflow-secrets',
+        # Key of a secret stored in this Secret object
+        key='sql_alchemy_conn')
+secret_volume = Secret(
+        deploy_type='volume',
+        # Path where we mount the secret as volume
+        deploy_target='/var/secrets/google',
+        # Name of Kubernetes Secret
+        secret='service-account',
+        # Key in the form of service account file name
+        key='service-account.json')
 
+gpu_aff={
+        'nodeAffinity': {
+            # requiredDuringSchedulingIgnoredDuringExecution means in order
+            # for a pod to be scheduled on a node, the node must have the
+            # specified labels. However, if labels on a node change at
+            # runtime such that the affinity rules on a pod are no longer
+            # met, the pod will still continue to run on the node.
+            'requiredDuringSchedulingIgnoredDuringExecution': {
+                'nodeSelectorTerms': [{
+                    'matchExpressions': [{
+                        # When nodepools are created in Google Kubernetes
+                        # Engine, the nodes inside of that nodepool are
+                        # automatically assigned the label
+                        # 'cloud.google.com/gke-nodepool' with the value of
+                        # the nodepool's name.
+                        'key': 'kubernetes.io/hostname',
+                        'operator': 'In',
+                        # The label key's value that pods can be scheduled
+                        # on.
+                        'values': [
+                            'gpu-node-w-1ouo',
+                            #'pool-1',
+                            ]
+                        }]
+                    }]
+                }
+            }
+        }
+cpu_aff={
+        'nodeAffinity': {
+            'requiredDuringSchedulingIgnoredDuringExecution': {
+                'nodeSelectorTerms': [{
+                    'matchExpressions': [{
+                        'key': 'kubernetes.io/hostname',
+                        'operator': 'In',
+                        'values': [
+                            'high-memory-w-1ih9',
+                            'high-memory-w-1iha',
+                            ]
+                        }]
+                    }]
+                }
+            }
+        }
 
 
 start = DummyOperator(task_id="start", dag=dag)
@@ -53,36 +115,9 @@ run_iqr = KubernetesPodOperator(
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3" ],
         arguments=["gpu_py.py", "iqr"],
-        affinity={
-            'nodeAffinity': {
-                # requiredDuringSchedulingIgnoredDuringExecution means in order
-                # for a pod to be scheduled on a node, the node must have the
-                # specified labels. However, if labels on a node change at
-                # runtime such that the affinity rules on a pod are no longer
-                # met, the pod will still continue to run on the node.
-                'requiredDuringSchedulingIgnoredDuringExecution': {
-                    'nodeSelectorTerms': [{
-                        'matchExpressions': [{
-                            # When nodepools are created in Google Kubernetes
-                            # Engine, the nodes inside of that nodepool are
-                            # automatically assigned the label
-                            # 'cloud.google.com/gke-nodepool' with the value of
-                            # the nodepool's name.
-                            'key': 'kubernetes.io/hostname',
-                            'operator': 'In',
-                            # The label key's value that pods can be scheduled
-                            # on.
-                            'values': [
-                                'gpu-node-w-1ouo',
-                                #'pool-1',
-                                ]
-                            }]
-                        }]
-                    }
-                }
-            },
+        affinity=gpu_aff,
         resources=pod_resources,
-        env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
+        env_vars={'MONGO_URL_SECRET':'{{var.value.mongo_url_secret}}'},
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
@@ -97,34 +132,7 @@ run_lstm = KubernetesPodOperator(
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3" ],
         arguments=["gpu_py.py", "lstm"],
-        affinity={
-            'nodeAffinity': {
-                # requiredDuringSchedulingIgnoredDuringExecution means in order
-                # for a pod to be scheduled on a node, the node must have the
-                # specified labels. However, if labels on a node change at
-                # runtime such that the affinity rules on a pod are no longer
-                # met, the pod will still continue to run on the node.
-                'requiredDuringSchedulingIgnoredDuringExecution': {
-                    'nodeSelectorTerms': [{
-                        'matchExpressions': [{
-                            # When nodepools are created in Google Kubernetes
-                            # Engine, the nodes inside of that nodepool are
-                            # automatically assigned the label
-                            # 'cloud.google.com/gke-nodepool' with the value of
-                            # the nodepool's name.
-                            'key': 'kubernetes.io/hostname',
-                            'operator': 'In',
-                            # The label key's value that pods can be scheduled
-                            # on.
-                            'values': [
-                                'gpu-node-w-1ouo',
-                                #'pool-1',
-                                ]
-                            }]
-                        }]
-                    }
-                }
-            },
+        affinity=gpu_aff,
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
@@ -138,35 +146,7 @@ run_svm = KubernetesPodOperator(
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3","gpu_py.py" ],
         arguments=["oc_svm"],
-        affinity={
-            'nodeAffinity': {
-                # requiredDuringSchedulingIgnoredDuringExecution means in order
-                # for a pod to be scheduled on a node, the node must have the
-                # specified labels. However, if labels on a node change at
-                # runtime such that the affinity rules on a pod are no longer
-                # met, the pod will still continue to run on the node.
-                'requiredDuringSchedulingIgnoredDuringExecution': {
-                    'nodeSelectorTerms': [{
-                        'matchExpressions': [{
-                            # When nodepools are created in Google Kubernetes
-                            # Engine, the nodes inside of that nodepool are
-                            # automatically assigned the label
-                            # 'cloud.google.com/gke-nodepool' with the value of
-                            # the nodepool's name.
-                            'key': 'kubernetes.io/hostname',
-                            'operator': 'In',
-                            # The label key's value that pods can be scheduled
-                            # on.
-                            'values': [
-                                'high-memory-w-1ih9',
-                                'high-memory-w-1iha',
-                                #'pool-1',
-                                ]
-                            }]
-                        }]
-                    }
-                }
-            },
+        affinity=cpu_aff,
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
