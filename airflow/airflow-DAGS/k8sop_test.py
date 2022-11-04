@@ -74,6 +74,7 @@ secret_all8 = Secret('env', None, 'airflow-cluster-webserver-config')
 secret_all9 = Secret('env', None, 'airflow-git-ssh-secret2')
 secret_alla = Secret('env', None, 'airflow-ssh-git-secret')
 secret_allb = Secret('env', None, 'default-token-hkdgr')
+secret_allb = Secret('env', None, 'sh.helm.release.v1.airflow-cluster.v34')
 
 
 
