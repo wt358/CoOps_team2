@@ -38,7 +38,9 @@ env_from = [
 '''
 
 configmaps = [
-        k8s.V1EnvFromSource(config_map_ref=k8s.V1ConfigMapEnvSource(name='airflow-cluster-pod-template')),]
+        k8s.V1EnvFromSource(config_map_ref=k8s.V1ConfigMapEnvSource(name='airflow-cluster-pod-template')),
+        k8s.V1EnvFromSource(config_map_ref=k8s.V1ConfigMapEnvSource(name='kube-root-ca.crt')),
+        ]
 
 
 pod_resources = Resources()
@@ -158,7 +160,7 @@ run_lstm = KubernetesPodOperator(
         secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
         env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
         #env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
-        #configmaps=configmaps,
+        configmaps=configmaps,
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
