@@ -51,9 +51,9 @@ secret_env = Secret(
         # than `volume`.
         deploy_target='SQL_CONN',
         # Name of the Kubernetes Secret
-        secret='airflow-secrets',
+        secret='db-secret-ggd7k5tgg2',
         # Key of a secret stored in this Secret object
-        key='sql_alchemy_conn')
+        key='MONGO_URL_SECRET')
 secret_volume = Secret(
         deploy_type='volume',
         # Path where we mount the secret as volume
@@ -122,8 +122,8 @@ run_iqr = KubernetesPodOperator(
         arguments=["gpu_py.py", "iqr"],
         affinity=gpu_aff,
         resources=pod_resources,
-        env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
-        configmaps=configmaps,
+        env_vars={'MONGO_URL_SECRET':'MONGO_URL_SECRET/value'},
+        secrets=[secret_env]
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
