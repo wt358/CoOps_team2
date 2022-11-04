@@ -1,8 +1,9 @@
-FROM apache/airflow:2.2.5-python3.8
+FROM wcu5i9i6.kr.private-ncr.ntruss.com/airflow-gpu:0.3 
 USER root
 COPY ./requirements_gpunode.txt ./requirements.txt
+COPY ./airflow-DAGS/pyfile/gpu_py.py .
 RUN apt-get update
 RUN apt-get install -y build-essential 
-# USER airflow
+USER airflow
 # install your pip package
-# RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt
