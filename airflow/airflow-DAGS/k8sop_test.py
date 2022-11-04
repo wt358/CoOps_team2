@@ -61,7 +61,7 @@ secret_volume = Secret(
         # Name of Kubernetes Secret
         secret='db-secret-ggd7k5tgg2',
         # Key in the form of service account file name
-        key='mongo-url-secret')
+        key='mongo-url-secret.json')
 
 gpu_aff={
         'nodeAffinity': {
@@ -139,8 +139,9 @@ run_lstm = KubernetesPodOperator(
         cmds=["python3" ],
         arguments=["gpu_py.py", "lstm"],
         affinity=gpu_aff,
+        resources=pod_resources,
         secrets=[secret_volume],
-        env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret'},
+        env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
