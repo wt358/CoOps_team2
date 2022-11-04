@@ -49,7 +49,7 @@ secret_env = Secret(
         deploy_type='env',
         # The name of the environment variable, since deploy_type is `env` rather
         # than `volume`.
-        deploy_target='SQL_CONN',
+        deploy_target='MONGO_URL_SECRET',
         # Name of the Kubernetes Secret
         secret='db-secret-ggd7k5tgg2',
         # Key of a secret stored in this Secret object
@@ -122,7 +122,7 @@ run_iqr = KubernetesPodOperator(
         arguments=["gpu_py.py", "iqr"],
         affinity=gpu_aff,
         resources=pod_resources,
-        env_vars={'MONGO_URL_SECRET':'MONGO_URL_SECRET/value'},
+        env_vars={'MONGO_URL_SECRET':'/MONGO_URL_SECRET/value'},
         secrets=[secret_env],
         is_delete_operator_pod=True,
         get_logs=True,
