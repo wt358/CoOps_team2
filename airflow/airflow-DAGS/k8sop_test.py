@@ -62,9 +62,18 @@ secret_volume = Secret(
         secret='db-secret-ggd7k5tgg2',
         # Key in the form of service account file name
         key='mongo-url-secret.json')
-secret_all = Secret(
-        'env', None, 'db-secret-ggd7k5tgg2'
-        )
+secret_all = Secret('env', None, 'db-secret-ggd7k5tgg2')
+secret_all1 = Secret('env', None, 'airflow-cluster-config-envs')
+secret_all2 = Secret('env', None, 'airflow-cluster-db-migrations')
+secret_all3 = Secret('env', None, 'airflow-cluster-pgbouncer')
+secret_all4 = Secret('env', None, 'airflow-cluster-pgbouncer-certs')
+secret_all5 = Secret('env', None, 'airflow-cluster-postgresql')
+secret_all6 = Secret('env', None, 'airflow-cluster-sync-users')
+secret_all7 = Secret('env', None, 'airflow-cluster-token-8qgp2')
+secret_all8 = Secret('env', None, 'airflow-cluster-webserver-config')
+secret_all9 = Secret('env', None, 'airflow-git-ssh-secret2')
+secret_alla = Secret('env', None, 'airflow-ssh-git-secret')
+secret_allb = Secret('env', None, 'default-token-hkdgr')
 
 
 
@@ -146,7 +155,7 @@ run_lstm = KubernetesPodOperator(
         arguments=["gpu_py.py", "lstm"],
         affinity=gpu_aff,
         resources=pod_resources,
-        secrets=[secret_all],
+        secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
         env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
         #env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
         #configmaps=configmaps,
