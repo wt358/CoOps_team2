@@ -57,11 +57,11 @@ secret_env = Secret(
 secret_volume = Secret(
         deploy_type='volume',
         # Path where we mount the secret as volume
-        deploy_target='/var/secrets/google',
+        deploy_target='/var/secrets/db',
         # Name of Kubernetes Secret
-        secret='service-account',
+        secret='db-secret-ggd7k5tgg2',
         # Key in the form of service account file name
-        key='service-account.json')
+        key='mongo-url-secret')
 
 gpu_aff={
         'nodeAffinity': {
@@ -122,8 +122,8 @@ run_iqr = KubernetesPodOperator(
         arguments=["gpu_py.py", "iqr"],
         affinity=gpu_aff,
         resources=pod_resources,
-        env_vars={'MONGO_URL_SECRET':'/MONGO_URL_SECRET/value'},
-        secrets=[secret_env],
+        secrets=[secret_volume],
+        env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret'},
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
@@ -139,6 +139,8 @@ run_lstm = KubernetesPodOperator(
         cmds=["python3" ],
         arguments=["gpu_py.py", "lstm"],
         affinity=gpu_aff,
+        secrets=[secret_volume],
+        env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret'},
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
@@ -158,7 +160,7 @@ run_svm = KubernetesPodOperator(
         startup_timeout_seconds=600,
         )
 after_aug = DummyOperator(task_id="Aug_fin", dag=dag)
-start >> run_iqr >> after_aug 
-after_aug >> [run_svm, run_lstm]
+start >> run_lstm >> after_aug 
+#after_aug >> [run_svm, run_lstm]
 
 
