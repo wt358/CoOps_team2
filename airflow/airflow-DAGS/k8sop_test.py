@@ -36,6 +36,15 @@ env_from = [
 ]
 
 '''
+
+configmaps = [
+        k8s.V1EnvFromSource(config_map_ref=k8s.V1ConfigMapEnvSource(name='airflow-cluster-pod-template')),]
+
+env_1 = Secret(
+        'MONGO_URL_SECRET'
+        )
+
+
 pod_resources = Resources()
 pod_resources.limit_gpu = '1'
 
@@ -118,6 +127,8 @@ run_iqr = KubernetesPodOperator(
         affinity=gpu_aff,
         resources=pod_resources,
         #env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
+        secrets=[env_1],
+        env_from=configmaps,
         is_delete_operator_pod=True,
         get_logs=True,
         startup_timeout_seconds=600,
