@@ -137,6 +137,7 @@ run_iqr = KubernetesPodOperator(
         arguments=["gpu_py.py", "iqr"],
         affinity=gpu_aff,
         resources=pod_resources,
+        secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
         #secrets=[secret_volume,secret_all],
         env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
         #configmaps=configmaps,
@@ -180,7 +181,7 @@ run_svm = KubernetesPodOperator(
         startup_timeout_seconds=600,
         )
 after_aug = DummyOperator(task_id="Aug_fin", dag=dag)
-start >> run_iqr >> after_aug 
-after_aug >> [run_svm, run_lstm]
+start >> run_lstm >> after_aug 
+#after_aug >> [run_svm, run_lstm]
 
 
