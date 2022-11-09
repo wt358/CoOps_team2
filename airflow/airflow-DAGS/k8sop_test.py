@@ -148,6 +148,7 @@ run_iqr = KubernetesPodOperator(
 
 run_lstm = KubernetesPodOperator(
         task_id="lstm_pod_operator",
+        owner="coops2",
         name="lstm-auto-encoder",
         namespace='airflow-cluster',
         image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.8',
