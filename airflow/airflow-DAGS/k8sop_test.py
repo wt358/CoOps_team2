@@ -35,12 +35,12 @@ env_from = [
             secret_ref=k8s.V1SecretEnvSource(name="regcred")),
 ]
 
+'''
 
 configmaps = [
-        k8s.V1EnvFromSource(config_map_ref=k8s.V1ConfigMapEnvSource(name='kube-root-ca.crt'))
+        k8s.V1EnvFromSource(config_map_ref=k8s.V1ConfigMapEnvSource(name='airflow-cluster-pod-template'))
         ]
 
-'''
 pod_resources = Resources()
 pod_resources.limit_gpu = '1'
 
