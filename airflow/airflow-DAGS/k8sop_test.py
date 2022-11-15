@@ -40,9 +40,10 @@ env_from = [
 configmaps = [
         k8s.V1EnvFromSource(config_map_ref=k8s.V1ConfigMapEnvSource(name='airflow-cluster-pod-template'))
         ]
-
+'''
 pod_resources = Resources()
 pod_resources.limit_gpu = '1'
+'''
 
 secret_env = Secret(
         # Expose the secret as environment variable.
@@ -135,7 +136,7 @@ run_iqr = KubernetesPodOperator(
         cmds=["python3" ],
         arguments=["gpu_py.py", "iqr"],
         affinity=gpu_aff,
-        resources=pod_resources,
+        #resources=pod_resources,
         secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
         #secrets=[secret_volume,secret_all],
         env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
@@ -156,7 +157,7 @@ run_lstm = KubernetesPodOperator(
         cmds=["python3" ],
         arguments=["gpu_py.py", "lstm"],
         #affinity=gpu_aff,
-        resources=pod_resources,
+        #resources=pod_resources,
         #env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
         secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
         #env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
