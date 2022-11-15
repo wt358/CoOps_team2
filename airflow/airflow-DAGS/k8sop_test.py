@@ -97,7 +97,7 @@ gpu_aff={
                         # The label key's value that pods can be scheduled
                         # on.
                         'values': [
-                            'gpu-node-w-1ouo',
+                            'pseudo-gpu-w-1yz7',
                             #'pool-1',
                             ]
                         }]
