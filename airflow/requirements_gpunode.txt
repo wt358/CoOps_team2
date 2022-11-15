@@ -16,4 +16,3 @@ matplotlib
 seaborn
 apache-airflow-providers-cncf-kubernetes
 cuda-python
-psycopg2
