@@ -173,6 +173,7 @@ run_svm = KubernetesPodOperator(
         image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.12',
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
+        secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
         cmds=["python3","gpu_py.py" ],
         arguments=["oc_svm"],
         affinity=cpu_aff,
