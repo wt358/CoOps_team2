@@ -79,9 +79,9 @@ import random as rn
 np.random.seed(34)
 
 # manual parameters
-RANDOM_SEED = os.environ['RANDOM_SEED'] 
-TRAINING_SAMPLE = os.environ['TRAINING_SAMPLE'] 
-VALIDATE_SIZE = os.environ['VALIDATE_SIZE'] 
+RANDOM_SEED = int(os.environ['RANDOM_SEED'])
+TRAINING_SAMPLE = int(os.environ['TRAINING_SAMPLE'])
+VALIDATE_SIZE = float(os.environ['VALIDATE_SIZE'])
 
 # setting random seeds for libraries to ensure reproducibility
 np.random.seed(RANDOM_SEED)
