@@ -125,7 +125,8 @@ class LoadModel(metaclass=ModelSingleton):
        print('loading model')
 
        mongoClient = MongoClient()
-       host = Variable.get("MONGO_URL_SECRET")
+       #host = Variable.get("MONGO_URL_SECRET")
+       host = os.environ['MONGO_URL_SECRET'] 
        client = MongoClient(host)
 
        db_model = client['coops2022_model']
@@ -515,7 +516,8 @@ def iqr_mds_gan():
         print(Augdata['Class'].value_counts(normalize=True)*100)
     
         mongoClient = MongoClient()
-        host = Variable.get("MONGO_URL_SECRET")
+        #host = Variable.get("MONGO_URL_SECRET")
+        host = os.environ['MONGO_URL_SECRET'] 
         client = MongoClient(host)
 
         db_test = client['coops2022_aug']
@@ -544,7 +546,8 @@ def iqr_mds_gan():
 def oc_svm():
     
     mongoClient = MongoClient()
-    host = Variable.get("MONGO_URL_SECRET")
+    #host = Variable.get("MONGO_URL_SECRET")
+    host = os.environ['MONGO_URL_SECRET'] 
     client = MongoClient(host)
     
     db_test = client['coops2022_aug']
@@ -669,7 +672,8 @@ def oc_svm():
 
 def lstm_autoencoder():
     mongoClient = MongoClient()
-    host = Variable.get("MONGO_URL_SECRET")
+    #host = Variable.get("MONGO_URL_SECRET")
+    host = os.environ['MONGO_URL_SECRET'] 
     client = MongoClient(host)
     
     db_test = client['coops2022_aug']
