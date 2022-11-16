@@ -710,6 +710,10 @@ def lstm_autoencoder():
     clean = clean.sample(frac=1).reset_index(drop=True)
 
     # training set: exlusively non-fraud transactions
+    
+    if clean.shape[0] < TRAINING_SAMPLE:
+        TRAINING_SAMPLE=(clean.shape[0]/5)*4
+
     X_train = clean.iloc[:TRAINING_SAMPLE].drop('label', axis=1)
     train = clean.iloc[:TRAINING_SAMPLE].drop('label', axis=1)
 
