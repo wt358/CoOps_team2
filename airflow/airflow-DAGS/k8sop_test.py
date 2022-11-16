@@ -130,7 +130,7 @@ run_iqr = KubernetesPodOperator(
         task_id="iqr_gan_pod_operator",
         name="iqr-gan",
         namespace='airflow-cluster',
-        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.8',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.12',
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3" ],
@@ -170,7 +170,7 @@ run_svm = KubernetesPodOperator(
         task_id="oc_svm_pod_operator",
         name="oc-svm",
         namespace='airflow-cluster',
-        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.8',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.12',
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3","gpu_py.py" ],
@@ -181,7 +181,7 @@ run_svm = KubernetesPodOperator(
         startup_timeout_seconds=600,
         )
 after_aug = DummyOperator(task_id="Aug_fin", dag=dag)
-start >> run_lstm >> after_aug 
-#after_aug >> [run_svm, run_lstm]
+start >> run_iqr >> after_aug 
+after_aug >> [run_svm, run_lstm]
 
 
