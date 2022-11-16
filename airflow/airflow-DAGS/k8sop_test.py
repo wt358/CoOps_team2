@@ -158,7 +158,6 @@ run_lstm = KubernetesPodOperator(
         arguments=["gpu_py.py", "lstm"],
         #affinity=gpu_aff,
         #resources=pod_resources,
-        env_vars={'TRAINING_SAMPLE':50000,'RANDOM_SEED':42,'VALIDATE_SIZE':0.2},
         secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
         #env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
         #configmaps=configmaps,
