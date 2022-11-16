@@ -139,7 +139,8 @@ run_iqr = KubernetesPodOperator(
         #resources=pod_resources,
         secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
         #secrets=[secret_volume,secret_all],
-        env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
+        env_vars={'TRAINING_SAMPLE':50000,'RANDOM_SEED':42,'VALIDATE_SIZE':0.2},
+        #env_vars={'MONGO_URL_SECRET':'{{var.value.MONGO_URL_SECRET}}'},
         #configmaps=configmaps,
         is_delete_operator_pod=True,
         get_logs=True,
@@ -173,6 +174,7 @@ run_svm = KubernetesPodOperator(
         image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.13',
         image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
+        env_vars={'TRAINING_SAMPLE':50000,'RANDOM_SEED':42,'VALIDATE_SIZE':0.2},
         secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
         cmds=["python3","gpu_py.py" ],
         arguments=["oc_svm"],
@@ -182,7 +184,8 @@ run_svm = KubernetesPodOperator(
         startup_timeout_seconds=600,
         )
 after_aug = DummyOperator(task_id="Aug_fin", dag=dag)
+after_ml = DummyOperator(task_id="ML_fin", dag=dag)
 start >> run_iqr >> after_aug 
-after_aug >> [run_svm, run_lstm]
+after_aug >> [run_svm, run_lstm] >> after_ml
 
 
