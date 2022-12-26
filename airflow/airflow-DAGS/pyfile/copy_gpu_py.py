@@ -34,7 +34,8 @@ from imblearn.pipeline import Pipeline
 from tensorflow.python.client import device_lib
 from sklearn.utils import shuffle
 import tensorflow as tf
-from tensorflow.keras.layers import Model,Input, Dense,regularizers , LSTM, TimeDistributed, RepeatVector
+from tensorflow.keras.layers import Input, Dense,regularizers , LSTM, TimeDistributed, RepeatVector
+from tensorflow.keras.models import  Model
 
 import joblib
 
