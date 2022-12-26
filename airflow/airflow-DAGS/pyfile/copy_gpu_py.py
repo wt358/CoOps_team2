@@ -217,7 +217,7 @@ def iqr_mds_gan():
     
         scaler = StandardScaler()
         #scaler = MinMaxScaler()
-        X = scaler.fit_transform(df.iloc[:,5:].iloc.drop('Class', 1))
+        X = scaler.fit_transform(df.iloc[:,5:].drop('Class', 1))
         y = df['Class'].values
         print(X.shape, y.shape)
 
