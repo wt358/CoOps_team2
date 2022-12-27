@@ -170,7 +170,7 @@ def iqr_mds_gan():
     for i in range(len(pds)):
         print(i, pds[i].count().max())
 
-
+    print(pds[0])
     df_all=MDS_molding(pds)
 
     print(df_all)
