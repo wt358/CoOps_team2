@@ -51,7 +51,7 @@ def MDS_molding(pds):
             mds_results=pd.DataFrame(mds_results) ##dataframe 형태로 저장 
             end_time = time.time()
             print('    if df 코드 실행 시간: %20ds' % (end_time - start_time))
-            list1.append(customize(dataframe,mds_results))## 구간별 라벨링 데이터 프레임을 리스트에 저장
+            list1.append(customize(pds[i],mds_results))## 구간별 라벨링 데이터 프레임을 리스트에 저장
             end_time = time.time()
             print('    if 코드 실행 시간: %20ds' % (end_time - start_time))
         else :
