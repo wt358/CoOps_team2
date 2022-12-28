@@ -203,87 +203,87 @@ def iqr_mds_gan():
 
     print(df.drop('Class',1).skew())
     
-    skew_cols = df.iloc[:,5:].drop('Class',1).skew().loc[lambda x: x>2].index
-    print(skew_cols)
+    # skew_cols = df.iloc[:,5:].drop('Class',1).skew().loc[lambda x: x>2].index
+    # print(skew_cols)
 
-    print(device_lib.list_local_devices())
-    print(tf.config.list_physical_devices())
+    # print(device_lib.list_local_devices())
+    # print(tf.config.list_physical_devices())
     
     with tf.device("/gpu:0"):
-        for col in skew_cols:
-            lower_lim = abs(df[col].min())
-            normal_col = df[col].apply(lambda x: np.log10(x+lower_lim+1))
-            print(f"Skew value of {col} after log transform: {normal_col.skew()}")
+    #     for col in skew_cols:
+    #         lower_lim = abs(df[col].min())
+    #         normal_col = df[col].apply(lambda x: np.log10(x+lower_lim+1))
+    #         print(f"Skew value of {col} after log transform: {normal_col.skew()}")
     
-        scaler = StandardScaler()
-        #scaler = MinMaxScaler()
-        X = scaler.fit_transform(df.iloc[:,5:].drop('Class', 1))
-        y = df['Class'].values
-        print(X.shape, y.shape)
+    #     scaler = StandardScaler()
+    #     #scaler = MinMaxScaler()
+    #     X = scaler.fit_transform(df.iloc[:,5:].drop('Class', 1))
+    #     y = df['Class'].values
+    #     print(X.shape, y.shape)
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y)
+    #     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y)
 
 
-        gan = buildGAN(out_shape=X_train.shape[1], num_classes=2)
-        # cgan.out_shape=X_train.shape[1]
+    #     gan = buildGAN(out_shape=X_train.shape[1], num_classes=2)
+    #     # cgan.out_shape=X_train.shape[1]
 
-        y_train = y_train.reshape(-1,1)
-        pos_index = np.where(y_train==1)[0]
-        neg_index = np.where(y_train==0)[0]
-        gan.train(X_train, y_train, pos_index, neg_index, epochs=50)#원래 epochs= 5000
+    #     y_train = y_train.reshape(-1,1)
+    #     pos_index = np.where(y_train==1)[0]
+    #     neg_index = np.where(y_train==0)[0]
+    #     gan.train(X_train, y_train, pos_index, neg_index, epochs=50)#원래 epochs= 5000
 
-        print(df.shape)
-        print(X_train.shape)
-        gan_num=df.shape[0]
-        noise = np.random.normal(0, 1, (gan_num, 32))
-        sampled_labels = np.ones(gan_num).reshape(-1, 1)
+    #     print(df.shape)
+    #     print(X_train.shape)
+    #     gan_num=df.shape[0]
+    #     noise = np.random.normal(0, 1, (gan_num, 32))
+    #     sampled_labels = np.ones(gan_num).reshape(-1, 1)
 
-        gen_samples = gan.generator.predict([noise, sampled_labels])
-        gen_samples = scaler.inverse_transform(gen_samples)
-        print(gen_samples.shape)
+    #     gen_samples = gan.generator.predict([noise, sampled_labels])
+    #     gen_samples = scaler.inverse_transform(gen_samples)
+    #     print(gen_samples.shape)
 
-        gen_df = pd.DataFrame(data = gen_samples,
-                columns = df.iloc[:,5:].drop('Class',1).columns)
-        gen_df['Class'] = 1
-        print(gen_df)
+    #     gen_df = pd.DataFrame(data = gen_samples,
+    #             columns = df.iloc[:,5:].drop('Class',1).columns)
+    #     gen_df['Class'] = 1
+    #     print(gen_df)
 
-        Class0 = df[df['Class'] == 0 ]
-        print(Class0)
+    #     Class0 = df[df['Class'] == 0 ]
+    #     print(Class0)
 
-        pca = PCA(n_components = 2)
-        PC = pca.fit_transform(gen_df)
-        PCdf = pca.fit_transform(Class0.iloc[:,5:])
+    #     pca = PCA(n_components = 2)
+    #     PC = pca.fit_transform(gen_df)
+    #     PCdf = pca.fit_transform(Class0.iloc[:,5:])
 
-        VarRatio = pca.explained_variance_ratio_
-        VarRatio = pd.DataFrame(np.round_(VarRatio,3))
+    #     VarRatio = pca.explained_variance_ratio_
+    #     VarRatio = pd.DataFrame(np.round_(VarRatio,3))
 
-        CumVarRatio    = np.cumsum(pca.explained_variance_ratio_)
-        CumVarRatio_df = pd.DataFrame(np.round_(CumVarRatio,3))
+    #     CumVarRatio    = np.cumsum(pca.explained_variance_ratio_)
+    #     CumVarRatio_df = pd.DataFrame(np.round_(CumVarRatio,3))
 
-        Result = pd.concat([VarRatio , CumVarRatio_df], axis=1)
-        print(pd.DataFrame(Result))
-        print(pd.DataFrame(PC))
+    #     Result = pd.concat([VarRatio , CumVarRatio_df], axis=1)
+    #     print(pd.DataFrame(Result))
+    #     print(pd.DataFrame(PC))
 
-        pca3 = PCA(n_components = 3)
-        PC3 = pca3.fit_transform(gen_df)
-        PC_df = pca3.fit_transform(Class0.iloc[:,5:])
+    #     pca3 = PCA(n_components = 3)
+    #     PC3 = pca3.fit_transform(gen_df)
+    #     PC_df = pca3.fit_transform(Class0.iloc[:,5:])
 
-        VarRatio3 = pca3.explained_variance_ratio_
-        VarRatio3 = pd.DataFrame(np.round_(VarRatio3,3))
+    #     VarRatio3 = pca3.explained_variance_ratio_
+    #     VarRatio3 = pd.DataFrame(np.round_(VarRatio3,3))
 
-        CumVarRatio3    = np.cumsum(pca3.explained_variance_ratio_)
-        CumVarRatio_df3 = pd.DataFrame(np.round_(CumVarRatio3,3))
+    #     CumVarRatio3    = np.cumsum(pca3.explained_variance_ratio_)
+    #     CumVarRatio_df3 = pd.DataFrame(np.round_(CumVarRatio3,3))
 
-        Result3 = pd.concat([VarRatio3 , CumVarRatio_df3], axis=1)
-        print(pd.DataFrame(Result3))
-        print(pd.DataFrame(PC3))
+    #     Result3 = pd.concat([VarRatio3 , CumVarRatio_df3], axis=1)
+    #     print(pd.DataFrame(Result3))
+    #     print(pd.DataFrame(PC3))
 
-        augdata = pd.concat([pd.DataFrame(Class0), gen_df])
-        Augdata = augdata.reset_index(drop=True)
-        print(Augdata)
-        print(Augdata['Class'].value_counts(normalize=True)*100)
-        Augdata['TimeStamp']=pd.to_datetime(Augdata['TimeStamp'],unit='s')
-    
+    #     augdata = pd.concat([pd.DataFrame(Class0), gen_df])
+    #     Augdata = augdata.reset_index(drop=True)
+    #     print(Augdata)
+    #     print(Augdata['Class'].value_counts(normalize=True)*100)
+    #     Augdata['TimeStamp']=pd.to_datetime(Augdata['TimeStamp'],unit='s')
+        Augdata=df
         mongoClient = MongoClient()
         #host = Variable.get("MONGO_URL_SECRET")
         host = os.environ['MONGO_URL_SECRET'] 
