@@ -18,7 +18,7 @@ class ModelSingleton(type):
            cls._mongo_id[mongo_id] = super(ModelSingleton, cls).__call__(*args, **kwargs)
        return cls._mongo_id[mongo_id]
    
-class LoadModel(ModelSingleton):
+class LoadModel(metalclass=ModelSingleton):
    def __init__(self, *args, **kwargs):
        print(kwargs)
        self.mongo_id = kwargs['mongo_id']
