@@ -36,7 +36,6 @@ class LoadModel(metaclass=ModelSingleton):
        print(self.mongo_id)
        f = fs.find({"_id": ObjectId(self.mongo_id)}).next()
        print(f)
-       client.close()
        with open(f'{f.model_name}.joblib', 'wb') as outfile:
            outfile.write(f.read())
        return joblib.load(f'{f.model_name}.joblib')
