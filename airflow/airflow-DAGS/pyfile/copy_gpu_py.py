@@ -360,7 +360,10 @@ def oc_svm():
         file_id = str(result[0]['file_id'])
 
         model = LoadModel(mongo_id=file_id).clf
-    
+    mongoClient = MongoClient()
+    #host = Variable.get("MONGO_URL_SECRET")
+    host = os.environ['MONGO_URL_SECRET'] 
+    client = MongoClient(host)
     joblib.dump(model, model_fpath)
     
     print(model.get_params())
@@ -554,6 +557,10 @@ def lstm_autoencoder():
             print("not empty")
             file_id = str(result[0]['file_id'])
             model = LoadModel(mongo_id=file_id).clf
+        mongoClient = MongoClient()
+        #host = Variable.get("MONGO_URL_SECRET")
+        host = os.environ['MONGO_URL_SECRET'] 
+        client = MongoClient(host)
         
         joblib.dump(model, model_fpath)
         
