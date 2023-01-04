@@ -13,7 +13,7 @@ from sklearn.svm import OneClassSVM
 from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score
 from gan import buildGAN
 from preprocess import customize, IQR, MDS_molding
-from loadmodel import ModelSingleton, LoadModel
+from loadmodel import *
 # from IPython.display import Image
 # import matplotlib.pyplot as plt
 # import seaborn as sns

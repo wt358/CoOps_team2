@@ -5,6 +5,7 @@ from gridfs import GridFS
 import joblib
 from bson import ObjectId
 from pymongo import MongoClient
+import io
 
 class ModelSingleton(type):
    """
