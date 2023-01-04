@@ -36,7 +36,10 @@ from sklearn.utils import shuffle
 import tensorflow as tf
 from tensorflow.keras import regularizers
 from tensorflow.keras.layers import Input, Dense, LSTM, TimeDistributed, RepeatVector
-from tensorflow.keras.models import  Model
+from tensorflow.keras.layers import BatchNormalization, Activation, Embedding, ZeroPadding2D, LeakyReLU
+from tensorflow.keras.initializers import RandomNormal
+from tensorflow.keras.models import  Model,Sequential
+import tensorflow.keras.backend as K
 
 import joblib
 
