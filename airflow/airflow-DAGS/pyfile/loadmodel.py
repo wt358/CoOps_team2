@@ -5,6 +5,7 @@ from gridfs import GridFS
 import joblib
 from bson import ObjectId
 from pymongo import MongoClient
+import tensorflow.keras.backend as K
 import io
 
 class ModelSingleton(type):

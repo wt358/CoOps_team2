@@ -39,7 +39,6 @@ from tensorflow.keras.layers import Input, Dense, LSTM, TimeDistributed, RepeatV
 from tensorflow.keras.layers import BatchNormalization, Activation, Embedding, ZeroPadding2D, LeakyReLU
 from tensorflow.keras.initializers import RandomNormal
 from tensorflow.keras.models import  Model,Sequential
-import tensorflow.keras.backend as K
 
 import joblib
 
@@ -555,6 +554,7 @@ def lstm_autoencoder():
         else:
             print("not empty")
             file_id = str(result[0]['file_id'])
+            
             model = LoadModel(mongo_id=file_id).clf
         
         joblib.dump(model, model_fpath)
