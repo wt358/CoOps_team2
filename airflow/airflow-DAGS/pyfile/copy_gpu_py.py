@@ -353,13 +353,15 @@ def oc_svm():
     model_fpath = f'{model_name}.joblib'
     result = collection_model.find({"model_name": model_name}).sort([("uploadDate", -1)])
     print(result)
+    cnt=result.count()
     print(result[0])
+    print(result[cnt])
     if len(list(result.clone()))==0:
         print("empty")
         model = OneClassSVM(kernel = 'rbf', gamma = 0.001, nu = 0.04).fit(target_columns)
     else:
         print("not empty")
-        file_id = str(result[0]['file_id'])
+        file_id = str(result[cnt]['file_id'])
 
         model = LoadModel(mongo_id=file_id).clf
     joblib.dump(model, model_fpath)
@@ -547,13 +549,16 @@ def lstm_autoencoder():
         model_fpath = f'{model_name}.joblib'
         result = collection_model.find({"model_name": model_name}).sort([("uploadDate", -1)])
         print(result)
+        cnt=result.count()
+        print(cnt)
         print(result[0])
+        print(result[cnt])
         if len(list(result.clone()))==0:
             print("empty")
             model = autoencoder_model(X_train)
         else:
             print("not empty")
-            file_id = str(result[0]['file_id'])
+            file_id = str(result[cnt]['file_id'])
             
             model = LoadModel(mongo_id=file_id).clf
         
