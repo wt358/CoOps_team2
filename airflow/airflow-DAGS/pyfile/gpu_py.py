@@ -10,7 +10,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import DBSCAN
 from sklearn.manifold import MDS
-from sklearn.metrics import precision_score, recall_score, f1_score,accuracy_score, classification_report, plot_confusion_matrix, confusion_matrix
+from sklearn.metrics import precision_score, recall_score, f1_score,accuracy_score, classification_report, confusion_matrix
 
 from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.model_selection import train_test_split
