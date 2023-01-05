@@ -356,7 +356,8 @@ def oc_svm():
     cnt=len(list(result.clone()))
     print(result[0])
     print(result[cnt-1])
-    if len(cnt)==0:
+    print(result[-1])
+    if cnt==0:
         print("empty")
         model = OneClassSVM(kernel = 'rbf', gamma = 0.001, nu = 0.04).fit(target_columns)
     else:
@@ -553,7 +554,8 @@ def lstm_autoencoder():
         print(cnt)
         print(result[0])
         print(result[cnt-1])
-        if len(cnt)==0:
+        print(result[-1])
+        if cnt==0:
             print("empty")
             model = autoencoder_model(X_train)
         else:
