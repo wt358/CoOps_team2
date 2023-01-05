@@ -351,7 +351,7 @@ def oc_svm():
     
     model_name = 'OC_SVM'
     model_fpath = f'{model_name}.joblib'
-    result = collection_model.find({"model_name": model_name}).sort({"uploadDate": -1})
+    result = collection_model.find({"model_name": model_name}).sort([("uploadDate", -1)])
     print(result)
     print(result[0])
     if len(list(result.clone()))==0:
@@ -545,7 +545,7 @@ def lstm_autoencoder():
         
         model_name = 'LSTM_autoencoder'
         model_fpath = f'{model_name}.joblib'
-        result = collection_model.find({"model_name": model_name}).sort({"uploadDate": -1})
+        result = collection_model.find({"model_name": model_name}).sort([("uploadDate", -1)])
         print(result)
         print(result[0])
         if len(list(result.clone()))==0:
