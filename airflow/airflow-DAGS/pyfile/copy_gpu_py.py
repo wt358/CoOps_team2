@@ -353,7 +353,7 @@ def oc_svm():
     model_fpath = f'{model_name}.joblib'
     result = collection_model.find({"model_name": model_name}).sort([("uploadDate", -1)])
     print(result)
-    cnt=result.count()
+    cnt=result.batch_size
     print(result[0])
     print(result[cnt])
     if len(list(result.clone()))==0:
@@ -549,7 +549,7 @@ def lstm_autoencoder():
         model_fpath = f'{model_name}.joblib'
         result = collection_model.find({"model_name": model_name}).sort([("uploadDate", -1)])
         print(result)
-        cnt=result.count()
+        cnt=result.batch_size
         print(cnt)
         print(result[0])
         print(result[cnt])
