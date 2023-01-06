@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from kubernetes.client import models as k8s
 from airflow.models import DAG, Variable
 from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.python_operator import BranchPythonOperator
 from airflow.kubernetes.secret import Secret
 from airflow.kubernetes.pod import Resources
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
@@ -123,6 +124,17 @@ cpu_aff={
             }
         }
 
+paths=['path_main','path_vari']
+
+def which_path():
+  '''
+  return the task_id which to be executed
+  '''
+  if True:
+    task_id = 'path_main'
+  else:
+    task_id = 'path_vari'
+  return task_id
 
 start = DummyOperator(task_id="start", dag=dag)
 
@@ -179,9 +191,30 @@ run_svm = KubernetesPodOperator(
         get_logs=True,
         startup_timeout_seconds=600,
         )
+
+
+main_or_vari = BranchPythonOperator(
+    task_id = 'branch',
+    python_callable=which_path,
+    dag=dag,
+)
+
+main_prod = DummyOperator(task_id="main_product", dag=dag)
+vari_prod = DummyOperator(task_id="various_product", dag=dag)
 after_aug = DummyOperator(task_id="Aug_fin", dag=dag)
 after_ml = DummyOperator(task_id="ML_fin", dag=dag)
-start >> run_iqr >> after_aug 
-after_aug >> [run_svm, run_lstm] >> after_ml
 
+start >> main_or_vari
 
+for path in paths:
+    t = DummyOperator(
+        task_id=path,
+        dag=dag,
+        )
+    
+    if path == 'path_main':
+        main_or_vari >> t >> run_iqr >> after_aug 
+        after_aug >> [run_svm, run_lstm] >> after_ml
+    elif path == 'path_vari':
+        main_or_vari >> t
+        
