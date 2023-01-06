@@ -18,7 +18,8 @@ from loadmodel import *
 # import matplotlib.pyplot as plt
 # import seaborn as sns
 
-
+import matplotlib.pyplot as plt
+import seaborn as sns
 from bson import ObjectId
 
 import gridfs
