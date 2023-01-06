@@ -1,13 +1,24 @@
 from datetime import datetime, timedelta
 
 from kubernetes.client import models as k8s
-from airflow.models import DAG, Variable
+from airflow.models import DAG
+from airflow.models.variable import Variable
+
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import BranchPythonOperator
 from airflow.kubernetes.secret import Secret
 from airflow.kubernetes.pod import Resources
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.utils.dates import days_ago
+from airflow.utils.trigger_rule import TriggerRule
+
+import sqlalchemy
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import text
+
+import pandas as pd
+
 
 dag_id = 'kubernetes-dag'
 
@@ -130,7 +141,30 @@ def which_path():
   '''
   return the task_id which to be executed
   '''
-  if True:
+  host = Variable.get("MS_HOST")
+  database = Variable.get("MS_DATABASE")
+  username = Variable.get("MS_USERNAME")
+  password = Variable.get("MS_PASSWORD")
+
+  query = text(
+      "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(day,-7,GETDATE())"
+      )
+  conection_url = sqlalchemy.engine.url.URL(
+      drivername="mssql+pymssql",
+      username=username,
+      password=password,
+      host=host,
+      database=database,
+  )
+  engine = create_engine(conection_url, echo=True)
+  
+  sql_result_pd = pd.read_sql_query(query, engine)
+  
+  mode_machine_name=sql_result_pd['Additional_Info_1'].value_counts().idxmax()
+  print(mode_machine_name) 
+  
+  
+  if '9000a' in mode_machine_name:
     task_id = 'path_main'
   else:
     task_id = 'path_vari'
@@ -199,8 +233,6 @@ main_or_vari = BranchPythonOperator(
     dag=dag,
 )
 
-main_prod = DummyOperator(task_id="main_product", dag=dag)
-vari_prod = DummyOperator(task_id="various_product", dag=dag)
 after_aug = DummyOperator(task_id="Aug_fin", dag=dag)
 after_ml = DummyOperator(task_id="ML_fin", dag=dag)
 
