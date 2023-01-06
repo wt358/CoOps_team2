@@ -351,18 +351,17 @@ def oc_svm():
     
     model_name = 'OC_SVM'
     model_fpath = f'{model_name}.joblib'
-    result = collection_model.find({"model_name": model_name}).sort([("uploadDate", -1)])
+    result = collection_model.find({"model_name": model_name}).sort([("inserted_time", -1)])
     print(result)
     cnt=len(list(result.clone()))
     print(result[0])
     print(result[cnt-1])
-    print(result[-1])
     if cnt==0:
         print("empty")
         model = OneClassSVM(kernel = 'rbf', gamma = 0.001, nu = 0.04).fit(target_columns)
     else:
         print("not empty")
-        file_id = str(result[cnt-1]['file_id'])
+        file_id = str(result[0]['file_id'])
 
         model = LoadModel(mongo_id=file_id).clf
     joblib.dump(model, model_fpath)
@@ -548,19 +547,18 @@ def lstm_autoencoder():
         
         model_name = 'LSTM_autoencoder'
         model_fpath = f'{model_name}.joblib'
-        result = collection_model.find({"model_name": model_name}).sort([("uploadDate", -1)])
+        result = collection_model.find({"model_name": model_name}).sort([("inserted_time", -1)])
         print(result)
         cnt=len(list(result.clone()))
         print(cnt)
         print(result[0])
         print(result[cnt-1])
-        print(result[-1])
         if cnt==0:
             print("empty")
             model = autoencoder_model(X_train)
         else:
             print("not empty")
-            file_id = str(result[cnt-1]['file_id'])
+            file_id = str(result[0]['file_id'])
             
             model = LoadModel(mongo_id=file_id).clf
         
