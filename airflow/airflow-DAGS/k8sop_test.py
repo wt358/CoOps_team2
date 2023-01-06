@@ -164,7 +164,8 @@ def which_path():
   print(mode_machine_name) 
   
   
-  if '9000a' in mode_machine_name:
+#   if '9000a' in mode_machine_name:
+  if False:
     task_id = 'path_main'
   else:
     task_id = 'path_vari'
