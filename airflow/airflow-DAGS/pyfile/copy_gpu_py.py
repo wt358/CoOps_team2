@@ -356,14 +356,12 @@ def oc_svm():
     cnt=len(list(result.clone()))
     print(result[0])
     print(result[cnt-1])
-    if cnt==0:
-        print("empty")
-        model = OneClassSVM(kernel = 'rbf', gamma = 0.001, nu = 0.04).fit(target_columns)
-    else:
-        print("not empty")
+    try:
         file_id = str(result[0]['file_id'])
-
         model = LoadModel(mongo_id=file_id).clf
+    except Exception as e:
+        print("exception occured in oc_svm",e)
+        model = OneClassSVM(kernel = 'rbf', gamma = 0.001, nu = 0.04).fit(target_columns)
     joblib.dump(model, model_fpath)
     
     print(model.get_params())
@@ -553,14 +551,12 @@ def lstm_autoencoder():
         print(cnt)
         print(result[0])
         print(result[cnt-1])
-        if cnt==0:
-            print("empty")
-            model = autoencoder_model(X_train)
-        else:
-            print("not empty")
+        try:
             file_id = str(result[0]['file_id'])
-            
             model = LoadModel(mongo_id=file_id).clf
+        except Exception as e:
+            print("exception occured in lstm ae",e)
+            model = autoencoder_model(X_train)
         
         joblib.dump(model, model_fpath)
         
