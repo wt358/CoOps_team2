@@ -14,7 +14,6 @@ from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score
 
 from functools import partial
 from scipy import integrate, stats
-from numba import cuda 
 
 
 

@@ -21,5 +21,3 @@ flask
 pyts
 streamlit
 streamlit-autorefresh
-numba==0.53.1
-numpy==1.19.5
