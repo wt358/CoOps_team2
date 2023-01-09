@@ -11,9 +11,21 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import IsolationForest
 from sklearn.svm import OneClassSVM 
 from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score
+
+from functools import partial
+from scipy import integrate, stats
+from numba import cuda 
+
+
+
 from gan import buildGAN
-from preprocess import customize, IQR, MDS_molding
+from preprocess import *
+from logger import *
+from cTadGAN import *
 from loadmodel import *
+import params
+
+
 # from IPython.display import Image
 # import matplotlib.pyplot as plt
 # import seaborn as sns
@@ -49,6 +61,7 @@ import csv
 import pandas as pd
 import os
 import sys
+import math
 
 import time
 import numpy as np
@@ -66,6 +79,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 
+import json
 from json import loads
 import random as rn
 
@@ -650,6 +664,349 @@ def lstm_autoencoder():
 
     print("hello auto encoder")
 
+def teng():
+    train_dt = now.strftime("%Y-%m-%d_%H:%M:%S")
+
+    train_data_path = params.train_data_path
+    train_columns = params.train_columns
+    time_columns = params.time_columns
+
+    interval =params.interval
+    latent_dim = params.latent_dim
+    shape = params.shape
+    encoder_input_shape = params.encoder_input_shape
+    generator_input_shape = params.generator_input_shape
+    critic_x_input_shape = params.critic_x_input_shape
+    critic_z_input_shape = params.critic_z_input_shape
+    encoder_reshape_shape = params.encoder_reshape_shape
+    generator_reshape_shape = params.generator_reshape_shape
+    learning_rate = params.learning_rate
+    batch_size = params.batch_size
+    n_critics = params.n_critics
+    epochs = params.epochs
+    check_point = params.check_point
+    z_range =params.z_range
+    window_size = params.window_size
+    window_size_portion = params.window_size_portion
+    window_step_size = params.window_step_size
+    window_step_size_portion =params.window_step_size_portion
+    min_percent = params.min_percent
+    anomaly_padding =params.anomaly_padding
+
+
+
+    logging.info('Step 1. Preprocess data')
+    # Read Data and reconstruct data fromat for TadGAN
+    now = datetime.now()
+
+    consumer = KafkaConsumer('test.coops2022_etl.etl_data',
+            group_id=f'teng_{train_dt}',
+            bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],
+            value_deserializer=lambda x: loads(x.decode('utf-8')),
+            auto_offset_reset='earliest',
+            consumer_timeout_ms=10000
+            )
+    #consumer.poll(timeout_ms=1000, max_records=2000)
+
+    #dataframe extract
+    l=[]
+
+    for message in consumer:
+        message = message.value
+        l.append(loads(message['payload'])['fullDocument'])
+    df = pd.DataFrame(l)
+    print(df)
+    # dataframe transform
+    df=df[df['idx']!='idx']
+    print(df.shape)
+    print(df.columns)
+    print(df)
+
+    df.drop(columns={'_id',
+        },inplace=True)
+    df=df[df['Machine_Name'] != '7']
+    df=df[df['Machine_Name'] != '6i']
+    df=df[df['Machine_Name'] != '']
+    #IQR
+    print(df)
+
+    
+    train_dataset = data_reshape(df, time_columns=None, vib_columns = train_columns)
+
+    for train_column in train_columns:
+        train_data = train_dataset[train_column]
+
+        # check train data size
+        if train_data.shape[0] <= 100:
+            logging.info('Data for train/inference should be larger than rolling size (100)')
+            break
+
+        # Check Intervals
+        interval_unique = np.unique([train_data['timestamp'][i+1] 
+                                     - train_data['timestamp'][i] for i in range(train_data.shape[0]-1)])
+        if len(interval_unique) != 1:
+            print('Time Intervals between data points are not equal. All the intervals are changed to one')
+            index_origin = train_data['timestamp']
+            train_data.loc[:,'timestamp'] = range(train_data.shape[0])
+            interval = train_data['timestamp'][1] - train_data['timestamp'][0] 
+        else:
+            interval = interval_unique[0]
+            index_origin = None
+
+        # TimeSegments 
+        X, index = time_segments_aggregate(train_data, interval=interval, time_column='timestamp')
+
+        # Imputer
+        imp = SimpleImputer()
+        X = imp.fit_transform(X)
+
+        # MinMax
+        scaler = MinMaxScaler(feature_range=(-1, 1))
+        X = scaler.fit_transform(X)
+
+        # Create rolling window sequences
+        X, _, _, _ = rolling_window_sequences(X, 
+                                              index, 
+                                              window_size=100, 
+                                              target_size=1, 
+                                              step_size=1,
+                                              target_column=0)
+
+        os.makedirs('./data/preprocessed/{}'.format(train_dt), exist_ok=True)
+        np.save('./data/preprocessed/{}/{}.npy'.format(train_dt, train_column), X)
+        np.save('./data/preprocessed/{}/{}_index.npy'.format(train_dt, train_column), index)
+        np.save('./data/preprocessed/{}/{}_index_origin.npy'.format(train_dt, train_column), index_origin)
+        logging.info("Training data input shape: {} - {}".format(train_column, X.shape))
+
+
+    for train_column in train_columns:
+        ####################################################################################
+        logging.info('Step 2. Build TadGAN network')
+
+        # Layer Parameters
+        encoder = build_encoder_layer(input_shape=encoder_input_shape,
+                                      encoder_reshape_shape=encoder_reshape_shape)
+        generator = build_generator_layer(input_shape=generator_input_shape,
+                                          generator_reshape_shape=generator_reshape_shape)
+        critic_x = build_critic_x_layer(input_shape=critic_x_input_shape)
+        critic_z = build_critic_z_layer(input_shape=critic_z_input_shape)
+
+        optimizer = tf.keras.optimizers.Adam(learning_rate)
+
+        # Critic x
+        z = Input(shape=(latent_dim, 1))
+        x = Input(shape=shape)
+        x_ = generator(z)
+        z_ = encoder(x)
+        fake_x = critic_x(x_)
+        valid_x = critic_x(x)
+        interpolated_x = RandomWeightedAverage()([x, x_])
+        critic_x_model = Model(inputs=[x, z], outputs=[valid_x, fake_x, interpolated_x])
+
+        # Critic z
+        fake_z = critic_z(z_)
+        valid_z = critic_z(z)
+        interpolated_z = RandomWeightedAverage()([z, z_])
+        critic_z_model = Model(inputs=[x, z], outputs=[valid_z, fake_z, interpolated_z])
+
+        # Encoder Decoder
+        z_gen = Input(shape=(latent_dim, 1))
+        x_gen_ = generator(z_gen)
+        x_gen = Input(shape=shape)
+        z_gen_ = encoder(x_gen)
+        x_gen_rec = generator(z_gen_)
+        fake_gen_x = critic_x(x_gen_)
+        fake_gen_z = critic_z(z_gen_)
+        encoder_generator_model = Model([x_gen, z_gen], [fake_gen_x, fake_gen_z, x_gen_rec])
+        
+        ####################################################################################
+        logging.info('Step 3. Train the network & Save models')
+        
+        # Load data for training
+        X_path = './data/preprocessed/{}/{}.npy'.format(train_dt, train_column)
+        index_path = './data/preprocessed/{}/{}_index.npy'.format(train_dt, train_column)
+
+        X = np.load(X_path, allow_pickle=True)
+        index = np.load(index_path, allow_pickle=True)
+
+        # Load model for training
+        encoder_model_path = './model/model_{}/{}/encoder'.format(train_dt, train_column)
+        generator_model_path = './model/model_{}/{}/decoder'.format(train_dt, train_column)
+        critic_x_model_path = './model/model_{}/{}/critic_x'.format(train_dt, train_column)   
+        critic_z_model_path = './model/model_{}/{}/critic_z'.format(train_dt, train_column)  
+
+        critic_x_m_model_path = './model/model_{}/{}/critic_x_model'.format(train_dt, train_column)
+        critic_z_m_model_path = './model/model_{}/{}/critic_z_model'.format(train_dt, train_column)
+        encoder_generator_model_path = './model/model_{}/{}/encoder_generator_model'.format(train_dt, train_column)
+
+        # Log path for tensorboard 
+        train_log_dir = 'tensorlog/' + train_dt + '/' + train_column
+        train_summary_writer = tf.summary.create_file_writer(train_log_dir)
+
+        # define loss for tensorboard
+        tb_epoch_cx_loss = tf.keras.metrics.Mean('epoch_cx_loss', dtype=tf.float32)
+        tb_epoch_cz_loss = tf.keras.metrics.Mean('epoch_cz_loss', dtype=tf.float32)
+        tb_epoch_eg_loss = tf.keras.metrics.Mean('epoch_eg_loss', dtype=tf.float32)
+        tb_loss = tf.keras.metrics.Sum('epoch_loss', dtype=tf.float32)
+
+        # functions for training
+        @tf.function
+        def critic_x_train_on_batch(x, z, valid, fake, delta):
+            with tf.GradientTape() as tape:
+
+                (valid_x, fake_x, interpolated) = critic_x_model(inputs=[x, z], training=True) 
+
+                with tf.GradientTape() as gp_tape:
+                    gp_tape.watch(interpolated)
+                    pred = critic_x(interpolated[0], training=True)
+
+                grads = gp_tape.gradient(pred, interpolated)[0]
+                grads = tf.square(grads)
+                ddx = tf.sqrt(1e-8 + tf.reduce_sum(grads, axis=np.arange(1, len(grads.shape))))
+                gp_loss = tf.reduce_mean((ddx - 1.0) ** 2)
+
+                loss = tf.reduce_mean(wasserstein_loss(valid, valid_x))
+                loss += tf.reduce_mean(wasserstein_loss(fake, fake_x))
+                loss += gp_loss*10.0
+
+            gradients = tape.gradient(loss, critic_x_model.trainable_weights)
+            optimizer.apply_gradients(zip(gradients, critic_x_model.trainable_weights))
+
+            tb_epoch_cx_loss(loss)
+            return loss
+
+        @tf.function
+        def critic_z_train_on_batch(x, z, valid, fake, delta):
+            with tf.GradientTape() as tape:
+
+                (valid_z, fake_z, interpolated) = critic_z_model(inputs=[x, z], training=True)
+
+                with tf.GradientTape() as gp_tape:
+                    gp_tape.watch(interpolated)
+                    pred = critic_z(interpolated[0], training=True)
+
+                grads = gp_tape.gradient(pred, interpolated)[0]
+                grads = tf.square(grads)
+                ddx = tf.sqrt(1e-8 + tf.reduce_sum(grads, axis=np.arange(1, len(grads.shape))))
+                gp_loss = tf.reduce_mean((ddx - 1.0) ** 2)
+
+                loss = tf.reduce_mean(wasserstein_loss(valid, valid_z))
+                loss += tf.reduce_mean(wasserstein_loss(fake, fake_z))
+                loss += gp_loss*10.0        
+
+            gradients = tape.gradient(loss, critic_z_model.trainable_weights)
+            optimizer.apply_gradients(zip(gradients, critic_z_model.trainable_weights))
+
+            tb_epoch_cz_loss(loss)
+            return loss
+
+        @tf.function
+        def enc_gen_train_on_batch(x, z, valid):
+            with tf.GradientTape() as tape:
+
+                (fake_gen_x, fake_gen_z, x_gen_rec) = encoder_generator_model(inputs=[x, z], training=True)
+
+                x = tf.squeeze(x)
+                x_gen_rec = tf.squeeze(x_gen_rec)
+
+                loss = tf.reduce_mean(wasserstein_loss(valid, fake_gen_x))
+                loss += tf.reduce_mean(wasserstein_loss(valid, fake_gen_z))
+                loss += tf.keras.losses.MSE(x, x_gen_rec)*10
+                loss = tf.reduce_mean(loss)
+
+            gradients = tape.gradient(loss, encoder_generator_model.trainable_weights)
+            optimizer.apply_gradients(zip(gradients, encoder_generator_model.trainable_weights))
+
+            tb_epoch_eg_loss(loss)
+            return loss
+
+        # Train 
+        X = X.reshape((-1, shape[0], 1))
+        X_ = np.copy(X)
+
+        fake = np.ones((batch_size, 1), dtype=np.float32)
+        valid = -np.ones((batch_size, 1), dtype=np.float32)
+        delta = np.ones((batch_size, 1), dtype=np.float32)
+
+        
+        train_loss = []
+        for epoch in range(1, epochs+1):
+
+            np.random.shuffle(X_)
+
+            epoch_eg_loss = []
+            epoch_cx_loss = []
+            epoch_cz_loss = []
+
+            minibatches_size = batch_size * n_critics
+            num_minibatches = int(X_.shape[0] // minibatches_size)
+
+            for i in range(num_minibatches):
+                minibatch = X_[i * minibatches_size: (i + 1) * minibatches_size]
+
+                generator.trainable = False
+                encoder.trainable = False
+
+                # train critics 
+                for j in range(n_critics):
+                    x = minibatch[j * batch_size: (j + 1) * batch_size]
+                    z = np.random.normal(size=(batch_size, latent_dim, 1))
+                    epoch_cx_loss.append(critic_x_train_on_batch(x, z, valid, fake, delta))
+                    epoch_cz_loss.append(critic_z_train_on_batch(x, z, valid, fake, delta))
+
+                critic_x.trainable = False
+                critic_z.trainable = False        
+                generator.trainable = True
+                encoder.trainable = True     
+
+                # train encoder, generator   
+                epoch_eg_loss.append(enc_gen_train_on_batch(x, z, valid))
+
+            cx_loss = np.mean(np.array(epoch_cx_loss), axis=0)
+            cz_loss = np.mean(np.array(epoch_cz_loss), axis=0)
+            eg_loss = np.mean(np.array(epoch_eg_loss), axis=0)            
+            obj_loss = np.sum([cx_loss, cz_loss, eg_loss])
+            
+            tb_loss([cx_loss, cz_loss, eg_loss])
+            train_loss.append([epoch, epochs, cx_loss, cz_loss, eg_loss])
+            
+            if epoch%check_point == 0:
+                """수정사항: log 별도 저장 -> csv"""
+                logging.info(
+                    'Epoch: {}/{}, [Dx loss: {}] [Dz loss: {}] [G loss: {}]'.format(epoch, epochs, cx_loss, cz_loss, eg_loss)
+                )
+
+            with train_summary_writer.as_default():
+                tf.summary.scalar('epoch_cx_loss', tb_epoch_cx_loss.result(), step=epoch)
+                tf.summary.scalar('epoch_cz_loss', tb_epoch_cz_loss.result(), step=epoch)
+                tf.summary.scalar('epoch_eg_loss', tb_epoch_eg_loss.result(), step=epoch)
+                tf.summary.scalar('epoch_loss', tb_loss.result(), step=epoch)
+
+            # critic_x.save(critic_x_model_path)
+            # encoder.save(encoder_model_path)
+            # generator.save(generator_model_path)
+            # critic_z.save(critic_z_model_path)
+
+            # critic_x_model.save(critic_x_m_model_path)
+            # critic_z_model.save(critic_z_m_model_path)
+            # encoder_generator_model.save(encoder_generator_model_path)
+            SaveModel(critic_x,'mongo_TadGAN','critic_x',train_dt)
+            SaveModel(encoder,'mongo_TadGAN','encoder',train_dt)
+            SaveModel(generator,'mongo_TadGAN','generator',train_dt)
+            SaveModel(critic_z,'mongo_TadGAN','critic_z',train_dt)
+            SaveModel(critic_x_model,'mongo_TadGAN','critic_x_model',train_dt)
+            SaveModel(critic_z_model,'mongo_TadGAN','critic_z_model',train_dt)
+            SaveModel(encoder_generator_model,'mongo_TadGAN','encoder_generator_model',train_dt)
+            
+            os.makedirs('./log/{}'.format(train_dt), exist_ok=True)            
+            pd.DataFrame(train_loss, 
+                         columns=['epoch','epochs','Dx_loss','Dz_loss','G_loss']
+                        ).to_csv('./log/{}/train_loss_{}.csv'.format(train_dt, train_column))
+
+
+
+    
+    print("hello teng")
 
 if __name__ == "__main__":
     print("entering main")
@@ -663,5 +1020,8 @@ if __name__ == "__main__":
     elif sys.argv[1] == 'oc_svm':
         print("entering svm")
         oc_svm()
+    elif sys.argv[1] == 'tad_gan':
+        print("entering tadgan")
+        teng()
     print("hello main")
  

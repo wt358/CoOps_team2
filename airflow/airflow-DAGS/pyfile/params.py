@@ -1,0 +1,24 @@
+train_columns = ['Plasticizing_Time'] # ['Max_Switch_Over_Pressure', 'Cycle_Time', 'Max_Injection_Pressure', 'Barrel_Temperature_6'] # change column names if EDA result is changed
+time_columns = "TimeStamp" # Update name if TimeStamp column name is changed
+
+interval = 1
+latent_dim = 20
+shape = [100, 1]
+encoder_input_shape = [100, 1]
+generator_input_shape = [20, 1]
+critic_x_input_shape = [100, 1]
+critic_z_input_shape = [20, 1]
+encoder_reshape_shape = [20, 1]
+generator_reshape_shape = [50, 1]
+learning_rate = 0.0005
+batch_size = 64
+n_critics = 5
+epochs = 1000
+check_point = 1
+z_range =[0, 10]
+window_size = None
+window_size_portion = None
+window_step_size = None
+window_step_size_portion = None
+min_percent = 0.1
+anomaly_padding =100

@@ -177,7 +177,7 @@ run_iqr = KubernetesPodOperator(
         task_id="iqr_gan_pod_operator",
         name="iqr-gan",
         namespace='airflow-cluster',
-        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.46',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.47',
         #image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3" ],
@@ -196,7 +196,7 @@ run_lstm = KubernetesPodOperator(
         task_id="lstm_pod_operator",
         name="lstm-auto-encoder",
         namespace='airflow-cluster',
-        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.46',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.47',
         #image_pull_policy="Always",
         #image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
@@ -211,11 +211,30 @@ run_lstm = KubernetesPodOperator(
         get_logs=True,
         startup_timeout_seconds=600,
         )
+run_tadgan = KubernetesPodOperator(
+        task_id="tad_pod_operator",
+        name="tad-gan",
+        namespace='airflow-cluster',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.47',
+        #image_pull_policy="Always",
+        #image_pull_policy="IfNotPresent",
+        image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
+        cmds=["python3" ],
+        arguments=["copy_gpu_py.py", "tad_gan"],
+        affinity=gpu_aff,
+        #resources=pod_resources,
+        secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
+        #env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
+        #configmaps=configmaps,
+        is_delete_operator_pod=True,
+        get_logs=True,
+        startup_timeout_seconds=600,
+        )
 run_svm = KubernetesPodOperator(
         task_id="oc_svm_pod_operator",
         name="oc-svm",
         namespace='airflow-cluster',
-        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.46',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.47',
         #image_pull_policy="Always",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         secrets=[secret_all,secret_all1 ,secret_all2 ,secret_all3, secret_all4, secret_all5, secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb ],
@@ -249,5 +268,5 @@ for path in paths:
         main_or_vari >> t >> run_iqr >> after_aug 
         after_aug >> [run_svm, run_lstm] >> after_ml
     elif path == 'path_vari':
-        main_or_vari >> t
+        main_or_vari >> t >> run_tadgan
         
