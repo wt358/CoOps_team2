@@ -664,6 +664,7 @@ def lstm_autoencoder():
     print("hello auto encoder")
 
 def teng():
+    now = datetime.now()
     train_dt = now.strftime("%Y-%m-%d_%H:%M:%S")
 
     train_data_path = params.train_data_path
@@ -696,7 +697,6 @@ def teng():
 
     logging.info('Step 1. Preprocess data')
     # Read Data and reconstruct data fromat for TadGAN
-    now = datetime.now()
 
     consumer = KafkaConsumer('test.coops2022_etl.etl_data',
             group_id=f'teng_{train_dt}',
