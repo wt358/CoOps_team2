@@ -1,3 +1,4 @@
+numpy==1.23
 pymongo
 pymssql
 pandas
@@ -17,3 +18,8 @@ seaborn
 apache-airflow-providers-cncf-kubernetes
 cuda-python
 psycopg2-binary
+flask
+pyts
+streamlit
+streamlit-autorefresh
+numba
