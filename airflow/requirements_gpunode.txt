@@ -1,4 +1,3 @@
-numpy==1.23
 pymongo
 pymssql
 pandas
@@ -7,7 +6,7 @@ kafka-python
 apache-airflow
 ciso8601
 influxdb-client[ciso]
-kubernetes
+kubernetes<24,>=21.7.0
 scikit-learn
 imbalanced-learn
 tensorflow
@@ -22,4 +21,5 @@ flask
 pyts
 streamlit
 streamlit-autorefresh
-numba
+numba==0.53.1
+numpy==1.19.5
