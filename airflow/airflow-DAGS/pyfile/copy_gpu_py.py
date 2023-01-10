@@ -735,7 +735,7 @@ def teng():
     new_col_list = col_list[-1:] + col_list[:-1]
     df=df[new_col_list]
     print(df)
-    df_scaled=outlier_iqr(df)
+    df_scaled,scaled=outlier_iqr(df)
     
     imp_mean = SimpleImputer(missing_values=np.nan, strategy='mean')
     scaled_imp = imp_mean.fit_transform(scaled)
