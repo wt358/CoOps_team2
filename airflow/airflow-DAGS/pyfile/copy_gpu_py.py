@@ -694,7 +694,6 @@ def teng():
     anomaly_padding =params.anomaly_padding
 
 
-
     logging.info('Step 1. Preprocess data')
     # Read Data and reconstruct data fromat for TadGAN
 
@@ -726,16 +725,40 @@ def teng():
     df=df[df['Machine_Name'] != '7']
     df=df[df['Machine_Name'] != '6i']
     df=df[df['Machine_Name'] != '']
-    #IQR
+    #EDA
     print(df)
     
-    df=df.drop(columns=['idx','Machine_Name','Additional_Info_1','Additional_Info_2'])
-    
+    df=df.drop(columns=['idx','Machine_Name','Additional_Info_1','Additional_Info_2','Shot_Number'],axis=1)
     print(df)
+    
+    col_list = df.columns.tolist()
+    new_col_list = col_list[-1:] + col_list[:-1]
+    df=df[new_col_list]
+    print(df)
+    df_scaled=outlier_iqr(df)
+    
+    imp_mean = SimpleImputer(missing_values=np.nan, strategy='mean')
+    scaled_imp = imp_mean.fit_transform(scaled)
+
+    df_scaled = pd.DataFrame(scaled_imp).T
+    df_scaled.columns = df.columns[1:]
+    df_scaled.index = pd.to_datetime(df['TimeStamp'])
+    
+    #초단위 groupby
+    
+    target = []
+    for u in df.columns:
+        target_i = df_scaled[u]
+        target_i = target_i.reset_index().groupby('TimeStamp').mean()
+        target.append(target_i)
+    df_target = pd.concat(target,axis=1)
+    
+    df = df_target[['Plasticizing_Time', 'Max_Switch_Over_Pressure', 'Cycle_Time', 'Max_Injection_Pressure', 'Barrel_Temperature_6']]
+    
+    
+    train_dataset = data_reshape(df, time_columns=time_columns, vib_columns = train_columns)
 
     
-    train_dataset = data_reshape(df, time_columns='TimeStamp', vib_columns = train_columns)
-
     for train_column in train_columns:
         train_data = train_dataset[train_column]
 

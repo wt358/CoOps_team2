@@ -225,3 +225,16 @@ def data_reshape(df, time_columns=None, vib_columns = ['x','y','z']):
 #     if not ((df.shape[1] == 2) & (df.columns[0] == 'timestamp') & (df.columns[1] == 'value')):
 #     print('Reconstruct data form for TadGAN')
 
+def outlier_iqr(df):
+    scaled = []
+    q = [0.05, 0.95]
+    scaler= MinMaxScaler()
+    for i in df.columns[1:]:
+        lb, ub = df[i].quantile(q).tolist()
+        samp = df[i].map(lambda x: None if (x < lb) or (x > ub) else x)
+        samp = scaler.fit_transform(samp.to_frame())
+        scaled.append(samp.reshape(-1,).tolist())
+
+df_scaled = pd.DataFrame(scaled).T
+df_scaled.columns = df.columns[1:]
+df_scaled.index = pd.to_datetime(df['TimeStamp'])
