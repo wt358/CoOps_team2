@@ -728,6 +728,10 @@ def teng():
     df=df[df['Machine_Name'] != '']
     #IQR
     print(df)
+    
+    df=df.drop(columns=['idx','Machine_Name','Additional_Info_1','Additional_Info_2'])
+    
+    print(df)
 
     
     train_dataset = data_reshape(df, time_columns='TimeStamp', vib_columns = train_columns)
