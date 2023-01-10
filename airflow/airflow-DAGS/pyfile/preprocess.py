@@ -234,7 +234,7 @@ def outlier_iqr(df):
         samp = df[i].map(lambda x: None if (x < lb) or (x > ub) else x)
         samp = scaler.fit_transform(samp.to_frame())
         scaled.append(samp.reshape(-1,).tolist())
-
-df_scaled = pd.DataFrame(scaled).T
-df_scaled.columns = df.columns[1:]
-df_scaled.index = pd.to_datetime(df['TimeStamp'])
+    df_scaled = pd.DataFrame(scaled).T
+    df_scaled.columns = df.columns[1:]
+    df_scaled.index = pd.to_datetime(df['TimeStamp'])
+    return df_scaled
