@@ -688,7 +688,7 @@ def teng():
     z_range =params.z_range
     window_size = params.window_size
     window_size_portion = params.window_size_portion
-    window_step_size = params.window_step_size
+    window_step_size = params.window
     window_step_size_portion =params.window_step_size_portion
     min_percent = params.min_percent
     anomaly_padding =params.anomaly_padding
@@ -726,6 +726,17 @@ def teng():
 
     df.drop(columns={'_id',
         },inplace=True)
+    df=df[['idx', 'Machine_Name','Additional_Info_1', 'Additional_Info_2','Shot_Number','TimeStamp',
+            'Average_Back_Pressure', 'Average_Screw_RPM', 'Clamp_Close_Time',
+            'Clamp_Open_Position', 'Clamp_open_time','Cushion_Position', 'Cycle_Time', 'Filling_Time',
+            'Injection_Time', 'Plasticizing_Position','Max_Back_Pressure','Max_Injection_Pressure','Max_Injection_Speed','Max_Screw_RPM',
+            'Max_Switch_Over_Pressure',
+            'Plasticizing_Time', 'Switch_Over_Position','Barrel_Temperature_1','Barrel_Temperature_2','Barrel_Temperature_3',
+            'Barrel_Temperature_4','Barrel_Temperature_5','Barrel_Temperature_6','Barrel_Temperature_7',
+            ]]
+
+
+    
     df=df[df['Machine_Name'] != '7']
     df=df[df['Machine_Name'] != '6i']
     df=df[df['Machine_Name'] != '']
@@ -735,23 +746,38 @@ def teng():
     df=df.drop(columns=['idx','Machine_Name','Additional_Info_1','Additional_Info_2','Shot_Number'],axis=1)
     df=df.dropna(axis=0)
     print(df)
-    
-    col_list = df.columns.tolist()
-    new_col_list = col_list[-1:] + col_list[:-1]
-    df=df[new_col_list]
+    df.iloc[:, 1:] = df.iloc[:, 1:].apply(pd.to_numeric, errors='coerce')
+    print("to number")
+    print(df.head().T)
+    print(df.info())
+
+    print(df.describe())
+    for i in df.columns:
+        print("컬럼: {:40s}, 크기: {}, Null: {}".format(i, df[i].shape, df[i].isnull().sum()))
     print(df)
+    
+    scaler = MinMaxScaler()
+    q = [0.025, 0.975]
+    for i in df.columns[1:]:
+        lb, ub = df[i].quantile(q).tolist()
+        samp = df[i].map(lambda x: None if (x < lb)or(x > ub) else x)
+        samp = scaler.fit_transform(samp.to_frame())
+        fig,ax = plt.subplots(1,1)
+        pd.Series(samp.reshape(-1,)).plot(figsize=(30,5), title=i, ax=ax)
+    print(df)
+
+
     df_scaled,scaled=outlier_iqr(df)
     
     imp_mean = SimpleImputer(missing_values=np.nan, strategy='mean')
     scaled_imp = imp_mean.fit_transform(scaled)
 
     df_scaled = pd.DataFrame(scaled_imp).T
-    df_scaled.columns = df.drop(columns=['TimeStamp']).columns
+    df_scaled.columns = df.columns[1:]
     df_scaled.index = pd.to_datetime(df['TimeStamp'])
     
     print(df_scaled.info())
     #초단위 groupby
-    print(df_scaled[usecols].describe().T.sort_values(by='mean',ascending=False))
     target = []
     for u in usecols:
         target_i = df_scaled[u]
