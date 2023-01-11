@@ -692,6 +692,7 @@ def teng():
     window_step_size_portion =params.window_step_size_portion
     min_percent = params.min_percent
     anomaly_padding =params.anomaly_padding
+    usecols=params.usecols
 
 
     logging.info('Step 1. Preprocess data')
@@ -711,6 +712,7 @@ def teng():
 
     for message in consumer:
         message = message.value
+        print(message)
         l.append(loads(message['payload'])['fullDocument'])
     df = pd.DataFrame(l)
     print(df)
@@ -747,7 +749,6 @@ def teng():
     
     print(df_scaled.info())
     #초단위 groupby
-    usecols=params.usecols
     print(df_scaled[usecols].describe().T.sort_values(by='mean',ascending=False))
     target = []
     for u in usecols:
