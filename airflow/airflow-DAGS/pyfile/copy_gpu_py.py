@@ -688,7 +688,7 @@ def teng():
     z_range =params.z_range
     window_size = params.window_size
     window_size_portion = params.window_size_portion
-    window_step_size = params.window
+    window_step_size = params.window_step_size
     window_step_size_portion =params.window_step_size_portion
     min_percent = params.min_percent
     anomaly_padding =params.anomaly_padding
