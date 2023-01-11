@@ -163,20 +163,7 @@ def pull_transform():
     df.drop(columns={'_id'},inplace=True)
 
     df=df.drop_duplicates(subset=["idx"])
-    df.drop(columns={'Barrel_Temperature_1',
-        'Barrel_Temperature_2',
-        'Barrel_Temperature_3',
-        'Barrel_Temperature_4',
-        'Barrel_Temperature_5',
-        'Barrel_Temperature_6',
-        'Barrel_Temperature_7',
-        'Max_Injection_Speed',
-        'Max_Injection_Pressure',
-        'Max_Screw_RPM',
-        'Max_Switch_Over_Pressure',
-        'Max_Back_Pressure',
-        'Clamp_open_time',
-        'Mold_Temperature_1',
+    df.drop(columns={'Mold_Temperature_1',
         'Mold_Temperature_2',
         'Mold_Temperature_3',
         'Mold_Temperature_4',
