@@ -753,7 +753,8 @@ def teng():
         target.append(target_i)
     df_target = pd.concat(target,axis=1)
     
-    df = df_target[['Plasticizing_Time', 'Max_Switch_Over_Pressure', 'Cycle_Time', 'Max_Injection_Pressure', 'Barrel_Temperature_6']]
+    # df = df_target[['Plasticizing_Time', 'Max_Switch_Over_Pressure', 'Cycle_Time', 'Max_Injection_Pressure', 'Barrel_Temperature_6']]
+    df = df_target[['Plasticizing_Time', 'Max_Switch_Over_Pressure', 'Cycle_Time', 'Max_Injection_Pressure']]
     
     
     train_dataset = data_reshape(df, time_columns=time_columns, vib_columns = train_columns)
