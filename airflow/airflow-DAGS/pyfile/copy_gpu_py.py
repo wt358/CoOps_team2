@@ -787,7 +787,7 @@ def teng():
     
     df = df_target[['Plasticizing_Time', 'Max_Switch_Over_Pressure', 'Cycle_Time', 'Max_Injection_Pressure', 'Barrel_Temperature_6']]
     
-    train_dataset = data_reshape(df, time_columns=time_columns, vib_columns = train_columns)
+    train_dataset = data_reshape(df,  vib_columns = train_columns)
 
     
     for train_column in train_columns:
