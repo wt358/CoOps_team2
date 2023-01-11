@@ -23,3 +23,25 @@ window_step_size = None
 window_step_size_portion = None
 min_percent = 0.1
 anomaly_padding =100
+
+usecols=['Injection_Time',
+        'Filling_Time',
+        'Plasticizing_Time',
+        'Cycle_Time',
+        'Clamp_Close_Time',
+        'Cushion_Position',
+        'Switch_Over_Position',
+        'Clamp_Open_Position',
+        'Max_Injection_Speed',
+        'Max_Screw_RPM',
+        'Average_Screw_RPM',
+        'Max_Injection_Pressure',
+        'Max_Switch_Over_Pressure',
+        'Max_Back_Pressure',
+        'Average_Back_Pressure',
+        'Barrel_Temperature_2',
+        'Barrel_Temperature_3',
+        'Barrel_Temperature_4',
+        'Barrel_Temperature_5',
+        'Barrel_Temperature_6',
+        'Barrel_Temperature_7']

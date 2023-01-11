@@ -745,10 +745,12 @@ def teng():
     df_scaled.columns = df.columns[1:]
     df_scaled.index = pd.to_datetime(df['TimeStamp'])
     
+    print(df_scaled.info())
     #초단위 groupby
-    
+    usecols=params.usecols
+    print(df_scaled[usecols].describe().T.sort_values(by='mean',ascending=False))
     target = []
-    for u in df.columns[1:]:
+    for u in usecols:
         target_i = df_scaled[u]
         target_i = target_i.reset_index().groupby('TimeStamp').mean()
         target.append(target_i)
