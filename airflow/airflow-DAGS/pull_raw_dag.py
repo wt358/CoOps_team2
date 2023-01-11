@@ -142,7 +142,7 @@ def pull_transform():
     db_test = client['coops2022']
     collection_test1 = db_test['molding_data']
     now = datetime.now()
-    start = now - timedelta(days=7)
+    start = now - timedelta(days=3)
     start1 = now - timedelta(days=45)
     print(start)
     query={
