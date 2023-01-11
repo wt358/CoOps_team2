@@ -712,8 +712,10 @@ def teng():
 
     for message in consumer:
         message = message.value
-        print(message)
-        l.append(loads(message['payload'])['fullDocument'])
+        try:
+            l.append(loads(message['payload'])['fullDocument'])
+        except:
+            print(message)
     df = pd.DataFrame(l)
     print(df)
     # dataframe transform
@@ -744,7 +746,7 @@ def teng():
     scaled_imp = imp_mean.fit_transform(scaled)
 
     df_scaled = pd.DataFrame(scaled_imp).T
-    df_scaled.columns = df.columns[1:]
+    df_scaled.columns = df.drop(columns=['TimeStamp']).columns
     df_scaled.index = pd.to_datetime(df['TimeStamp'])
     
     print(df_scaled.info())
