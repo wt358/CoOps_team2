@@ -241,4 +241,4 @@ def outlier_iqr(df):
     df_scaled = pd.DataFrame(scaled).T
     df_scaled.columns = df.columns[1:]
     df_scaled.index = pd.to_datetime(df['TimeStamp'])
-    return df_scaled
+    return df_scaled,scaled
