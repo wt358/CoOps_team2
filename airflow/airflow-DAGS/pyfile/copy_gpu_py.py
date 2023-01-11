@@ -729,6 +729,7 @@ def teng():
     print(df)
     
     df=df.drop(columns=['idx','Machine_Name','Additional_Info_1','Additional_Info_2','Shot_Number'],axis=1)
+    df=df.dropna(axix=0)
     print(df)
     
     col_list = df.columns.tolist()
