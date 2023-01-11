@@ -747,7 +747,7 @@ def teng():
     #초단위 groupby
     
     target = []
-    for u in df.columns:
+    for u in df.columns[1:]:
         target_i = df_scaled[u]
         target_i = target_i.reset_index().groupby('TimeStamp').mean()
         target.append(target_i)
