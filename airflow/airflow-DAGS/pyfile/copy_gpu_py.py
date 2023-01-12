@@ -833,7 +833,7 @@ def teng():
                                               target_size=1, 
                                               step_size=1,
                                               target_column=0)
-
+        train_dt="today"
         os.makedirs('./data/preprocessed/{}'.format(train_dt), exist_ok=True)
         np.save('./data/preprocessed/{}/{}.npy'.format(train_dt, train_column), X)
         np.save('./data/preprocessed/{}/{}_index.npy'.format(train_dt, train_column), index)
