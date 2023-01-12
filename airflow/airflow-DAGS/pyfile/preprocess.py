@@ -202,8 +202,8 @@ def k_to_1000(t):
         pass
     return float(t)
 
-def data_reshape(df, time_columns=None, vib_columns = ['x','y','z']):
-    # df = pd.read_csv(data_path)
+def data_reshape(data_path, time_columns=None, vib_columns = ['x','y','z']):
+    df = pd.read_csv(data_path)
     
     if time_columns == None:
         time_columns = df.dtypes[df.dtypes != float].index.tolist()[0]# params['time_columns']

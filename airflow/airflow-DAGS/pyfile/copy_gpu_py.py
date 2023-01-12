@@ -786,8 +786,11 @@ def teng():
     df_target = pd.concat(target,axis=1)
     
     df = df_target[['Plasticizing_Time', 'Max_Switch_Over_Pressure', 'Cycle_Time', 'Max_Injection_Pressure', 'Barrel_Temperature_6']]
+    print(df)
+    os.makedirs('./data/cleansed',exist_ok=True)
+    df.to_csv(train_data_path,encoding='utf-8-sig')
     
-    train_dataset = data_reshape(df,  vib_columns = train_columns)
+    train_dataset = data_reshape(train_data_path,vib_columns = train_columns)
 
     
     for train_column in train_columns:
