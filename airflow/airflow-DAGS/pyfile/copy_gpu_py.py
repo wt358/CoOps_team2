@@ -22,6 +22,7 @@ from preprocess import *
 from logger import *
 from cTadGAN import *
 from loadmodel import *
+from data_evaluation import *
 import params
 
 
@@ -1085,5 +1086,8 @@ if __name__ == "__main__":
     elif sys.argv[1] == 'tad_gan':
         print("entering tadgan")
         teng()
+    elif sys.argv[1] == 'eval':
+        print("entering data evaluation")
+        data_eval()
     print("hello main")
  

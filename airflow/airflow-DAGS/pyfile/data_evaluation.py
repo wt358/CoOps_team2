@@ -5,12 +5,12 @@
 import logging
 import os
 import re
-import datetime
+from datetime import datetime
 import pandas as pd
 import numpy as np
 from collections import Counter
 from joblib import dump, load
-
+from pymongo import MongoClient
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
@@ -78,18 +78,30 @@ qda_params = {
 
 
 ##################################################################
-if __name__ == '__main__':
+def data_eval():
     random.seed(42)
     
     logging.info('########## START DATA EVALUATION ##########')
     logging.info('########## Read & Preprocess data ##########')
     
-    eval_dt = datetime.datetime.now().strftime("%Y-%m-%d")
+    eval_dt = datetime.now().strftime("%Y-%m-%d")
     
     """수정사항: 데이터 Read 부분: 주생산품 데이터 with augmentation"""
-    df = pd.read_csv('./data/raw/1.csv', encoding='utf-8-sig', index_col=0)
+    host = os.environ['MONGO_URL_SECRET'] 
+    client = MongoClient(host)
+    db_test = client['coops2022_aug']
+    collection_aug=db_test['mongo_aug1']
+    try:
+        moldset_df = pd.DataFrame(list(collection_aug.find()))
+    except:
+        print("mongo connection failed")
+        return False
+    print(moldset_df)
 
-    df = df.drop(['Machine_Name','Additional_Info_1', 'Additional_Info_2','Shot_Number'],axis=1)
+
+    df = moldset_df
+
+    df = df.drop(['_id','Machine_Name','Additional_Info_1', 'Additional_Info_2','Shot_Number'],axis=1)
     idx = df.pop('idx')
     y = df.pop('Class')
     dt = pd.to_datetime(df.pop('TimeStamp'))
@@ -145,14 +157,14 @@ if __name__ == '__main__':
     best_param = {}
     learning_time = []
     for name, clf, param in zip(names, classifiers, params):
-        start = datetime.datetime.now()
+        start = datetime.now()
         clf_gridsearch = GridSearchCV(clf, param, scoring='f1')
         clf_gridsearch.fit(X, y)
         best_score[name] = clf_gridsearch.best_score_
         best_param[name] = clf_gridsearch.best_params_
 
-        end = datetime.datetime.now() - start
-        learning_time.append([name, start, end, end.total_seconds()])
+        end = datetime.now() - start
+        learning_time.append([name, start, end, end.total_seconds(),clf_gridsearch.best_score_,clf_gridsearch.best_params_])
         logging.info('Gridsearch time for {}: {} sec'.format(name, end.total_seconds()))
 
 
@@ -163,14 +175,25 @@ if __name__ == '__main__':
     for name, clf in zip(names, classifiers):
         clf_best = clf.set_params(**best_param[name])
         clf_best.fit(X, y)
-        dump(clf, './model/{}/{}.model'.format(re.sub(" ","_",name)))
-        
-    best_score.to_csv('./data/result/{}/best_score.csv'.format(eval_dt) ,encoding='utf-8-sig')
-    best_param.to_csv('./data/result/{}/best_param.csv'.format(eval_dt) ,encoding='utf-8-sig')
-    pd.DataFrame(learning_time, 
-                 columns = ['name','start','end','time']
-                ).to_csv('./data/result/{}/learning_time.csv'.format(eval_dt) ,encoding='utf-8-sig')
+        model_name=re.sub(" ","_",name)
+        os.makedirs('./model/{}'.format(model_name), exist_ok=True)
+        dump(clf, './model/{}/{}.model'.format(model_name,eval_dt))
+    
+    db_test = client['coops2022_eval']
+    collection= db_test['data_eval']
 
+
+    lr_time=pd.DataFrame(learning_time, 
+                 columns=['name', 'start', 'end',
+                          'time', 'BestScore', 'BestParam']
+                )
+    data=lr_time.to_dict('records')
+    try:
+        collection.insert_many(data,ordered=False)
+    except Exception as e:
+        print("mongo connection failer",e)
+    client.close()
+    print("hello evaluation")
 
 
 
