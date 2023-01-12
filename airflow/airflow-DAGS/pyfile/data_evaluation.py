@@ -169,8 +169,8 @@ def data_eval():
 
 
     logging.info('########## Save models & parameters ##########')
-    os.makedirs('./data/result/{}'.format(train_dt), exist_ok=True)
-    os.makedirs('./data/model/{}'.format(train_dt), exist_ok=True)
+    os.makedirs('./data/result/{}'.format(eval_dt), exist_ok=True)
+    os.makedirs('./data/model/{}'.format(eval_dt), exist_ok=True)
     
     for name, clf in zip(names, classifiers):
         clf_best = clf.set_params(**best_param[name])
