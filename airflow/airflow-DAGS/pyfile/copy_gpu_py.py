@@ -135,6 +135,7 @@ def iqr_mds_gan():
         l.append(loads(message['payload'])['fullDocument'])
     df = pd.DataFrame(l)
     print(df)
+    consumer.close()
     # dataframe transform
     df=df[df['idx']!='idx']
     print(df.shape)
@@ -718,6 +719,7 @@ def teng():
             print(message)
     df = pd.DataFrame(l)
     print(df)
+    consumer.close()
     # dataframe transform
     df=df[df['idx']!='idx']
     print(df.shape)
