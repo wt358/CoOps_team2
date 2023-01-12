@@ -133,7 +133,10 @@ def iqr_mds_gan():
 
     for message in consumer:
         message = message.value
-        l.append(loads(message['payload'])['fullDocument'])
+        try:
+            l.append(loads(message['payload'])['fullDocument'])
+        except:
+            print(message)
     df = pd.DataFrame(l)
     print(df)
     consumer.close()
