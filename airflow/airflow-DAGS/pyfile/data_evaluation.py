@@ -163,9 +163,10 @@ def data_eval():
         best_score[name] = clf_gridsearch.best_score_
         best_param[name] = clf_gridsearch.best_params_
 
-        end = datetime.now() - start
-        learning_time.append([name, start, end, end.total_seconds(),clf_gridsearch.best_score_,clf_gridsearch.best_params_])
-        logging.info('Gridsearch time for {}: {} sec'.format(name, end.total_seconds()))
+        end = datetime.now()
+        during = end - start
+        learning_time.append([name, start, end,during.total_seconds(),clf_gridsearch.best_score_,str(clf_gridsearch.best_params_)])
+        logging.info('Gridsearch time for {}: {} sec'.format(name, during.total_seconds()))
 
 
     logging.info('########## Save models & parameters ##########')
@@ -180,7 +181,7 @@ def data_eval():
         dump(clf, './model/{}/{}.model'.format(model_name,eval_dt))
     
     db_test = client['coops2022_eval']
-    collection= db_test['data_eval']
+    collection= db_test[f'data_eval_{eval_dt}']
 
 
     lr_time=pd.DataFrame(learning_time, 
