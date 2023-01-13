@@ -231,8 +231,6 @@ def outlier_iqr(df):
     scaler= MinMaxScaler()
     print(df.columns)
     print(df.dtypes)
-    df.iloc[:,1:]=df.iloc[:,1:].apply(pd.to_numeric,errors='coerce')
-    print(df.dtypes)
     for i in df.columns[1:]:
         lb, ub = df[i].quantile(q).tolist()
         samp = df[i].map(lambda x: None if (x < lb) or (x > ub) else x)

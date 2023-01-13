@@ -4,6 +4,7 @@ from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from airflow.operators.dummy import DummyOperator
 from airflow.models.variable import Variable
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
@@ -301,7 +302,7 @@ with DAG(
     tags=["inference"],
     max_active_runs=3,
     ) as dag:
-
+    paths=['path_main','path_vari']
     t1 = PythonOperator(
         task_id="model_inference",
         python_callable=model_inference,
@@ -310,7 +311,6 @@ with DAG(
         retries=0,
         retry_delay=timedelta(minutes=1),
     )
-
     t2 = PythonOperator(
         task_id="push_on_premise",
         python_callable=push_onpremise,
@@ -324,3 +324,17 @@ with DAG(
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
     dummy1 >> t1 >> t2
+    for path in paths:
+        t = DummyOperator(
+            task_id=path,
+            dag=dag,
+            )
+        
+        if path == 'path_main':
+            main_or_vari >> t >> run_iqr >> after_aug 
+            after_aug >> [run_svm, run_lstm] >> after_ml
+            after_aug >> run_eval
+        elif path == 'path_vari':
+            main_or_vari >> t >> run_tadgan
+
+

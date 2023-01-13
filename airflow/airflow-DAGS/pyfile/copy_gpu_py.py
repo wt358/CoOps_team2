@@ -11,7 +11,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import IsolationForest
 from sklearn.svm import OneClassSVM 
 from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score
-
+from numba import cuda
 from functools import partial
 from scipy import integrate, stats
 
@@ -669,6 +669,31 @@ def lstm_autoencoder():
     print("hello auto encoder")
 
 def teng():
+    
+    logging.info('########## START UPDATE ##########')
+    logging.info('- GPU envrionmental')
+    
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+
+    if gpus:  
+        # kill all the processes which is using GPU
+        device = cuda.get_current_device()
+        device.reset()
+
+        # Set GPU env: prevent GPU from out-of-memory
+        # ref: https://www.tensorflow.org/guide/gpu?hl=ko
+        try: 
+            for gpu in gpus: 
+                tf.config.experimental.set_memory_growth(gpu, True) 
+        except RuntimeError as e: 
+            logging.info(e)
+        logging.info(gpus)
+    else:
+        logging.info('NO GPU')
+    ####################################################################################
+    logging.info('- Parameters')
+
+    
     now = datetime.now()
     train_dt = now.strftime("%Y-%m-%d_%H:%M:%S")
 
@@ -790,14 +815,14 @@ def teng():
         target_i = target_i.reset_index().groupby('TimeStamp').mean()
         target.append(target_i)
     df_target = pd.concat(target,axis=1)
-    
+    print(df_target)
     df = df_target[['Plasticizing_Time', 'Max_Switch_Over_Pressure', 'Cycle_Time', 'Max_Injection_Pressure', 'Barrel_Temperature_6']]
     print(df)
     os.makedirs('./data/cleansed',exist_ok=True)
     df.to_csv(train_data_path,encoding='utf-8-sig')
     
     train_dataset = data_reshape(train_data_path,vib_columns = train_columns)
-
+    train_dt="today"
     
     for train_column in train_columns:
         train_data = train_dataset[train_column]
@@ -837,7 +862,6 @@ def teng():
                                               target_size=1, 
                                               step_size=1,
                                               target_column=0)
-        train_dt="today"
         os.makedirs('./data/preprocessed/{}'.format(train_dt), exist_ok=True)
         np.save('./data/preprocessed/{}/{}.npy'.format(train_dt, train_column), X)
         np.save('./data/preprocessed/{}/{}_index.npy'.format(train_dt, train_column), index)
@@ -894,6 +918,8 @@ def teng():
 
         X = np.load(X_path, allow_pickle=True)
         index = np.load(index_path, allow_pickle=True)
+        print(X)
+        print(index)
 
         # Load model for training
         encoder_model_path = './model/model_{}/{}/encoder'.format(train_dt, train_column)
