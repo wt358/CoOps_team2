@@ -443,8 +443,6 @@ with DAG(
     )
 
     dummy1 = DummyOperator(task_id="path1")
-    dummy_main = DummyOperator(task_id="path1_main")
-    dummy_vari = DummyOperator(task_id="path1_vari")
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
     dummy1 >> main_or_vari
@@ -456,9 +454,9 @@ with DAG(
             )
         
         if path == 'path_main':
-            main_or_vari>>dummy_main>>t1 >> t2
+            main_or_vari>>t>>t1 >> t2
 
         elif path == 'path_vari':
-            main_or_vari>>dummy_vari>>infer_tadgan
+            main_or_vari>>t>>infer_tadgan
 
 
