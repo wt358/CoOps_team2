@@ -420,6 +420,7 @@ with DAG(
         python_callable=which_path,
         dag=dag,
     )
+    
     infer_tadgan = KubernetesPodOperator(
         task_id="tad_infer_pod_operator",
         name="tad-infer-gan",
@@ -458,6 +459,6 @@ with DAG(
             main_or_vari>>dummy_main>>t1 >> t2
 
         elif path == 'path_vari':
-            main_or_vari>>dummy_vari>>t1 >> t2
+            main_or_vari>>dummy_vari>>infer_tadgan
 
 
