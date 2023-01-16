@@ -421,8 +421,8 @@ with DAG(
         dag=dag,
     )
     infer_tadgan = KubernetesPodOperator(
-        task_id="tad_pod_operator",
-        name="tad-gan",
+        task_id="tad_infer_pod_operator",
+        name="tad-infer-gan",
         namespace='airflow-cluster',
         image='wcu5i9i6.kr.private-ncr.ntruss.com/tad:0.01',
         # image_pull_policy="Always",
