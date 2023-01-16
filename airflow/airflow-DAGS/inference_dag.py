@@ -442,7 +442,7 @@ with DAG(
     )
 
     dummy1 = DummyOperator(task_id="path1")
-    dummy_main = DummyOperator(task_id="path_main")
+    dummy_main = DummyOperator(task_id="path1_main")
     dummy_vari = DummyOperator(task_id="path1_vari")
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
