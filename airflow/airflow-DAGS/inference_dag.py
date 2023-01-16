@@ -389,6 +389,7 @@ def which_path():
   return task_id
 
 
+paths=['path_main','path_vari']
 # define DAG with 'with' phase
 with DAG(
     dag_id="inference_dag", # DAG의 식별자용 아이디입니다.
@@ -398,7 +399,6 @@ with DAG(
     tags=["inference"],
     max_active_runs=3,
     ) as dag:
-    paths=['path_main','path_vari']
     t1 = PythonOperator(
         task_id="model_inference",
         python_callable=model_inference,
