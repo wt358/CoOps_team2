@@ -382,7 +382,7 @@ def which_path():
   
   
 #   if '9000a' in mode_machine_name:
-  if False:
+  if True:
     task_id = 'path_main'
   else:
     task_id = 'path_vari'
@@ -430,7 +430,7 @@ with DAG(
         # image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
         cmds=["python3"],
-        arguments=["copy_gpu_py.py", "tad_gan"],
+        arguments=["copy_gpu_py.py", "infer_tad"],
         affinity=gpu_aff,
         # resources=pod_resources,
         secrets=[secret_all, secret_all1, secret_all2, secret_all3, secret_all4, secret_all5,
@@ -441,6 +441,27 @@ with DAG(
         get_logs=True,
         startup_timeout_seconds=600,
     )
+    infer_main = KubernetesPodOperator(
+        task_id="main_infer_pod_operator",
+        name="main-infer-gan",
+        namespace='airflow-cluster',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:80',
+        # image_pull_policy="Always",
+        # image_pull_policy="IfNotPresent",
+        image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
+        cmds=["python3"],
+        arguments=["copy_gpu_py.py", "infer_main"],
+        affinity=gpu_aff,
+        # resources=pod_resources,
+        secrets=[secret_all, secret_all1, secret_all2, secret_all3, secret_all4, secret_all5,
+                 secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb],
+        # env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
+        # configmaps=configmaps,
+        is_delete_operator_pod=True,
+        get_logs=True,
+        startup_timeout_seconds=600,
+    )
+
 
     dummy1 = DummyOperator(task_id="path1")
     # 테스크 순서를 정합니다.
@@ -454,7 +475,7 @@ with DAG(
             )
         
         if path == 'path_main':
-            main_or_vari>>t>>t1 >> t2
+            main_or_vari>>t>>infer_main >> t2
 
         elif path == 'path_vari':
             main_or_vari>>t>>infer_tadgan

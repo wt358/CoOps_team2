@@ -23,6 +23,7 @@ from logger import *
 from cTadGAN import *
 from loadmodel import *
 from data_evaluation import *
+from inference import *
 import params
 
 
@@ -1118,5 +1119,11 @@ if __name__ == "__main__":
     elif sys.argv[1] == 'eval':
         print("entering data evaluation")
         data_eval()
+    elif sys.argv[1] == 'infer_tad':
+        print("entering inference tadgan")
+        infer_tad()
+    elif sys.argv[1] == 'infer_main':
+        print("entering inference main product ")
+        infer_lstm()
     print("hello main")
  
