@@ -1,10 +1,13 @@
 from datetime import timedelta
 from datetime import datetime
+from kubernetes.client import models as k8s
+from airflow.kubernetes.secret import Secret
 from airflow import DAG
 from airflow.utils.dates import days_ago
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.operators.python_operator import BranchPythonOperator
 from airflow.operators.dummy import DummyOperator
 from airflow.models.variable import Variable
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
@@ -85,6 +88,65 @@ rn.seed(RANDOM_SEED)
 tf.random.set_seed(RANDOM_SEED)
 
 rn.seed(10)
+secret_all = Secret('env', None, 'db-secret-ggd7k5tgg2')
+secret_all1 = Secret('env', None, 'airflow-cluster-config-envs')
+secret_all2 = Secret('env', None, 'airflow-cluster-db-migrations')
+secret_all3 = Secret('env', None, 'airflow-cluster-pgbouncer')
+secret_all4 = Secret('env', None, 'airflow-cluster-pgbouncer-certs')
+secret_all5 = Secret('env', None, 'airflow-cluster-postgresql')
+secret_all6 = Secret('env', None, 'airflow-cluster-sync-users')
+secret_all7 = Secret('env', None, 'airflow-cluster-token-8qgp2')
+secret_all8 = Secret('env', None, 'airflow-cluster-webserver-config')
+secret_all9 = Secret('env', None, 'airflow-git-ssh-secret2')
+secret_alla = Secret('env', None, 'airflow-ssh-git-secret')
+secret_allb = Secret('env', None, 'default-token-hkdgr')
+
+
+gpu_aff={
+        'nodeAffinity': {
+            # requiredDuringSchedulingIgnoredDuringExecution means in order
+            # for a pod to be scheduled on a node, the node must have the
+            # specified labels. However, if labels on a node change at
+            # runtime such that the affinity rules on a pod are no longer
+            # met, the pod will still continue to run on the node.
+            'requiredDuringSchedulingIgnoredDuringExecution': {
+                'nodeSelectorTerms': [{
+                    'matchExpressions': [{
+                        # When nodepools are created in Google Kubernetes
+                        # Engine, the nodes inside of that nodepool are
+                        # automatically assigned the label
+                        # 'cloud.google.com/gke-nodepool' with the value of
+                        # the nodepool's name.
+                        'key': 'kubernetes.io/hostname',
+                        'operator': 'In',
+                        # The label key's value that pods can be scheduled
+                        # on.
+                        'values': [
+                            'pseudo-gpu-w-1yz7',
+                            #'pool-1',
+                            ]
+                        }]
+                    }]
+                }
+            }
+        }
+cpu_aff={
+        'nodeAffinity': {
+            'requiredDuringSchedulingIgnoredDuringExecution': {
+                'nodeSelectorTerms': [{
+                    'matchExpressions': [{
+                        'key': 'kubernetes.io/hostname',
+                        'operator': 'In',
+                        'values': [
+                            'high-memory-w-1ih9',
+                            'high-memory-w-1iha',
+                            ]
+                        }]
+                    }]
+                }
+            }
+        }
+
 
 tf.random.set_seed(10)
 class ModelSingleton(type):
@@ -292,6 +354,40 @@ def push_onpremise():
 
     print("hello push on premise")
 
+def which_path():
+  '''
+  return the task_id which to be executed
+  '''
+  host = Variable.get("MS_HOST")
+  database = Variable.get("MS_DATABASE")
+  username = Variable.get("MS_USERNAME")
+  password = Variable.get("MS_PASSWORD")
+
+  query = text(
+      "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(day,-7,GETDATE())"
+      )
+  conection_url = sqlalchemy.engine.url.URL(
+      drivername="mssql+pymssql",
+      username=username,
+      password=password,
+      host=host,
+      database=database,
+  )
+  engine = create_engine(conection_url, echo=True)
+  
+  sql_result_pd = pd.read_sql_query(query, engine)
+  mode_machine_name=sql_result_pd['Additional_Info_1'].value_counts().idxmax()
+  print(sql_result_pd['Additional_Info_1'].value_counts())
+  print(mode_machine_name) 
+  
+  
+#   if '9000a' in mode_machine_name:
+  if False:
+    task_id = 'path_main'
+  else:
+    task_id = 'path_vari'
+  return task_id
+
 
 # define DAG with 'with' phase
 with DAG(
@@ -319,11 +415,39 @@ with DAG(
         retries=0,
         retry_delay=timedelta(minutes=1),
     )
+    main_or_vari = BranchPythonOperator(
+        task_id = 'branch',
+        python_callable=which_path,
+        dag=dag,
+    )
+    infer_tadgan = KubernetesPodOperator(
+        task_id="tad_pod_operator",
+        name="tad-gan",
+        namespace='airflow-cluster',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/tad:0.01',
+        # image_pull_policy="Always",
+        # image_pull_policy="IfNotPresent",
+        image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
+        cmds=["python3"],
+        arguments=["copy_gpu_py.py", "tad_gan"],
+        affinity=gpu_aff,
+        # resources=pod_resources,
+        secrets=[secret_all, secret_all1, secret_all2, secret_all3, secret_all4, secret_all5,
+                 secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb],
+        # env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
+        # configmaps=configmaps,
+        is_delete_operator_pod=True,
+        get_logs=True,
+        startup_timeout_seconds=600,
+    )
 
     dummy1 = DummyOperator(task_id="path1")
+    dummy_main = DummyOperator(task_id="path_main")
+    dummy_vari = DummyOperator(task_id="path1_vari")
     # 테스크 순서를 정합니다.
     # t1 실행 후 t2를 실행합니다.
-    dummy1 >> t1 >> t2
+    dummy1 >> main_or_vari
+    
     for path in paths:
         t = DummyOperator(
             task_id=path,
@@ -331,10 +455,9 @@ with DAG(
             )
         
         if path == 'path_main':
-            main_or_vari >> t >> run_iqr >> after_aug 
-            after_aug >> [run_svm, run_lstm] >> after_ml
-            after_aug >> run_eval
+            main_or_vari>>dummy_main>>t1 >> t2
+
         elif path == 'path_vari':
-            main_or_vari >> t >> run_tadgan
+            main_or_vari>>dummy_vari>>t1 >> t2
 
 
