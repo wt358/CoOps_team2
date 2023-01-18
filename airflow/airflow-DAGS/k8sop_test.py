@@ -165,7 +165,7 @@ def which_path():
   
   
 #   if '9000a' in mode_machine_name:
-  if False:
+  if True:
     task_id = 'path_main'
   else:
     task_id = 'path_vari'

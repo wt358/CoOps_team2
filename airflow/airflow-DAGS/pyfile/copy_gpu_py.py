@@ -1124,6 +1124,6 @@ if __name__ == "__main__":
         infer_tad()
     elif sys.argv[1] == 'infer_main':
         print("entering inference main product ")
-        infer_lstm()
+        infer_main()
     print("hello main")
  
