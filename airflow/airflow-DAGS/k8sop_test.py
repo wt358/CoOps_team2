@@ -16,7 +16,7 @@ import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
-
+from pymongo import MongoClient
 import pandas as pd
 
 
@@ -137,6 +137,32 @@ cpu_aff={
 
 paths=['path_main','path_vari']
 
+def print_rank(df,i,machine_no):
+    today=pd.Timestamp.today()
+    date_1month=(today- pd.DateOffset(months=i)).strftime('%Y-%m-%d %I:%M:%S')
+    
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+    db_rank= client['coops2022_rank']
+    collection = db_rank[f'rank_{machine_no}_{i}']
+
+    df2=df[df['TimeStamp'] > date_1month ]['Additional_Info_1'].value_counts()
+    df1=df2.rank(method='min',ascending=False)
+    print("\n",i,"month rank")
+    print("====================================")
+    print(df1)
+    print()
+    print(df2)
+    data=df2.to_dict('records')
+    try:
+        collection.insert_many(data,ordered=False)
+    except Exception as e:
+        print("mongo connection failer",e)
+    print("====================================")
+    client.close()
+    return
+
+
 def which_path():
   '''
   return the task_id which to be executed
@@ -148,6 +174,9 @@ def which_path():
 
   query = text(
       "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(day,-7,GETDATE())"
+      )
+  query1 = text(
+      "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(month,-6,GETDATE())"
       )
   conection_url = sqlalchemy.engine.url.URL(
       drivername="mssql+pymssql",
@@ -161,7 +190,29 @@ def which_path():
   sql_result_pd = pd.read_sql_query(query, engine)
   mode_machine_name=sql_result_pd['Additional_Info_1'].value_counts().idxmax()
   print(sql_result_pd['Additional_Info_1'].value_counts())
-  print(mode_machine_name) 
+  print(mode_machine_name)
+  
+  sql_result = engine.execute(query)
+  sql_result_pd = pd.read_sql_query(query, engine)
+
+  sql_result_pd = sql_result_pd[sql_result_pd['Machine_Name'] != '7']
+  sql_result_pd = sql_result_pd[sql_result_pd['Machine_Name'] != '6i']
+  sql_result_pd_6 = sql_result_pd[sql_result_pd['Machine_Name'] != '']
+  sql_result_pd_25 = sql_result_pd[sql_result_pd['Machine_Name'] == '']
+#   month_list = [1, 3, 6]
+  month_list = [6]
+  print("======================================================")
+  print("  6호기")
+  for i in month_list:
+      print_rank(sql_result_pd_6, i)
+  print("======================================================")
+  print("  25호기")
+  for i in month_list:
+      print_rank(sql_result_pd_25, i)
+  print("======================================================")
+
+
+
   
   
 #   if '9000a' in mode_machine_name:
