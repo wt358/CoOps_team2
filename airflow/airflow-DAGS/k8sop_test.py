@@ -204,11 +204,11 @@ def which_path():
   print("======================================================")
   print("  6호기")
   for i in month_list:
-      print_rank(sql_result_pd_6, i)
+      print_rank(sql_result_pd_6, i,"6")
   print("======================================================")
   print("  25호기")
   for i in month_list:
-      print_rank(sql_result_pd_25, i)
+      print_rank(sql_result_pd_25, i,"25")
   print("======================================================")
 
 
