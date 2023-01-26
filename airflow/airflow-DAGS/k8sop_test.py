@@ -140,18 +140,18 @@ paths=['path_main','path_vari']
 def print_rank(df,i,machine_no):
     today=pd.Timestamp.today()
     date_1month=(today- pd.DateOffset(months=i)).strftime('%Y-%m-%d %I:%M:%S')
-    
+    today=datetime.now().strftime("%Y-%m-%d")
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
     db_rank= client['coops2022_rank']
-    collection = db_rank[f'rank_{machine_no}_{i}']
+    collection = db_rank[f'rank_{machine_no}_{i}_{today}']
 
     df2=df[df['TimeStamp'] > date_1month ]['Additional_Info_1'].value_counts()
     df1=df2.rank(method='min',ascending=False)
     print("\n",i,"month rank")
     print("====================================")
-    df1=df2.rename("count")
-    df2=df1.rename("rank")
+    df1=df1.rename("rank")
+    df2=df2.rename("count")
     df_new=pd.concat([df1,df2],axis=1).reset_index()
     print(df_new)
     data=df_new.to_dict('records')
