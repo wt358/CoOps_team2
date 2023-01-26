@@ -152,7 +152,7 @@ def print_rank(df,i,machine_no):
     print("====================================")
     df1=df2.rename("count")
     df2=df1.rename("rank")
-    df_new=pd.concat([df1,df2],axis=1)
+    df_new=pd.concat([df1,df2],axis=1).reset_index()
     print(df_new)
     data=df_new.to_dict('records')
     try:
