@@ -150,8 +150,8 @@ def print_rank(df,i,machine_no):
     df1=df2.rank(method='min',ascending=False)
     print("\n",i,"month rank")
     print("====================================")
-    df1=df1.rename("count")
-    df2=df2.rename("rank")
+    df1=df2.rename("count")
+    df2=df1.rename("rank")
     df_new=pd.concat([df1,df2],axis=1)
     print(df_new)
     data=df_new.to_dict('records')
@@ -193,8 +193,8 @@ def which_path():
   print(sql_result_pd['Additional_Info_1'].value_counts())
   print(mode_machine_name)
   
-  sql_result = engine.execute(query)
-  sql_result_pd = pd.read_sql_query(query, engine)
+  sql_result = engine.execute(query1)
+  sql_result_pd = pd.read_sql_query(query1, engine)
 
   sql_result_pd = sql_result_pd[sql_result_pd['Machine_Name'] != '7']
   sql_result_pd = sql_result_pd[sql_result_pd['Machine_Name'] != '6i']
