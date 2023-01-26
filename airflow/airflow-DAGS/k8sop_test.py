@@ -150,10 +150,11 @@ def print_rank(df,i,machine_no):
     df1=df2.rank(method='min',ascending=False)
     print("\n",i,"month rank")
     print("====================================")
-    print(df1)
-    print()
-    print(df2)
-    data=df2.to_dict('records')
+    df1=df1.rename("count")
+    df2=df2.rename("rank")
+    df_new=pd.concat([df1,df2],axis=1)
+    print(df_new)
+    data=df_new.to_dict('records')
     try:
         collection.insert_many(data,ordered=False)
     except Exception as e:
