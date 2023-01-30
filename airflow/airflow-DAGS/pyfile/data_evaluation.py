@@ -156,6 +156,7 @@ def data_eval():
     best_score = {}
     best_param = {}
     learning_time = []
+    db_test = client['coops2022_eval']
     for name, clf, param in zip(names, classifiers, params):
         start = datetime.now()
         clf_gridsearch = GridSearchCV(clf, param, scoring='f1')
@@ -165,6 +166,18 @@ def data_eval():
 
         end = datetime.now()
         during = end - start
+        output_df = pd.DataFrame([[eval_dt, start, end, during.total_seconds(), clf_gridsearch.best_score_]+list(best_param[name].values())],
+                                columns=['date', 'start', 'end',
+                                        'time', 'BestScore'] + list(best_param[name].keys())
+        )
+        print(output_df)
+        collection=db_test[f'{name}']
+        data=output_df.to_dict('records')
+        try:
+            collection.insert_many(data, ordered=False)
+        except Exception as e:
+            print("mongo connection failer",e)
+
         learning_time.append([name, start, end,during.total_seconds(),clf_gridsearch.best_score_,str(clf_gridsearch.best_params_)])
         logging.info('Gridsearch time for {}: {} sec'.format(name, during.total_seconds()))
 
@@ -179,20 +192,15 @@ def data_eval():
         model_name=re.sub(" ","_",name)
         os.makedirs('./model/{}'.format(model_name), exist_ok=True)
         dump(clf, './model/{}/{}.model'.format(model_name,eval_dt))
-    
-    db_test = client['coops2022_eval']
-    collection= db_test[f'data_eval_{eval_dt}']
-
-
-    lr_time=pd.DataFrame(learning_time, 
-                 columns=['name', 'start', 'end',
-                          'time', 'BestScore', 'BestParam']
-                )
-    data=lr_time.to_dict('records')
-    try:
-        collection.insert_many(data,ordered=False)
-    except Exception as e:
-        print("mongo connection failer",e)
+    # lr_time=pd.DataFrame(learning_time, 
+    #              columns=['name', 'start', 'end',
+    #                       'time', 'BestScore', 'BestParam']
+    #             )
+    # data=lr_time.to_dict('records')
+    # try:
+    #     collection.insert_many(data,ordered=False)
+    # except Exception as e:
+    #     print("mongo connection failer",e)
     client.close()
     print("hello evaluation")
 
