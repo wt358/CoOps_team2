@@ -37,6 +37,7 @@ dag = DAG(
         default_args=task_default_args,
         schedule_interval=timedelta(days=7),
         max_active_runs=3,
+        catchup=True
 )
 '''
 env_from = [
