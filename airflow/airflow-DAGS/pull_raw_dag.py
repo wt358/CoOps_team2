@@ -55,11 +55,10 @@ def pull_influx():
     influx_df =  query_api.query_data_frame(query=query)
     print(len(influx_df))
     influx_df.to_csv(os.path.join(".",FILENAME), index=False)
-
+    client.close()
     reader = open(FILENAME, 'r')
     data = csv.DictReader(reader, influx_df.keys())
 
-    mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
 
@@ -104,7 +103,7 @@ def pull_mssql():
     sql_result = engine.execute(query)
     sql_result_pd = pd.read_sql_query(query, engine)
     sql_result_pd.to_csv(os.path.join(".",FILENAME), index=False)
-
+    engine.dispose()
     # for i,row in enumerate(sql_result):
     #     #print(type(row)) == <class 'sqlalchemy.engine.row.LegacyRow'>
     #     for column, value in row.items():
@@ -118,7 +117,6 @@ def pull_mssql():
     reader = open(FILENAME, 'r')
     data = csv.DictReader(reader, sql_result.keys())
 
-    mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
 
@@ -129,12 +127,12 @@ def pull_mssql():
         result = collection_test1.insert_many(data)
     except:
         print("mongo connection failed")
+    client.close()
 
 def wait_kafka():
     time.sleep(30)
 
 def pull_transform():
-    mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
 
@@ -190,7 +188,6 @@ def pull_transform():
     print(moldset_labeled_9000R.head())
     print(len(moldset_labeled_9000R))
     '''
-    mongoClient = MongoClient()
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
 
@@ -205,7 +202,7 @@ def pull_transform():
     except Exception as e: 
         print("mongo connection failed")
         print(e)
-    
+    client.close()
     print("hello")
 
 
