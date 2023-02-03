@@ -69,6 +69,7 @@ def pull_influx():
         result = collection_test1.insert_many(data)
     except:
         print("mongo connection failed")
+    client.close()
 
 
 def pull_mssql():
@@ -153,7 +154,7 @@ def pull_transform():
         df = pd.DataFrame(list(collection_test1.find(query)))
     except Exception as e: 
         print("mongo connection failed")
-     
+    
     print(df)
     if df.empty:
         print("empty")
