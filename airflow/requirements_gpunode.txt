@@ -2,14 +2,14 @@ numpy==1.23.5
 keras==2.9.0
 pymongo
 pymssql
-pandas==1.1.5
+pandas
 sqlalchemy
 kafka-python
 apache-airflow
 ciso8601
 influxdb-client[ciso]
 kubernetes<24,>=21.7.0
-scikit-learn==1.2.0
+scikit-learn
 imbalanced-learn
 tensorflow==2.9.3
 ipython

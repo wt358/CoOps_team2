@@ -101,8 +101,8 @@ secret_all9 = Secret('env', None, 'airflow-git-ssh-secret2')
 secret_alla = Secret('env', None, 'airflow-ssh-git-secret')
 secret_allb = Secret('env', None, 'default-token-hkdgr')
 
-gpu_tag="0.84"
-tad_tag="0.02"
+gpu_tag="0.85"
+tad_tag="0.03"
 gpu_aff={
         'nodeAffinity': {
             # requiredDuringSchedulingIgnoredDuringExecution means in order

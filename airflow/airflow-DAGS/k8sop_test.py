@@ -21,8 +21,8 @@ import pandas as pd
 
 
 dag_id = 'kubernetes-dag'
-gpu_tag="0.84"
-tad_tag="0.02"
+gpu_tag="0.85"
+tad_tag="0.03"
 
 task_default_args = {
         'owner': 'coops2',
