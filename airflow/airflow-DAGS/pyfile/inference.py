@@ -87,7 +87,7 @@ def infer_main():
 def infer_lstm():
     
     update_dt = datetime.now().strftime("%Y-%m-%d")
-    test_data_path = params.test_data_path
+    test_data_path = params.train_data_path
     train_columns = params.train_columns
     time_columns = params.time_columns
     interval =params.interval
@@ -235,15 +235,13 @@ def infer_lstm():
 
     db_test = client['coops2022_result']
     collection = db_test[f'result_{model_name}']
-    #data=scored.to_dict('records')
-    data=X_pred.to_dict('records')
+    data=scored.to_dict('records')
+    # data=X_pred.to_dict('records')
 
     try:
         collection.insert_many(data,ordered=False)
     except Exception as e:
         print("mongo connection failer",e)
-
-
 
     print("hello inference lstm ae")
     

@@ -445,7 +445,7 @@ with DAG(
         task_id="main_infer_pod_operator",
         name="main-infer-gan",
         namespace='airflow-cluster',
-        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.81',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.82',
         # image_pull_policy="Always",
         # image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
