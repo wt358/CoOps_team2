@@ -399,14 +399,14 @@ with DAG(
     tags=["inference"],
     max_active_runs=3,
     ) as dag:
-    t1 = PythonOperator(
-        task_id="model_inference",
-        python_callable=model_inference,
-        depends_on_past=True,
-        owner="coops2",
-        retries=0,
-        retry_delay=timedelta(minutes=1),
-    )
+    # t1 = PythonOperator(
+    #     task_id="model_inference",
+    #     python_callable=model_inference,
+    #     depends_on_past=True,
+    #     owner="coops2",
+    #     retries=0,
+    #     retry_delay=timedelta(minutes=1),
+    # )
     t2 = PythonOperator(
         task_id="push_on_premise",
         python_callable=push_onpremise,
@@ -445,7 +445,7 @@ with DAG(
         task_id="main_infer_pod_operator",
         name="main-infer-gan",
         namespace='airflow-cluster',
-        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.80',
+        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.81',
         # image_pull_policy="Always",
         # image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
