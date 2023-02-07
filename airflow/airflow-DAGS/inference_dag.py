@@ -245,7 +245,7 @@ def model_inference():
     
     model_name = 'scaler_data'
     model_fpath = f'{model_name}.joblib'
-    result = collection_model.find({"model_name": model_name}).sort[("inserted_time",-1)]
+    result = collection_model.find({"model_name": model_name}).sort([("inserted_time",-1)])
     print(result)
     if len(list(result.clone()))==0:
         print("empty")
