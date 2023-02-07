@@ -22,7 +22,7 @@ import pandas as pd
 
 dag_id = 'kubernetes-dag'
 gpu_tag="0.86"
-tad_tag="0.04"
+tad_tag="0.05"
 
 task_default_args = {
         'owner': 'coops2',
@@ -220,7 +220,7 @@ def which_path():
   
   
 #   if '9000a' in mode_machine_name:
-  if False:
+  if True:
     task_id = 'path_main'
   else:
     task_id = 'path_vari'

@@ -1083,6 +1083,7 @@ def teng():
             # critic_x_model.save(critic_x_m_model_path)
             # critic_z_model.save(critic_z_m_model_path)
             # encoder_generator_model.save(encoder_generator_model_path)
+            train_dt=datetime.now().strftime("%Y-%m-%d")
             SaveModel(critic_x,'mongo_TadGAN','critic_x',train_dt)
             SaveModel(encoder,'mongo_TadGAN','encoder',train_dt)
             SaveModel(generator,'mongo_TadGAN','generator',train_dt)
