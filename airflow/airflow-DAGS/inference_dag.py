@@ -245,7 +245,7 @@ def model_inference():
     
     model_name = 'scaler_data'
     model_fpath = f'{model_name}.joblib'
-    result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
+    result = collection_model.find({"model_name": model_name}).sort[("inserted_time",-1)]
     print(result)
     if len(list(result.clone()))==0:
         print("empty")
@@ -270,7 +270,7 @@ def model_inference():
     collection_model=db_model[f'mongo_{model_name}']
     
     model_fpath = f'{model_name}.joblib'
-    result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
+    result = collection_model.find({"model_name": model_name}).sort([("inserted_time",-1)])
     
     print(result)
     if len(list(result.clone()))==0:
@@ -400,14 +400,14 @@ with DAG(
     tags=["inference"],
     max_active_runs=3,
     ) as dag:
-    # t1 = PythonOperator(
-    #     task_id="model_inference",
-    #     python_callable=model_inference,
-    #     depends_on_past=True,
-    #     owner="coops2",
-    #     retries=0,
-    #     retry_delay=timedelta(minutes=1),
-    # )
+    t1 = PythonOperator(
+        task_id="model_inference",
+        python_callable=model_inference,
+        depends_on_past=True,
+        owner="coops2",
+        retries=0,
+        retry_delay=timedelta(minutes=1),
+    )
     t2 = PythonOperator(
         task_id="push_on_premise",
         python_callable=push_onpremise,
@@ -476,7 +476,7 @@ with DAG(
             )
         
         if path == 'path_main':
-            main_or_vari>>t>>infer_main >> t2
+            main_or_vari>>t>>t1 >> t2
 
         elif path == 'path_vari':
             main_or_vari>>t>>infer_tadgan
