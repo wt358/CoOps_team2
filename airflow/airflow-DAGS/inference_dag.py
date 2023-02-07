@@ -101,7 +101,8 @@ secret_all9 = Secret('env', None, 'airflow-git-ssh-secret2')
 secret_alla = Secret('env', None, 'airflow-ssh-git-secret')
 secret_allb = Secret('env', None, 'default-token-hkdgr')
 
-
+gpu_tag="0.83"
+tad_tag="0.02"
 gpu_aff={
         'nodeAffinity': {
             # requiredDuringSchedulingIgnoredDuringExecution means in order
@@ -425,7 +426,7 @@ with DAG(
         task_id="tad_infer_pod_operator",
         name="tad-infer-gan",
         namespace='airflow-cluster',
-        image='wcu5i9i6.kr.private-ncr.ntruss.com/tad:0.01',
+        image=f'wcu5i9i6.kr.private-ncr.ntruss.com/tad:{tad_tag}',
         # image_pull_policy="Always",
         # image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
@@ -445,7 +446,7 @@ with DAG(
         task_id="main_infer_pod_operator",
         name="main-infer-gan",
         namespace='airflow-cluster',
-        image='wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.82',
+        image=f'wcu5i9i6.kr.private-ncr.ntruss.com/cuda:{gpu_tag}',
         # image_pull_policy="Always",
         # image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],

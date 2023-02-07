@@ -196,7 +196,7 @@ def infer_lstm():
     collection_model=db_model[f'mongo_{model_name}']
     
     model_fpath = f'{model_name}.joblib'
-    result = collection_model.find({"model_name": model_name}).sort('uploadDate', -1)
+    result = collection_model.find({"model_name": model_name}).sort('inserted_time', -1)
     
     print(result)
     if len(list(result.clone()))==0:
