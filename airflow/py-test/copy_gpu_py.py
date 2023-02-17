@@ -1,6 +1,7 @@
 from datetime import timedelta
+import sys
 from datetime import datetime
-
+print(sys.argv[1])
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.metrics import precision_score, recall_score, f1_score,accuracy_score, classification_report,  confusion_matrix
@@ -61,7 +62,6 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 import csv
 import pandas as pd
 import os
-import sys
 import math
 
 import time
