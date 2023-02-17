@@ -68,8 +68,8 @@ with DAG(
         # not provide validcredentials the pod will fail to launch. If not
         # specified, config_file defaults to ~/.kube/config
         # config_file="{{ conf.get('core', 'kube_config') }}",
-        # is_delete_operator_pod=True,
-        # get_logs=True,
+        is_delete_operator_pod=True,
+        get_logs=True,
     )
     # [START howto_operator_python_kwargs]
     def my_sleeping_function(random_base):
