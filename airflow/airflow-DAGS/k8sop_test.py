@@ -199,10 +199,10 @@ def print_stat(df,machine_no):
         # df_new=pd.concat([df1,df2],axis=1).reset_index()
         # print(df_new)
         data=stat_df.to_dict('records')
-        # try:
-        #     collection.insert_many(data,ordered=False)
-        # except Exception as e:
-        #     print("mongo connection failer",e)
+        try:
+            collection.insert_many(data,ordered=False)
+        except Exception as e:
+            print("mongo connection failer",e)
         print("====================================")
     client.close()
     return
