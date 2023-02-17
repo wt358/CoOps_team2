@@ -374,6 +374,7 @@ def infer_lstm():
 
     db_test = client['coops2022_result']
     collection = db_test[f'result_{model_name}']
+    collection.create_index([("TimeStamp",pymongo.ASCENDING)],unique=True)
     data=scored.to_dict('records')
     # data=X_pred.to_dict('records')
 
