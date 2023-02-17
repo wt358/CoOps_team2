@@ -56,8 +56,8 @@ def infer_vari():
     #data consumer
     now = datetime.now()
     curr_time = now.strftime("%Y-%m-%d_%H:%M:%S")
-    print(ds)
-    print(os.environ['{{ds}}'])
+    print(os.environ['EXECUTION_DATE'])
+    print(os.environ['sdf'])
     consumer = KafkaConsumer('test.coops2022_etl.etl_data',
             group_id=f'Inference_vari_model_{curr_time}',
             bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],

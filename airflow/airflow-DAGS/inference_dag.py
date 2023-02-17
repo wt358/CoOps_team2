@@ -487,6 +487,7 @@ with DAG(
         secrets=[secret_all, secret_all1, secret_all2, secret_all3, secret_all4, secret_all5,
                  secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb],
         # env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
+        env_vars={'EXECUTION_DATE':"{{ds}}"},
         # configmaps=configmaps,
         is_delete_operator_pod=True,
         get_logs=True,
