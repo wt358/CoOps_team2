@@ -82,7 +82,7 @@ with DAG(
     #         retry_delay=timedelta(minutes=1),
     #     )
 
-        run_this >>kubenetes_template_ex
+    run_this >>kubenetes_template_ex
     # [END howto_operator_python_kwargs]
 
     # [START howto_operator_python_venv]
