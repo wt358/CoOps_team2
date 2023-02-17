@@ -309,7 +309,7 @@ def model_vari_infer():
     # % of fraudulent transactions were caught succesfully (recall):    {tp}/({fn}+{tp}) = {tp/(fn+tp):.2%}
     # % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
     db_test=client['coops2022_result']
-    collection=db_test[f'result_{model_name}_{curr_time}']
+    collection=db_test[f'result_{model_name}']
     data=y_log.to_dict('records')
     try:
         collection.insert_many(data,ordered=False)
