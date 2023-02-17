@@ -13,12 +13,22 @@ args = {
     'owner': 'airflow',
 }
 
+task_default_args = {
+        'owner': 'coops2',
+        'retries': 0,
+        'retry_delay': timedelta(minutes=1),
+        'depends_on_past': True,
+        #'execution_timeout': timedelta(minutes=5)
+}
+
+
 with DAG(
     dag_id='python_operator',
     default_args=args,
     schedule_interval=timedelta(days=7),
+    default_args=task_default_args,
     start_date=days_ago(30),
-    tags=['example'],
+    tags=['exaddsdfmple'],
     catchup=True,
 ) as dag:
 
@@ -82,7 +92,7 @@ with DAG(
     #         retry_delay=timedelta(minutes=1),
     #     )
 
-    run_this >>kubenetes_template_ex
+        run_this >>kubenetes_template_ex
     # [END howto_operator_python_kwargs]
 
     # [START howto_operator_python_venv]
