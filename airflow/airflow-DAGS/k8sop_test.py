@@ -168,7 +168,7 @@ def print_rank(df,i,machine_no):
 
 def print_stat(df,machine_no):
     today=pd.Timestamp.today()
-    today=datetime.now().strftime("%Y-%m-%d")
+    today=datetime.now("%Y-%m-%d")
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
     db_rank= client['coops2022_rank']
