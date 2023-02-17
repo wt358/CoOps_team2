@@ -17,6 +17,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from pymongo import MongoClient
+import pymongo
 import pandas as pd
 
 
@@ -185,6 +186,7 @@ def print_stat(df,machine_no):
         print(date_1month)
         today=datetime.now().strftime("%Y-%m-%d")
         collection = db_rank[f'stat_{machine_no}_{i}month_{today}']
+        collection.create_index([("Today",pymongo.ASCENDING)],unique=True)
         df2=df[df['TimeStamp'] > date_1month ]
         print(df2)
         stat_df=df2.drop(columns={'TimeStamp'}).describe().T
@@ -200,6 +202,7 @@ def print_stat(df,machine_no):
         # df2=df2.rename("count")
         # df_new=pd.concat([df1,df2],axis=1).reset_index()
         # print(df_new)
+        stat_df['Today']=today
         data=stat_df.to_dict('records')
         try:
             collection.insert_many(data,ordered=False)
