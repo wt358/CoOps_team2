@@ -24,7 +24,6 @@ task_default_args = {
 
 with DAG(
     dag_id='python_operator',
-    default_args=args,
     schedule_interval=timedelta(days=7),
     default_args=task_default_args,
     start_date=days_ago(30),
