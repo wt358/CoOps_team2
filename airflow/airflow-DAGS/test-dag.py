@@ -58,12 +58,14 @@ with DAG(
         # Airflow UI. In this case we are getting the value of my_value and
         # setting the environment variable `MY_VALUE`. The pod will fail if
         # `my_value` is not set in the Airflow UI.
-        env_vars={"MY_VALUE": "{{ var.value.my_value }}"},
+        # env_vars={"MY_VALUE": "{{ var.value.my_value }}"},
         # Sets the config file to a kubernetes config file specified in
         # airflow.cfg. If the configuration file does not exist or does
         # not provide validcredentials the pod will fail to launch. If not
         # specified, config_file defaults to ~/.kube/config
-        config_file="{{ conf.get('core', 'kube_config') }}",
+        # config_file="{{ conf.get('core', 'kube_config') }}",
+        is_delete_operator_pod=True,
+        get_logs=True,
     )
     # [START howto_operator_python_kwargs]
     def my_sleeping_function(random_base):
