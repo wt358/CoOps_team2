@@ -174,6 +174,8 @@ def print_stat(df,machine_no):
     mode_machine_name=df['Additional_Info_1'].value_counts().idxmax()
     print("main product ",mode_machine_name)
     df= df[df['Additional_Info_1'] == mode_machine_name]
+    df.drop(columns={'idx','Machine_Name','Additional_Info_1', 'Additional_Info_2','Shot_Number','TimeStamp',
+        },inplace=True)
     print(df)
     
     for i in [1,6]:
