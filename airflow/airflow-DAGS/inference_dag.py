@@ -66,6 +66,7 @@ from collections import Counter
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
 from pymongo import MongoClient
+import pymongo
 
 import sqlalchemy
 from sqlalchemy import create_engine
@@ -310,6 +311,7 @@ def model_vari_infer():
     # % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
     db_test=client['coops2022_result']
     collection=db_test[f'result_{model_name}']
+    collection.create_index([("TimeStamp",pymongo.ASCENDING)],unique=True)
     data=y_log.to_dict('records')
     try:
         collection.insert_many(data,ordered=False)
