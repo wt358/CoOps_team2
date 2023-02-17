@@ -14,8 +14,8 @@ args = {
 with DAG(
     dag_id='python_operator',
     default_args=args,
-    schedule_interval=timedelta(days=1),
-    start_date=days_ago(2),
+    schedule_interval=timedelta(days=7),
+    start_date=days_ago(30),
     tags=['example'],
     catchup=True,
 ) as dag:
