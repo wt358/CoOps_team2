@@ -380,10 +380,9 @@ for path in paths:
         )
     
     if path == 'path_main':
-        main_or_vari >> t 
-        # main_or_vari >> t >> run_iqr >> after_aug 
-        # after_aug >> [run_svm, run_lstm] >> after_ml
-        # after_aug >> run_eval
+        main_or_vari >> t >> run_iqr >> after_aug 
+        after_aug >> [run_svm, run_lstm] >> after_ml
+        after_aug >> run_eval
     elif path == 'path_vari':
         main_or_vari >> t >> run_tadgan
         
