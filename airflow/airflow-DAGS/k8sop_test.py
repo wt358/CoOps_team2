@@ -263,8 +263,8 @@ def which_path():
     print_stat(sql_result_pd_25,25)
     print("======================================================")
     engine.dispose()
-#   if '9000a' in mode_machine_name:
-    if True:
+    if '9000a' in mode_machine_name:
+    # if True:
         task_id = 'path_main'
     else:
         task_id = 'path_vari'
