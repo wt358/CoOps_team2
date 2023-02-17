@@ -254,7 +254,7 @@ def which_path():
     sql_result_pd_6 = sql_result_pd[sql_result_pd['Machine_Name'] != '']
     sql_result_pd_25 = sql_result_pd[sql_result_pd['Machine_Name'] == '']
     #   month_list = [1, 3, 6]
-    month_list = [6]
+    month_list = [1,6]
     print("======================================================")
     print("  6호기")
     for i in month_list:
