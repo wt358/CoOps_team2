@@ -33,6 +33,7 @@ with DAG(
         owner="coops2",
         retries=0,
         retry_delay=timedelta(minutes=1),
+        depends_on_past=True,
     )
     # [END howto_operator_python]
 
