@@ -166,6 +166,42 @@ def print_rank(df,i,machine_no):
     client.close()
     return
 
+def print_stat(df,machine_no):
+    today=pd.Timestamp.today()
+    date_1month=(today- pd.DateOffset(months=i)).strftime('%Y-%m-%d %I:%M:%S')
+    today=datetime.now().strftime("%Y-%m-%d")
+    host = Variable.get("MONGO_URL_SECRET")
+    client = MongoClient(host)
+    db_rank= client['coops2022_rank']
+    mode_machine_name=df['Additional_Info_1'].value_counts().idxmax()
+    print("main product ",mode_machine_name)
+    df= df[df['Additional_Info_1'] == mode_machine_name]
+    print(df)
+    
+    for i in [1,6]:
+        collection = db_rank[f'stat_{machine_no}_{i}_{today}']
+
+        df2=df[df['TimeStamp'] > date_1month ]['Additional_Info_1'].value_counts().describe()
+        
+        # df1=df2.rank(method='min',ascending=False)
+        
+        print("\n",i,"month stat")
+        print("====================================")
+        print(df)
+        # df1=df1.rename("rank")
+        # df2=df2.rename("count")
+        # df_new=pd.concat([df1,df2],axis=1).reset_index()
+        # print(df_new)
+        # data=df_new.to_dict('records')
+        # try:
+        #     collection.insert_many(data,ordered=False)
+        # except Exception as e:
+        #     print("mongo connection failer",e)
+        print("====================================")
+    client.close()
+    return
+
+
 
 def which_path():
     '''
@@ -211,10 +247,12 @@ def which_path():
     print("  6호기")
     for i in month_list:
         print_rank(sql_result_pd_6, i,6)
+    print_stat(sql_result_pd_6,6)
     print("======================================================")
     print("  25호기")
     for i in month_list:
         print_rank(sql_result_pd_25, i,25)
+    print_stat(sql_result_pd_25,25)
     print("======================================================")
     engine.dispose()
 #   if '9000a' in mode_machine_name:
