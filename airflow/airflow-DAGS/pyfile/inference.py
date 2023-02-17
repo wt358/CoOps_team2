@@ -5,6 +5,7 @@ from datetime import datetime
 from kafka import KafkaConsumer
 from pymongo import MongoClient
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import pymongo
 
 from gridfs import GridFS
 from numba import cuda
@@ -15,10 +16,10 @@ import pandas as pd
 import gridfs
 import tensorflow as tf
 
-
 from preprocess import *
 from loadmodel import *
 from logger import *
+from sklearn.svm import OneClassSVM 
 import params
 
 def infer_tad():
@@ -51,6 +52,144 @@ def infer_tad():
 
 
     print("hello inference tad")
+    
+def infer_vari():
+    #data consumer
+    now = datetime.now()
+    curr_time = now.strftime("%Y-%m-%d_%H:%M:%S")
+
+    consumer = KafkaConsumer('test.coops2022_etl.etl_data',
+            group_id=f'Inference_vari_model_{curr_time}',
+            bootstrap_servers=['kafka-clust-kafka-persis-d198b-11683092-d3d89e335b84.kr.lb.naverncp.com:9094'],
+            value_deserializer=lambda x: loads(x.decode('utf-8')),
+            auto_offset_reset='earliest',
+            consumer_timeout_ms=10000
+            )
+    #consumer.poll(timeout_ms=1000, max_records=2000)
+
+    #dataframe extract
+    l=[]
+
+    for message in consumer:
+        message = message.value
+        l.append(loads(message['payload'])['fullDocument'])
+    df = pd.DataFrame(l)
+    consumer.close()
+    print(df)
+    if df.empty:
+        print("empty queue")
+        return
+    # dataframe transform
+    df=df[df['idx']!='idx']
+    print(df.shape)
+    print(df.columns)
+    print(df)
+
+    df.drop(columns={'_id',
+        },inplace=True)
+    
+    print(df)
+
+    
+    labled = pd.DataFrame(df, columns = ['Filling_Time','Plasticizing_Time','Cycle_Time','Cushion_Position'])
+
+
+    labled.columns = map(str.lower,labled.columns)
+    labled.rename(columns={'class':'label'},inplace=True)
+    print(labled.head())
+
+    target_columns = pd.DataFrame(labled, columns = ['cycle_time', 'cushion_position'])
+    target_columns.astype('float')
+     
+     
+    host = os.environ['MONGO_URL_SECRET'] 
+    client=MongoClient(host)
+    db_model = client['coops2022_model']
+    fs = gridfs.GridFS(db_model)
+    collection_model=db_model['mongo_OCSVM']
+    
+    model_name = 'OC_SVM'
+    model_fpath = f'{model_name}.joblib'
+    result = collection_model.find({"model_name": model_name}).sort([("inserted_time", -1)])
+    print(result)
+    # cnt=len(list(result.clone()))
+    # print(result[0])
+    # print(result[cnt-1])
+    try:
+        file_id = str(result[0]['file_id'])
+        model = LoadModel(mongo_id=file_id).clf
+    except Exception as e:
+        print("exception occured in oc_svm",e)
+        model = OneClassSVM(kernel = 'rbf', gamma = 0.001, nu = 0.04).fit(target_columns)
+    joblib.dump(model, model_fpath)
+    
+    print(model.get_params())
+    
+    y_pred = model.predict(target_columns)
+    print(y_pred)
+
+
+
+    # filter outlier index
+    outlier_index = np.where(y_pred == -1)
+
+    #filter outlier values
+    outlier_values = target_columns.iloc[outlier_index]
+    print(outlier_values)
+    
+    # 이상값은 -1으로 나타낸다.
+    score = model.fit(target_columns)
+    anomaly = model.predict(target_columns)
+    target_columns['anomaly']= anomaly
+    anomaly_data = target_columns.loc[target_columns['anomaly']==-1] 
+    print(target_columns['anomaly'].value_counts())
+
+    target_columns[target_columns['anomaly']==1] = 0
+    target_columns[target_columns['anomaly']==-1] = 1
+    target_columns['Anomaly'] = target_columns['anomaly'] > 0.5
+    y_test = target_columns['Anomaly']
+    
+    print(y_test.unique())
+
+    # df = pd.DataFrame(labled, columns = ['label'])
+    # print(df.label)
+    
+    # outliers = df['label']
+    # outliers = outliers.fillna(0)
+    # print(outliers.unique())
+    # print(outliers)
+
+    print(y_test)
+    y_log=pd.DataFrame(index=df.index)
+    y_log['TimeStamp']=df['TimeStamp']
+    y_log['Anomaly']=y_test
+    print(y_log['TimeStamp'].nunique())
+    # outliers = outliers.to_numpy()
+    # y_test = y_test.to_numpy()
+
+    # get (mis)classification
+    # cf = confusion_matrix(outliers, y_test)
+
+    # # true/false positives/negatives
+    # print(cf)
+    # (tn, fp, fn, tp) = cf.flatten()
+
+    # print(f"""{cf}
+    # % of transactions labeled as fraud that were correct (precision): {tp}/({fp}+{tp}) = {tp/(fp+tp):.2%}
+    # % of fraudulent transactions were caught succesfully (recall):    {tp}/({fn}+{tp}) = {tp/(fn+tp):.2%}
+    # % of g-mean value : root of (specificity)*(recall) = ({tn}/({fp}+{tn})*{tp}/({fn}+{tp})) = {(tn/(fp+tn)*tp/(fn+tp))**0.5 :.2%}""")
+    db_test=client['coops2022_result']
+    collection=db_test[f'result_{model_name}']
+    collection.create_index([("TimeStamp",pymongo.ASCENDING)],unique=True)
+    data=y_log.to_dict('records')
+    try:
+        collection.insert_many(data,ordered=False)
+    except Exception as e:
+        print("mongo connection failed",e)
+    client.close()
+    print("hello oc_svm inference")
+
+
 
 def infer_main():
     logging.info('########## START INFERENCE ##########')
