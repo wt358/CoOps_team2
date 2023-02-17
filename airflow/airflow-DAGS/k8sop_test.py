@@ -183,7 +183,8 @@ def print_stat(df,machine_no):
         today=datetime.now().strftime("%Y-%m-%d")
         collection = db_rank[f'stat_{machine_no}_{i}_{today}']
         df2=df[df['TimeStamp'] > date_1month ]
-        stat_df=df2.describe(exclude=['TimeStamp'])
+        print(df2)
+        stat_df=df2.drop(columns={'TimeStamp'}).describe()
         
         # df1=df2.rank(method='min',ascending=False)
         
