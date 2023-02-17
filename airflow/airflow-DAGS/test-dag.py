@@ -41,8 +41,7 @@ with DAG(
     kubenetes_template_ex = KubernetesPodOperator(
         task_id="ex-kube-templates",
         name="ex-kube-templates",
-        namespace="default",
-        image="bash",
+        namespace='airflow-cluster',
         # All parameters below are able to be templated with jinja -- cmds,
         # arguments, env_vars, and config_file. For more information visit:
         # https://airflow.apache.org/docs/apache-airflow/stable/macros-ref.html
