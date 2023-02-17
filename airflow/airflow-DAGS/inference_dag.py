@@ -10,7 +10,6 @@ from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import Kubernete
 from airflow.operators.python_operator import BranchPythonOperator
 from airflow.operators.dummy import DummyOperator
 from airflow.models.variable import Variable
-from airflow.models.dagrun import DagRun
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import DBSCAN
@@ -150,10 +149,6 @@ cpu_aff={
             }
         }
 
-def get_most_recent_dag_run(dag_id):
-    dag_runs = DagRun.find(dag_id=dag_id)
-    dag_runs.sort(key=lambda x: x.execution_date, reverse=True)
-    return dag_runs[1] if len(dag_runs) > 1 else None
 
 tf.random.set_seed(10)
 class ModelSingleton(type):
@@ -416,7 +411,6 @@ with DAG(
     #     retries=0,
     #     retry_delay=timedelta(minutes=1),
     # )
-    execute_date=get_most_recent_dag_run('inference_dag')
     t2 = PythonOperator(
         task_id="push_on_premise",
         python_callable=push_onpremise,
@@ -492,7 +486,7 @@ with DAG(
         # resources=pod_resources,
         secrets=[secret_all, secret_all1, secret_all2, secret_all3, secret_all4, secret_all5,
                  secret_all6, secret_all7, secret_all8, secret_all9, secret_alla, secret_allb],
-        env_vars={'EXECUTION_DATE':execute_date},
+        # env_vars={'MONGO_URL_SECRET':'/var/secrets/db/mongo-url-secret.json'},
         # configmaps=configmaps,
         is_delete_operator_pod=True,
         get_logs=True,
