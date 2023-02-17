@@ -174,7 +174,7 @@ def print_stat(df,machine_no):
     mode_machine_name=df['Additional_Info_1'].value_counts().idxmax()
     print("main product ",mode_machine_name)
     df= df[df['Additional_Info_1'] == mode_machine_name]
-    df.drop(columns={'idx','Machine_Name','Additional_Info_1', 'Additional_Info_2','Shot_Number',
+    df.drop(columns={'idx','Machine_Name','Additional_Info_2','Shot_Number',
         },inplace=True)
     print(df)
     
@@ -183,7 +183,7 @@ def print_stat(df,machine_no):
         today=datetime.now().strftime("%Y-%m-%d")
         collection = db_rank[f'stat_{machine_no}_{i}_{today}']
         df2=df[df['TimeStamp'] > date_1month ]['Additional_Info_1'].value_counts()
-        stat_df=df2.describe(exclude=['TimeStamp'])
+        stat_df=df2.describe(exclude=['TimeStamp','Additional_Info_1'])
         
         # df1=df2.rank(method='min',ascending=False)
         
