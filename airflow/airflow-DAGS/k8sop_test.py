@@ -149,6 +149,7 @@ def print_rank(df,i,machine_no):
     client = MongoClient(host)
     db_rank= client['coops2022_rank']
     collection = db_rank[f'rank_{machine_no}_{i}_{today}']
+    collection.create_index([("rank",pymongo.ASCENDING)],unique=True)
 
     df2=df[df['TimeStamp'] > date_1month ]['Additional_Info_1'].value_counts()
     df1=df2.rank(method='min',ascending=False)
