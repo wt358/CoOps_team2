@@ -102,7 +102,7 @@ secret_all9 = Secret('env', None, 'airflow-git-ssh-secret2')
 secret_alla = Secret('env', None, 'airflow-ssh-git-secret')
 secret_allb = Secret('env', None, 'default-token-hkdgr')
 
-gpu_tag="0.87"
+gpu_tag="0.90"
 tad_tag="0.06"
 gpu_aff={
         'nodeAffinity': {
@@ -460,8 +460,8 @@ with DAG(
         # image_pull_policy="Always",
         # image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
-        cmds=["python3"],
-        arguments=["copy_gpu_py.py", "infer_main"],
+        cmds=["sh"],
+        arguments=["command.sh","infer_main"],
         affinity=gpu_aff,
         # resources=pod_resources,
         secrets=[secret_all, secret_all1, secret_all2, secret_all3, secret_all4, secret_all5,
@@ -476,8 +476,7 @@ with DAG(
         task_id="infer_vari_pod_operator",
         name="vari_infer",
         namespace='airflow-cluster',
-        # image=f'wcu5i9i6.kr.private-ncr.ntruss.com/cuda:{gpu_tag}',
-        image=f'wcu5i9i6.kr.private-ncr.ntruss.com/cuda:0.90',
+        image=f'wcu5i9i6.kr.private-ncr.ntruss.com/cuda:{gpu_tag}',
         # image_pull_policy="Always",
         # image_pull_policy="IfNotPresent",
         image_pull_secrets=[k8s.V1LocalObjectReference('regcred')],
