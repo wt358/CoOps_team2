@@ -200,7 +200,7 @@ def which_path():
     
     sql_result = engine.execute(query1)
     sql_result_pd = pd.read_sql_query(query1, engine)
-
+    sql_result_pd['Additional_Info_1']=sql_result_pd['Additional_Info_1'].str.strip()
     sql_result_pd = sql_result_pd[sql_result_pd['Machine_Name'] != '7']
     sql_result_pd = sql_result_pd[sql_result_pd['Machine_Name'] != '6i']
     sql_result_pd_6 = sql_result_pd[sql_result_pd['Machine_Name'] != '']
