@@ -217,7 +217,7 @@ def which_path():
     print("======================================================")
     engine.dispose()
 #   if '9000a' in mode_machine_name:
-    if False:
+    if True:
         task_id = 'path_main'
     else:
         task_id = 'path_vari'
@@ -333,9 +333,10 @@ for path in paths:
         )
     
     if path == 'path_main':
-        main_or_vari >> t >> run_iqr >> after_aug 
-        after_aug >> [run_svm, run_lstm] >> after_ml
-        after_aug >> run_eval
+        main_or_vari >> t 
+        # main_or_vari >> t >> run_iqr >> after_aug 
+        # after_aug >> [run_svm, run_lstm] >> after_ml
+        # after_aug >> run_eval
     elif path == 'path_vari':
         main_or_vari >> t >> run_tadgan
         
