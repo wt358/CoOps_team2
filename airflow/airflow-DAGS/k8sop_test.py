@@ -184,10 +184,10 @@ def print_stat(df,machine_no):
         date_1month=(today- pd.DateOffset(months=i)).strftime('%Y-%m-%d %I:%M:%S')
         print(date_1month)
         today=datetime.now().strftime("%Y-%m-%d")
-        collection = db_rank[f'stat_{machine_no}_{i}_{today}']
+        collection = db_rank[f'stat_{machine_no}_{i}month_{today}']
         df2=df[df['TimeStamp'] > date_1month ]
         print(df2)
-        stat_df=df2.drop(columns={'TimeStamp'}).describe()
+        stat_df=df2.drop(columns={'TimeStamp'}).describe().T
         
         # df1=df2.rank(method='min',ascending=False)
         
