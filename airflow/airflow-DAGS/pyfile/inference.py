@@ -6,7 +6,7 @@ from kafka import KafkaConsumer
 from pymongo import MongoClient
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import pymongo
-
+from airflow.model.dagrun import DagRun
 from gridfs import GridFS
 from numba import cuda
 from json import loads
