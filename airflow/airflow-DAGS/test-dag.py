@@ -42,10 +42,6 @@ with DAG(
     run_this = PythonOperator(
         task_id='print_the_context',
         python_callable=print_context,
-        owner="coops2",
-        retries=0,
-        retry_delay=timedelta(minutes=1),
-        depends_on_past=True,
     )
     # [END howto_operator_python]
     kubenetes_template_ex = KubernetesPodOperator(
