@@ -168,63 +168,60 @@ def print_rank(df,i,machine_no):
 
 
 def which_path():
-  '''
-  return the task_id which to be executed
-  '''
-  host = Variable.get("MS_HOST")
-  database = Variable.get("MS_DATABASE")
-  username = Variable.get("MS_USERNAME")
-  password = Variable.get("MS_PASSWORD")
+    '''
+    return the task_id which to be executed
+    '''
+    host = Variable.get("MS_HOST")
+    database = Variable.get("MS_DATABASE")
+    username = Variable.get("MS_USERNAME")
+    password = Variable.get("MS_PASSWORD")
 
-  query = text(
-      "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(day,-7,GETDATE())"
-      )
-  query1 = text(
-      "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(month,-6,GETDATE())"
-      )
-  conection_url = sqlalchemy.engine.url.URL(
-      drivername="mssql+pymssql",
-      username=username,
-      password=password,
-      host=host,
-      database=database,
-  )
-  engine = create_engine(conection_url, echo=True)
-  
-  sql_result_pd = pd.read_sql_query(query, engine)
-  mode_machine_name=sql_result_pd['Additional_Info_1'].value_counts().idxmax()
-  print(sql_result_pd['Additional_Info_1'].value_counts())
-  print(mode_machine_name)
-  
-  sql_result = engine.execute(query1)
-  sql_result_pd = pd.read_sql_query(query1, engine)
+    query = text(
+        "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(day,-7,GETDATE())"
+        )
+    query1 = text(
+        "SELECT * from shot_data WITH(NOLOCK) where TimeStamp > DATEADD(month,-6,GETDATE())"
+        )
+    conection_url = sqlalchemy.engine.url.URL(
+        drivername="mssql+pymssql",
+        username=username,
+        password=password,
+        host=host,
+        database=database,
+    )
+    engine = create_engine(conection_url, echo=True)
+    
+    sql_result_pd = pd.read_sql_query(query, engine)
+    mode_machine_name=sql_result_pd['Additional_Info_1'].value_counts().idxmax()
+    print(sql_result_pd['Additional_Info_1'].value_counts())
+    print(sql_result_pd)
+    print(mode_machine_name)
+    
+    sql_result = engine.execute(query1)
+    sql_result_pd = pd.read_sql_query(query1, engine)
 
-  sql_result_pd = sql_result_pd[sql_result_pd['Machine_Name'] != '7']
-  sql_result_pd = sql_result_pd[sql_result_pd['Machine_Name'] != '6i']
-  sql_result_pd_6 = sql_result_pd[sql_result_pd['Machine_Name'] != '']
-  sql_result_pd_25 = sql_result_pd[sql_result_pd['Machine_Name'] == '']
-#   month_list = [1, 3, 6]
-  month_list = [6]
-  print("======================================================")
-  print("  6호기")
-  for i in month_list:
-      print_rank(sql_result_pd_6, i,6)
-  print("======================================================")
-  print("  25호기")
-  for i in month_list:
-      print_rank(sql_result_pd_25, i,25)
-  print("======================================================")
-
-
-
-  
-  
+    sql_result_pd = sql_result_pd[sql_result_pd['Machine_Name'] != '7']
+    sql_result_pd = sql_result_pd[sql_result_pd['Machine_Name'] != '6i']
+    sql_result_pd_6 = sql_result_pd[sql_result_pd['Machine_Name'] != '']
+    sql_result_pd_25 = sql_result_pd[sql_result_pd['Machine_Name'] == '']
+    #   month_list = [1, 3, 6]
+    month_list = [6]
+    print("======================================================")
+    print("  6호기")
+    for i in month_list:
+        print_rank(sql_result_pd_6, i,6)
+    print("======================================================")
+    print("  25호기")
+    for i in month_list:
+        print_rank(sql_result_pd_25, i,25)
+    print("======================================================")
+    engine.dispose()
 #   if '9000a' in mode_machine_name:
-  if False:
-    task_id = 'path_main'
-  else:
-    task_id = 'path_vari'
-  return task_id
+    if False:
+        task_id = 'path_main'
+    else:
+        task_id = 'path_vari'
+    return task_id
 
 start = DummyOperator(task_id="start", dag=dag)
 
