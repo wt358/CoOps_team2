@@ -192,6 +192,7 @@ def which_path():
     engine = create_engine(conection_url, echo=True)
     
     sql_result_pd = pd.read_sql_query(query, engine)
+    sql_result_pd['Additional_Info_1']=sql_result_pd['Additional_Info_1'].str.strip()
     mode_machine_name=sql_result_pd['Additional_Info_1'].value_counts().idxmax()
     print(sql_result_pd['Additional_Info_1'].value_counts())
     print(sql_result_pd)
