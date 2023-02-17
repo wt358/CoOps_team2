@@ -30,6 +30,9 @@ with DAG(
     run_this = PythonOperator(
         task_id='print_the_context',
         python_callable=print_context,
+        owner="coops2",
+        retries=0,
+        retry_delay=timedelta(minutes=1),
     )
     # [END howto_operator_python]
 
@@ -39,11 +42,14 @@ with DAG(
         time.sleep(random_base)
 
     # Generate 5 sleeping tasks, sleeping from 0.0 to 0.4 seconds respectively
-    for i in range(5):
+    for i in range(2):
         task = PythonOperator(
             task_id='sleep_for_' + str(i),
             python_callable=my_sleeping_function,
             op_kwargs={'random_base': float(i) / 10},
+            owner="coops2",
+            retries=0,
+            retry_delay=timedelta(minutes=1),
         )
 
         run_this >> task
