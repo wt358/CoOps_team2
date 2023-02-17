@@ -186,7 +186,7 @@ def print_stat(df,machine_no):
         print(date_1month)
         today=datetime.now().strftime("%Y-%m-%d")
         collection = db_rank[f'stat_{machine_no}_{i}month_{today}']
-        collection.create_index([("Today",pymongo.ASCENDING)],unique=True)
+        collection.create_index([("Today",pymongo.ASCENDING),("Feature",pymongo.ASCENDING)],unique=True)
         df2=df[df['TimeStamp'] > date_1month ]
         print(df2)
         stat_df=df2.drop(columns={'TimeStamp'}).describe().T
