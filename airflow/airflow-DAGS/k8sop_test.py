@@ -169,8 +169,10 @@ def print_rank(df,i,machine_no):
 def print_stat(df,machine_no):
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
-    db_rank= client['coops2022_rank']
-    mode_machine_name=df['Additional_Info_1'].value_counts().idxmax()
+    db_rank= client['coops2022_stat']
+    today=pd.Timestamp.today()
+    date_1month=(today- pd.DateOffset(months=1)).strftime('%Y-%m-%d %I:%M:%S')
+    mode_machine_name=df[df['TimeStamp'] > date_1month ]['Additional_Info_1'].value_counts().idxmax()
     print("main product ",mode_machine_name)
     df= df[df['Additional_Info_1'] == mode_machine_name]
     df.drop(columns={'idx','Machine_Name','Additional_Info_1', 'Additional_Info_2','Shot_Number',
@@ -184,9 +186,7 @@ def print_stat(df,machine_no):
         today=datetime.now().strftime("%Y-%m-%d")
         collection = db_rank[f'stat_{machine_no}_{i}_{today}']
         df2=df[df['TimeStamp'] > date_1month ]
-        df3=df[df['TimeStamp'] < date_1month ]
         print(df2)
-        print(df3)
         stat_df=df2.drop(columns={'TimeStamp'}).describe()
         
         # df1=df2.rank(method='min',ascending=False)
@@ -198,7 +198,7 @@ def print_stat(df,machine_no):
         # df2=df2.rename("count")
         # df_new=pd.concat([df1,df2],axis=1).reset_index()
         # print(df_new)
-        # data=df_new.to_dict('records')
+        data=stat_df.to_dict('records')
         # try:
         #     collection.insert_many(data,ordered=False)
         # except Exception as e:
