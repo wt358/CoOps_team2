@@ -72,6 +72,7 @@ kubenetes_template_ex = KubernetesPodOperator(
     # config_file="{{ conf.get('core', 'kube_config') }}",
     is_delete_operator_pod=True,
     get_logs=True,
+    image="gcr.io/gcp-runtimes/ubuntu_18_0_4",
 )
 # [START howto_operator_python_kwargs]
 def my_sleeping_function(random_base):
