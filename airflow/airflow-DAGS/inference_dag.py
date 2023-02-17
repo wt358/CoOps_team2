@@ -295,6 +295,7 @@ def model_vari_infer():
     y_log=pd.DataFrame(index=df.index)
     y_log['TimeStamp']=df['TimeStamp']
     y_log['Anomaly']=y_test
+    print(y_log['TimeStamp'].unique())
     # outliers = outliers.to_numpy()
     # y_test = y_test.to_numpy()
 
