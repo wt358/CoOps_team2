@@ -168,7 +168,6 @@ def print_rank(df,i,machine_no):
 
 def print_stat(df,machine_no):
     today=pd.Timestamp.today()
-    date_1month=(today- pd.DateOffset(months=i)).strftime('%Y-%m-%d %I:%M:%S')
     today=datetime.now().strftime("%Y-%m-%d")
     host = Variable.get("MONGO_URL_SECRET")
     client = MongoClient(host)
@@ -180,14 +179,14 @@ def print_stat(df,machine_no):
     
     for i in [1,6]:
         collection = db_rank[f'stat_{machine_no}_{i}_{today}']
-
+        date_1month=(today- pd.DateOffset(months=i)).strftime('%Y-%m-%d %I:%M:%S')
         df2=df[df['TimeStamp'] > date_1month ]['Additional_Info_1'].value_counts().describe()
         
         # df1=df2.rank(method='min',ascending=False)
         
         print("\n",i,"month stat")
         print("====================================")
-        print(df)
+        print(df2)
         # df1=df1.rename("rank")
         # df2=df2.rename("count")
         # df_new=pd.concat([df1,df2],axis=1).reset_index()
