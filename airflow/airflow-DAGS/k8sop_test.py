@@ -193,6 +193,8 @@ def print_stat(df,machine_no):
         
         print("\n",i,"month stat")
         print("====================================")
+        stat_df.reset_index(inplace=True)
+        stat_df = stat_df.rename(columns = {'index':'Feature'})
         print(stat_df)
         # df1=df1.rename("rank")
         # df2=df2.rename("count")
