@@ -14,7 +14,7 @@ with DAG(
     dag_id='python_operator',
     default_args=args,
     schedule_interval=None,
-    start_date=days_ago(2),
+    start_date=days_ago(1),
     tags=['example'],
 ) as dag:
 
