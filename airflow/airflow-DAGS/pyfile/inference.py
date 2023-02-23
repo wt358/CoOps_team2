@@ -360,7 +360,28 @@ def infer_lstm():
     
     scored = pd.DataFrame(index=test.index)
     Xtest = X_test.reshape(X_test.shape[0], X_test.shape[2])
+    scored['TimeStamp']=pd.to_datetime(df['TimeStamp'])
     scored['Loss_mae'] = np.mean(np.abs(X_pred-Xtest), axis = 1)
+    loss_list=np.abs(X_pred-Xtest)
+    print(loss_list)
+    mean=np.mean(loss_list,axis=0)
+    std=np.cov(loss_list.T)
+    print(mean)
+    print(std)
+    x=loss_list-mean
+    print(x)
+
+    new_df=np.mean(np.abs(np.dot(np.dot(x,std),x.T)),axis=1).reshape(-1,1)
+    scaler_minmax=StandardScaler()
+    scaler_minmax.fit(new_df)
+    data_scaler1=np.abs(scaler_minmax.transform(new_df))
+    scaler_minmax=MinMaxScaler()
+    scaler_minmax.fit(new_df)
+    data_scaler2=scaler_minmax.transform(new_df)
+
+    # print(data_scaler)
+    scored['Anomaly_Score_standard']=data_scaler1
+    scored['Anomaly_Score_minmax']=data_scaler2
     scored['Threshold'] = 0.1
     scored['Anomaly'] = scored['Loss_mae'] > scored['Threshold']
     print(scored.head())
