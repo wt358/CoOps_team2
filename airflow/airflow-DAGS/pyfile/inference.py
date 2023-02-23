@@ -82,7 +82,9 @@ def infer_vari():
     # dataframe transform
     df=df[df['idx']!='idx']
     df['TimeStamp']=pd.to_datetime(df['TimeStamp'])
-    start_time=now-timedelta(hours=6)
+    print(now)
+    start_time=now-timedelta(hours=24)
+    print(start_time)
     df=df[df['TimeStamp']>=start_time]
     print(df.shape)
     print(df.columns)
