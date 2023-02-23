@@ -1,6 +1,7 @@
 
 import os
 from datetime import datetime
+from datetime import timedelta 
 
 from kafka import KafkaConsumer
 from pymongo import MongoClient
@@ -80,6 +81,9 @@ def infer_vari():
         return
     # dataframe transform
     df=df[df['idx']!='idx']
+    df['TimeStamp']=pd.to_datetime(df['TimeStamp'])
+    start_time=now-timedelta(hours=1)
+    df=df[df['TimeStamp']>=start_time]
     print(df.shape)
     print(df.columns)
     print(df)
@@ -278,6 +282,9 @@ def infer_lstm():
         return
     # dataframe transform
     df=df[df['idx']!='idx']
+    df['TimeStamp']=pd.to_datetime(df['TimeStamp'])
+    start_time=now-timedelta(hours=1)
+    df=df[df['TimeStamp']>=start_time]
     print(df.shape)
     print(df.columns)
     print(df)
