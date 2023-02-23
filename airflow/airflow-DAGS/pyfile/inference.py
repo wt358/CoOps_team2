@@ -84,7 +84,7 @@ def infer_vari():
     df['TimeStamp']=pd.to_datetime(df['TimeStamp'])
     now=now.astimezone()
     print(now)
-    start_time=(now-timedelta(hours=24)).astimezone()
+    start_time=(now-timedelta(hours=1)).astimezone()
     print(start_time)
     df=df[df['TimeStamp']>=start_time]
     print(df.shape)
@@ -95,7 +95,9 @@ def infer_vari():
         },inplace=True)
     
     print(df)
-
+    if df.empty:
+        print("empty")
+        return 1
     
     labled = pd.DataFrame(df, columns = ['Filling_Time','Plasticizing_Time','Cycle_Time','Cushion_Position'])
 
@@ -286,11 +288,17 @@ def infer_lstm():
     # dataframe transform
     df=df[df['idx']!='idx']
     df['TimeStamp']=pd.to_datetime(df['TimeStamp'])
-    start_time=now-timedelta(hours=1)
+    now=now.astimezone()
+    print(now)
+    start_time=(now-timedelta(hours=1)).astimezone()
+    print(start_time)
     df=df[df['TimeStamp']>=start_time]
     print(df.shape)
     print(df.columns)
     print(df)
+    if df.empty:
+        print("empty df")
+        return 1
 
     df.drop(columns={'_id',
         },inplace=True)
