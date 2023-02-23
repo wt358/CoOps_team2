@@ -287,7 +287,7 @@ def infer_lstm():
         return
     # dataframe transform
     df=df[df['idx']!='idx']
-    df['TimeStamp']=pd.to_datetime(df['TimeStamp'].astype('datetime64[ns]'))
+    df['TimeStamp']=pd.to_datetime(df['TimeStamp'],utc=True)
     now=now.astimezone()
     print(now)
     start_time=(now-timedelta(hours=1)).astimezone()
