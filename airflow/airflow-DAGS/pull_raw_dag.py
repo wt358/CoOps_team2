@@ -66,8 +66,10 @@ def pull_influx():
 
     db_test = client['coops2022']
     collection_test1 = db_test['weight_data']
+    collection_test2 = db_test['weight_data_new']
     try:
         result = collection_test1.insert_many(data)
+        result = collection_test2.insert_many(data)
     except:
         print("mongo connection failed")
     client.close()
@@ -125,8 +127,10 @@ def pull_mssql():
 
     db_test = client['coops2022']
     collection_test1 = db_test['molding_data']
+    collection_test2 = db_test['molding_data_new']
     try:
         result = collection_test1.insert_many(data)
+        result = collection_test2.insert_many(data)
     except:
         print("mongo connection failed")
     client.close()
