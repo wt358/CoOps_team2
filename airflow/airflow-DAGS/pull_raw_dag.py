@@ -44,7 +44,8 @@ def pull_influx():
     query = ' from(bucket:"cloud-bucket")\
     |> range(start: -24h)\
     |> filter(fn:(r) => r._measurement == "CLSeoGwang25HO")\
-    |> filter(fn:(r) => r._field == "Weight" )'
+    |> filter(fn:(r) => r._field == "Weight" )\
+    |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")'
     #|> range(start: -2mo)
     # result = query_api.query(org=org, query=query)
     # print(result)
