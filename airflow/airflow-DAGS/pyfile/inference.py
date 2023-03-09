@@ -84,7 +84,7 @@ def infer_vari():
     df['TimeStamp']=pd.to_datetime(df['TimeStamp'],utc=True)
     now=now.astimezone()
     print(now)
-    start_time=now-timedelta(hours=1)
+    start_time=now-timedelta(minutes=30)
     print(start_time)
     df=df[df['TimeStamp']>=start_time]
     print(df.shape)
@@ -290,7 +290,7 @@ def infer_lstm():
     df['TimeStamp']=pd.to_datetime(df['TimeStamp'],utc=True)
     now=now.astimezone()
     print(now)
-    start_time=(now-timedelta(hours=1)).astimezone()
+    start_time=(now-timedelta(minutes=30)).astimezone()
     print(start_time)
     df=df[df['TimeStamp']>=start_time]
     print(df.shape)
